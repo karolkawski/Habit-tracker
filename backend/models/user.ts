@@ -1,4 +1,4 @@
-import mongoose, { Document, Model, Schema } from "mongoose"
+import mongoose, { Document, Model } from "mongoose"
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -29,7 +29,7 @@ type UserModel = Model<UserDocument> & {
     findByCredentials(login: string, password: string): Promise<UserDocument>
 }
 
-const userSchema = new mongoose.Schema<UserAttributes>(
+const userSchema = new mongoose.Schema<UserDocument>(
   {
     login: {
       type: String,
@@ -118,4 +118,4 @@ userSchema.statics.findByCredentials = async (login, password) => {
 
 const User = mongoose.model<UserDocument, UserModel>("User", userSchema);
 
-module.exports = User;
+export default User;

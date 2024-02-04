@@ -1,3 +1,5 @@
+import { EntryType } from "perf_hooks";
+
 const mongoose = require("mongoose");
 const mongodb = require("mongodb");
 const Habit = require("../models/habit");
@@ -55,7 +57,7 @@ const seedHabits = [
   },
 ];
 
-const seedEntries = (habitIds) => {
+const seedEntries = (habitIds: number[]) => {
   return [
     {
       time: "2023-03-01",
@@ -261,9 +263,9 @@ const seedDb = async () => {
   await Settings.insertMany(seedSettings);
 
   const habitIds = await Habit.find({}, "_id");
-  const ids = habitIds.map((habit) => habit._id);
+  const ids = habitIds.map((habit: any) => habit._id);
   await Entry.deleteMany({});
-  await Entry.insertMany(seedEntries(ids)).then((entries) => {});
+  await Entry.insertMany(seedEntries(ids)).then((entries: EntryType[]) => {});
 };
 
 seedDb().then(() => {

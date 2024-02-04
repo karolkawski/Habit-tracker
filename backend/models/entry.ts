@@ -7,7 +7,7 @@ type EntryAttributes = {
     count_mode: boolean;
   }
   
-  type EntryDocument = EntryAttributes & Document
+  export type EntryDocument = EntryAttributes & Document
   
   type EntryModel = Model<EntryDocument> & {
     getEntriesForHabit(habitId: mongoose.Types.ObjectId): Promise<EntryDocument[]>;
@@ -27,7 +27,7 @@ const entriesSchema = new mongoose.Schema<EntryDocument>(
     amount: {
       type: Number,
       required: true,
-      validate(value) {
+      validate(value: number) {
         if (value < 0) {
           throw new Error("Amount must be a positive number");
         }
@@ -50,4 +50,4 @@ entriesSchema.statics.getEntriesForHabit = function (
   const Entry = mongoose.model<EntryDocument, EntryModel>("Entry", entriesSchema);
   
 
-module.exports = Entry;
+export default Entry;

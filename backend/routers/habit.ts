@@ -1,35 +1,16 @@
-const express = require("express");
-const Habit = require("../models/habit");
-const Entry = require("../models/entry");
-const router = new express.Router();
-const auth = require("../middleware/auth");
+import express, {Router, Request, Response} from "express";
+import Habit, { HabitDocument } from "../models/habit";
+import Entry, { EntryDocument } from "../models/entry";
+const router: Router = express.Router();
+import auth from "../middleware/auth";
+import {Frequency} from '../types/Habit'
 
-type Frequency = {
-    frequency: {
-        days: { [key: string]: boolean };
-      };
-  }
-
-  type HabitType ={
-    id: string;
-    name: string;
-    // Add other properties as needed
-  }
-  
-  type EntryType = {
-    id: string;
-    habitId: string;
-    timestamp: Date;
-    amount: number;
-    countMode: boolean;
-    // Add other properties as needed
-  }
 /**
  * List all habits
  * GET /habits?completed (today)
  * GET /habits?limit=10&skip=20
  */
-router.get("/api/habits", auth, (req: any, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: any): void; new(): any; }; }; }) => {
+router.get("/api/habits", auth, (req: Request, res: Response) => {
   Habit.find({})
     .then((habits: any) => {
       res.status(201).send(habits);
@@ -42,7 +23,7 @@ router.get("/api/habits", auth, (req: any, res: { status: (arg0: number) => { ()
 /**
  * Get habit by id
  */
-router.get("/api/habits/:id", auth, (req: { params: { id: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: any): void; new(): any; }; }; }) => {
+router.get("/api/habits/:id", auth,  (req: Request, res: Response) => {
   const { id } = req.params;
   Habit.findById(id)
     .then((habit: any) => {
@@ -59,7 +40,7 @@ router.get("/api/habits/:id", auth, (req: { params: { id: any; }; }, res: { stat
 /**
  * Add new habit
  */
-router.post("/api/habits/add", auth, async (req: { body: { _id: any; }; on: (arg0: string, arg1: (err: any) => void) => void; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: string): void; new(): any; }; }; }) => {
+router.post("/api/habits/add", auth, async  (req: Request, res: Response) => {
   delete req.body._id;
   let cancelRequest = false;
 
@@ -84,7 +65,7 @@ router.post("/api/habits/add", auth, async (req: { body: { _id: any; }; on: (arg
 /**
  * Update habit
  */
-router.patch("/api/habits/:id", auth, (req: { params: { id: any; }; body: any; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: any): void; new(): any; }; }; }) => {
+router.patch("/api/habits/:id", auth,  (req: Request, res: Response) => {
   Habit.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
@@ -100,7 +81,7 @@ router.patch("/api/habits/:id", auth, (req: { params: { id: any; }; body: any; }
 /**
  * Get today's habits
  */
-router.get("/api/todayHabits", auth, (req: any, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: { habits: any; }): void; new(): any; }; }; }) => {
+router.get("/api/todayHabits", auth,  (req: Request, res: Response) => {
   const currentTime = new Date();
   const dayIndex = currentTime.getDay();
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -120,32 +101,39 @@ router.get("/api/todayHabits", auth, (req: any, res: { status: (arg0: number) =>
 /**
  * Get habits by date
  */
-router.get("/api/habitsByDate", auth, (req: { query: { time: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: never[]): void; new(): any; }; }; }) => {
-  let { time } = req.query;
-  if (time instanceof Date && !isNaN(time.valueOf())) {
-    time = new Date();
-  }
+router.get("/api/habitsByDate", auth,  (req: Request<{}, {}, { time?: string }>, res: Response) => {
+    let { time } = req.query;
+    if (time) {
+        const parsedTime = new Date(time as string);
+        
+        // Sprawdź, czy parsowanie się udało
+        if (!isNaN(parsedTime.getTime())) {
+            time = parsedTime as unknown as string; 
+        } else {
+            res.status(400).send('Invalid date format');
+            return;
+        }
+    }
 
-  const dayIndex = new Date(time).getDay();
+  const dayIndex = new Date(time!).getDay();
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const currentDay = days[dayIndex];
   const query: Frequency = { frequency: { days: {} } };
   query.frequency.days[currentDay] = true;
 
-  const startOfDay = new Date(time);
+  const startOfDay = new Date(time!);
   startOfDay.setHours(0, 0, 0, 0);
-  const endOfDay = new Date(time);
+  const endOfDay = new Date(time!);
   endOfDay.setHours(23, 59, 59, 999);
 
   Habit.find(query)
-    .then((habits: any[]) => {
-      console.log("🚀 ~ .then ~ habits:", habits);
+    .then((habits: HabitDocument[]) => {
       if (!habits || habits.length === 0) {
         res.status(200).send([]);
         return;
       }
 
-      const promises = habits.map((habit: { _id: any; }) => {
+      const promises = habits.map((habit: HabitDocument) => {
         return Entry.findOne({
           habit_id: habit._id,
           time: { $gte: startOfDay, $lte: endOfDay },
@@ -155,8 +143,8 @@ router.get("/api/habitsByDate", auth, (req: { query: { time: any; }; }, res: { s
       });
 
       Promise.all(promises)
-        .then((entries: EntryType[]) => {
-          const habitEntries: { habit: HabitType; entry: EntryType }[] = habits.map((habit: HabitType, index: number) => ({
+        .then((entries: (EntryDocument | null)[]) => {
+          const habitEntries: { habit: HabitDocument; entry: EntryDocument | null }[] = habits.map((habit: HabitDocument, index: number) => ({
             habit: habit,
             entry: entries[index],
           }));
@@ -174,7 +162,7 @@ router.get("/api/habitsByDate", auth, (req: { query: { time: any; }; }, res: { s
 /**
  * Delete habit
  */
-router.delete("/api/habits/:id", auth, (req: { params: { id: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: any): void; new(): any; }; }; }) => {
+router.delete("/api/habits/:id", auth, (req: Request, res: Response) => {
   Habit.findByIdAndDelete(req.params.id)
     .then((habit: any) => {
       res.status(201).send(habit);

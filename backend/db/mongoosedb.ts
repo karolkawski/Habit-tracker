@@ -1,8 +1,6 @@
-const mongoose = require("mongoose");
-const mongodb = require("mongodb");
+import mongoose, { ConnectOptions } from "mongoose";
 
-//CONNECTION
-mongoose.set("strictQuery", false);
-mongoose.connect("mongodb://127.0.0.1:27017/habit_tracker_290423", {
-	useNewUrlParser: true,
-});
+const options: ConnectOptions = {
+};
+
+mongoose.connect("mongodb://localhost:27017/habitTrackerDB", options);

@@ -9,7 +9,7 @@ type SettingsDocument = SettingsAttributes & Document
 
 type SettingsModel = Model<SettingsDocument>
 
-const settingsSchema = new mongoose.Schema<SettingsAttributes>(
+const settingsSchema = new mongoose.Schema<SettingsDocument>(
   {
     name: {
       type: String,
@@ -25,4 +25,4 @@ const settingsSchema = new mongoose.Schema<SettingsAttributes>(
 
 const Settings = mongoose.model<SettingsDocument, SettingsModel>("Settings", settingsSchema);
 
-module.exports = Settings;
+export default Settings;

@@ -1,15 +1,16 @@
-const express = require("express");
-const Entry = require("../models/entry");
-const Habit = require("../models/habit");
-const router = new express.Router();
-const auth = require("../middleware/auth");
+import express, {Router, Request, Response} from "express";
+import Entry from "../models/entry";
+import Habit from "../models/habit";
+const router: Router = express.Router();
+import auth from "../middleware/auth";
+import {EntryDocument} from '../models/entry'
 
 /**
  * List all entries
  */
-router.get("/api/entries", auth, (req: any, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: EntryType[]): void; new(): any; }; }; }) => {
+router.get("/api/entries", auth, (req: Request, res: Response) => {
   Entry.find({})
-    .then((entries: EntryType[]) => {
+    .then((entries: EntryDocument[]) => {
       res.status(201).send(entries);
     })
     .catch((e: any) => {
@@ -20,7 +21,7 @@ router.get("/api/entries", auth, (req: any, res: { status: (arg0: number) => { (
 /**
  *  Get entrie by id
  */
-router.get("/api/entries/:id", auth, (req: { params: { id: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: any): void; new(): any; }; }; }) => {
+router.get("/api/entries/:id", auth,  (req: Request, res: Response) => {
   const { id } = req.params;
   Entry.findById(id)
     .then((entry: any) => {
@@ -37,7 +38,7 @@ router.get("/api/entries/:id", auth, (req: { params: { id: any; }; }, res: { sta
 /**
  * Add new entrie
  */
-router.post("/api/entries/add", auth, async (req: { body: { habit_id: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: string): void; new(): any; }; }; }) => {
+router.post("/api/entries/add", auth, async  (req: Request, res: Response) => {
   const { habit_id } = req.body;
   const habit = await Habit.findById(habit_id);
   if (!habit) res.status(404).send("Missing habit");
@@ -65,8 +66,12 @@ router.post("/api/entries/add", auth, async (req: { body: { habit_id: any; }; },
     return;
   }
 
-  if (habit.count_mode) {
-    const currAmount = Number.parseInt(entrie.amount);
+  if (habit && habit.count_mode) {
+    if (!entrie) {
+        res.status(400).send("Missing entrie");
+        return;
+    }
+    const currAmount = Number.parseInt(entrie.amount.toString());
     if (currAmount + 1 > habit.amount) {
       res.status(400).send("Max amount of entrie");
       return;
@@ -98,12 +103,15 @@ router.post("/api/entries/add", auth, async (req: { body: { habit_id: any; }; },
 /**
  * Get Entries by date
  */
-router.get("/api/entriesByDate", auth, (req: { query: { start: any; end: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: string): void; new(): any; }; }; }) => {
+router.get("/api/entriesByDate", auth,  (req: Request, res: Response) => {
   const { start, end } = req.query;
-  const startDate: Date = new Date(start);
-  const endDate: Date  = new Date(end);
+  if (start === undefined || end === undefined) {
+    return res.status(400).send("Start and end dates are required");
+  }
+  const startDate: Date = new Date(start as string);
+  const endDate: Date  = new Date(end as string);
 
-  if (isNaN(startDate) || isNaN(endDate)) {
+  if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
     return res.status(400).send("Invalid date range");
   }
 
@@ -124,12 +132,15 @@ router.get("/api/entriesByDate", auth, (req: { query: { start: any; end: any; };
 /**
  * Get Entries by date and habit_id
  */
-router.get("/api/entriesByHabitAndDate", auth, (req: { query: { start: any; end: any; habit_id: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: string): void; new(): any; }; }; }) => {
+router.get("/api/entriesByHabitAndDate", auth,  (req: Request, res: Response) => {
   const { start, end, habit_id } = req.query;
-  const startDate: Date = new Date(start);
-  const endDate: Date = new Date(end);
+  if (start === undefined || end === undefined) {
+    return res.status(400).send("Start and end dates are required");
+  }
+  const startDate: Date = new Date(start as string);
+  const endDate: Date  = new Date(end as string);
 
-  if (isNaN(startDate) || isNaN(endDate)) {
+  if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
     return res.status(400).send("Invalid date range");
   }
 
@@ -151,7 +162,7 @@ router.get("/api/entriesByHabitAndDate", auth, (req: { query: { start: any; end:
 /**
  * Delete entrie
  */
-router.delete("/api/entries/:id", auth, (req: { params: { id: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: any): void; new(): any; }; }; }) => {
+router.delete("/api/entries/:id", auth, (req: Request, res: Response) => {
   const { id } = req.params;
   Entry.findOneAndDelete({ _id: id })
     .then((habit: any) => {

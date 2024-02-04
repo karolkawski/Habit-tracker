@@ -1,17 +1,20 @@
+import Settings from "../models/settings";
+import express, {Router, Request, Response} from "express";
+const router: Router = express.Router();
+import auth from "../middleware/auth";
 
-const Settings = require("../models/settings");
 
-router.get("/api/settings", auth, (req: any, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: any): void; new(): any; }; }; }) => {
+router.get("/api/settings", auth, (req: Request, res: Response) => {
   Settings.find({})
-    .then((settings: any) => {
+    .then((settings) => {
       res.status(201).send(settings);
     })
-    .catch((e: any) => {
+    .catch((e) => {
       res.status(500).send(e);
     });
 });
 
-router.post("/api/settings/add", auth, async (req: { query: { name: any; value: any; }; body: any; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: string): void; new(): any; }; }; }) => {
+router.post("/api/settings/add", auth, async (req: Request, res: Response) => {
   let { name, value } = req.query;
 
   const existedSetting = await Settings.findOne({ name: name });
@@ -30,16 +33,16 @@ router.post("/api/settings/add", auth, async (req: { query: { name: any; value: 
 
     newSettings
       .save()
-      .then((settingReq: any) => {
+      .then((settingReq) => {
         res.status(201).send(settingReq);
       })
-      .catch((e: any) => {
+      .catch((e) => {
         res.status(400).send(e);
       });
   }
 });
 
-router.delete("/api/settings/delete", auth, async (req: { body: { name: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: string): void; new(): any; }; }; }) => {
+router.delete("/api/settings/delete", auth, async (req: Request, res: Response) => {
   let { name } = req.body;
 
   try {
@@ -63,7 +66,7 @@ router.delete("/api/settings/delete", auth, async (req: { body: { name: any; }; 
   }
 });
 
-router.patch("/api/settings/update", auth, async (req: { body: { name: any; value: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: string): any; new(): any; }; }; }) => {
+router.patch("/api/settings/update", auth, async (req: Request, res: Response) => {
   try {
     let { name, value } = req.body;
     const existedSetting = await Settings.findOne({ name: name });

@@ -10,7 +10,7 @@ type HabitAttributes = {
     frequency: {days: {Mon: boolean, Tue: boolean, Wed: boolean, Thu: boolean, Fri: boolean, Sat: boolean, Sun: boolean}, repeat: string}
 }
 
-type HabitDocument = HabitAttributes & Document
+export type HabitDocument = HabitAttributes & Document
 
 type HabitModel = Model<HabitDocument>
 
@@ -34,7 +34,7 @@ const habitSchema = new mongoose.Schema<HabitDocument>(
     },
     amount: {
       type: Number,
-      validate(value) {
+      validate(value: number) {
         if (value < 0) {
           throw new Error("Amount must be a positive number");
         }
@@ -60,4 +60,4 @@ const habitSchema = new mongoose.Schema<HabitDocument>(
 
 const Habit = mongoose.model<HabitDocument, HabitModel>("Habit", habitSchema);
 
-module.exports = Habit;
+export default Habit;

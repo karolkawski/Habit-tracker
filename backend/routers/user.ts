@@ -1,9 +1,16 @@
-const express = require("express");
-const router = new express.Router();
-const User = require("../models/user");
-const auth = require("../middleware/auth");
+import express, {Router, Request, Response} from "express";
+const router: Router = express.Router();
+import User from "../models/user";
+import auth from "../middleware/auth";
 
-router.post("/api/user/add", async (req: { body: any; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: string): void; new(): any; }; }; }) => {
+type AuthenticatedRequest = Request & {
+    user?: {
+      tokens: string[];
+      save: () => Promise<void>;
+    };
+  }
+
+router.post("/api/user/add", async (req: Request, res: Response) => {
   const user = await new User(req.body);
 
   user
@@ -17,7 +24,7 @@ router.post("/api/user/add", async (req: { body: any; }, res: { status: (arg0: n
     });
 });
 
-router.post("/api/user/login", async (req: { body: { login: any; password: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: string): void; new(): any; }; }; }) => {
+router.post("/api/user/login", async (req: Request, res: Response) => {
   console.log("🚀 ~ file: user.js:21 ~ router.post ~ req:", req);
   const user = await User.findByCredentials(req.body.login, req.body.password);
   if (!user) {
@@ -30,11 +37,11 @@ router.post("/api/user/login", async (req: { body: { login: any; password: any; 
   res.status(200).send({ user: user.getPublicData(), token });
 });
 
-router.get("/api/user/me", auth, (req: { user: any; }, res: { send: (arg0: any) => void; }) => {
+router.get("/api/user/me", auth, (req: AuthenticatedRequest, res: Response) => {
   res.send(req.user);
 });
 
-router.get("/api/users", auth, async (req: any, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: string): void; new(): any; }; }; }) => {
+router.get("/api/users", auth, async (req: Request, res: Response) => {
   const users = await User.find({});
   if (!users) {
     res.status(400).send("[]");
@@ -43,10 +50,12 @@ router.get("/api/users", auth, async (req: any, res: { status: (arg0: number) =>
   res.status(200).send(users);
 });
 
-router.post("/api/users/logout", auth, async (req: { user: { tokens: never[]; save: () => any; }; }, res: { send: () => void; status: (arg0: number) => { (): any; new(): any; send: { (): void; new(): any; }; }; }) => {
+router.post("/api/users/logout", auth, async (req: AuthenticatedRequest, res : Response) => {
   try {
-    req.user.tokens = [];
-    await req.user.save();
+    if (req.user) {
+        req.user.tokens = [];
+        await req.user.save();
+    }
 
     res.send();
   } catch (e) {
@@ -54,7 +63,7 @@ router.post("/api/users/logout", auth, async (req: { user: { tokens: never[]; sa
   }
 });
 
-router.delete("/api/user/delete", auth, (req: { body: { login: any; password: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: any): void; new(): any; }; }; }) => {
+router.delete("/api/user/delete", auth, (req: Request, res: Response) => {
   const { login, password } = req.body;
   User.findOneAndDelete({ login: login })
     .then((user: any) => {
@@ -65,7 +74,7 @@ router.delete("/api/user/delete", auth, (req: { body: { login: any; password: an
     });
 });
 
-router.patch("/api/user/update/:id", auth, (req: { params: { id: any; }; body: any; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: any): void; new(): any; }; }; }) => {
+router.patch("/api/user/update/:id", auth, (req: Request, res: Response) => {
   User.findByIdAndUpdate(req.params.id, req.body, {
     new: false,
     runValidators: false,

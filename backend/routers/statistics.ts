@@ -1,16 +1,26 @@
-const express = require("express");
-const Habit = require("../models/habit");
-const router = new express.Router();
-const Entry = require("../models/entry");
-const calculateTimeGap = require("../utils/calculateTimeGap");
-const dateRange = require("../utils/dateRange");
-const getDaysArray = require("../utils/getDaysArray");
-const auth = require("../middleware/auth");
+import express, {Router, Request, Response} from "express";
+import Habit, { HabitDocument } from "../models/habit";
+const router: Router = express.Router();
+import Entry from "../models/entry";
+import calculateTimeGap from "../utils/calculateTimeGap";
+import dateRange from "../utils/dateRange";
+import getDaysArray from "../utils/getDaysArray";
+import auth from "../middleware/auth";
+import { HabitType } from "../types/Habit";
 
-router.get("/api/statistics/entries", auth, (req: { query: { habitID: any; year: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: any): void; new(): any; }; }; }) => {
+router.get("/api/statistics/entries", auth, (req: Request, res: Response) => {
   const { habitID, year } = req.query;
-  const firstDayOfYear = new Date(Date.UTC(year, 0, 1));
-  const lastDayOfYear = new Date(Date.UTC(Number.parseInt(year) + 1, 0, 1));
+
+  if (year === undefined) {
+    res.status(404).send("Missing year");
+    return;
+  }
+
+  const numericYear = parseInt(year as string, 10);
+
+
+  const firstDayOfYear = new Date(Date.UTC(numericYear, 0, 1));
+  const lastDayOfYear = new Date(Date.UTC(numericYear + 1, 0, 1));
   lastDayOfYear.setDate(lastDayOfYear.getDate() - 1);
 
   if (habitID === "ALL") {
@@ -87,14 +97,14 @@ router.get("/api/statistics/entries", auth, (req: { query: { habitID: any; year:
   }
 });
 
-router.get("/api/statistics/habits", auth, async (req: { query: { time: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: unknown): void; new(): any; }; }; }) => {
+router.get("/api/statistics/habits", auth, async (req: Request, res: Response) => {
   const { time } = req.query;
   const currentTime = new Date();
   const startDate = calculateTimeGap(currentTime, time);
   try {
     const habits = await Habit.find({});
     const response = await Promise.all(
-      habits.map(async (habit: { id: any; name: any; }) => {
+      habits.map(async (habit: HabitDocument) => {
         const entries = await Entry.find({
           time: {
             $gte: startDate,
@@ -113,10 +123,10 @@ router.get("/api/statistics/habits", auth, async (req: { query: { time: any; }; 
   }
 });
 
-router.get("/api/statistics/weekday", auth, (req: { query: { habitID: any; time: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: any[]): void; new(): any; }; }; }) => {
+router.get("/api/statistics/weekday", auth, (req: Request, res: Response) => {
   const { habitID, time } = req.query;
   const dayNames = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
-  const response: { value: number; }[] = [];
+  const response: { name: string; value: number }[] = [];
   const currentTime = new Date();
   const startDate = calculateTimeGap(currentTime, time);
 
