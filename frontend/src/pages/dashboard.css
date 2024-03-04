@@ -1,0 +1,109 @@
+
+.Dashboard__Habit {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        border-bottom: 1px solid #ccc;
+        padding: 5px 0px;
+    }
+.Dashboard__HabitDetails {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+.Dashboard__HabitDone {
+        width: 30px;
+        height: 30px;
+        background:#fff;
+        border-radius: 50%;
+        margin: 0px 10px 0px 0px;
+        border: 1px solid #ccc;
+        cursor: pointer;
+}
+        .Dashboard__HabitDone  .Icon {
+        display: none;
+  
+      }
+  
+  .Dashboard--done {
+        width: 30px;
+        height: 30px;
+        background:green;
+        border-radius: 50%;
+        margin: 0px 10px 0px 0px;
+        border: 1px solid #ccc;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+  }
+        .Dashboard--done  .Icon {
+            display: flex;
+  
+        }
+.Dashboard__HabitDetailsTitle {
+        font-weight: bold
+  
+    }
+  
+.Dashboard__HabitDetailsTime {
+        display: flex;
+        flex-direction: row;
+    };
+  
+.Dashboard__HabitDetailsStreak {
+        display: flex;
+        flex-direction: row;
+    }
+  
+.Dashboard__HabitIcon {
+        border: 1px solid #000;
+        border-radius: 10px;
+        padding: 5px 10px;
+        max-width: 60px;
+        width: 60px;
+        display: flex;
+        justify-content: center;
+   
+    }
+    .Dashboard__HabitIcon  i {
+      font-size: 30px;
+
+    }
+  
+  .Dashboard__Calendar {
+        display: flex;
+        justify-content: space-evenly;
+      }
+  
+  .Dashboard__CalendarBox {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color:pink;
+      }
+  
+  .Dashboard__Title {
+        font-size: 30px;
+        padding-top:20px;
+      }
+  
+  .Dashboard__List {
+    font-size: 18px;
+          
+      }
+
+      .nodata {
+        margin: 10px 0px;
+        padding: 10px;
+        width: 100%;
+        min-height:100px;
+        height: 100%;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+      }

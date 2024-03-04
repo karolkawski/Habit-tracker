@@ -1,0 +1,80 @@
+.Frequency {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  &--s {
+    .Frequency {
+      &__day {
+        width: 10px;
+        font-size: 10px;
+        border: 1px solid #ccc;
+        position: relative;
+        display: flex;
+
+        &:first-child {
+          border-left: unset;
+        
+        }
+      }
+      &__repeat {
+        display: none;
+      }
+      &__week {
+        width: 10px;
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+    }
+
+    .days-box {
+      width: 10px;
+      height: 10px;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }
+  }
+
+
+  &__days {
+    display: flex;
+  }
+
+  &__repeat {
+    border: 1px solid #000;
+    margin-right: 10px;
+    padding: 2px;
+  }
+
+  &__day {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0px 5px;
+    width: 47px;
+    border-right: 1px solid #000;
+    position: unset;
+
+    &:first-child {
+      border-left: 1px solid #000;
+    
+    }
+  }
+}
+
+.days-box {
+  width: 35px;
+  height: 24px;
+
+  &--true {
+    background: #00ff00
+  }
+
+  &--false {
+    background: #fff;
+  }
+   
+}
