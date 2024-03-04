@@ -1,6 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import "./db/mongoosedb";
+import cors from "cors"; // Import the cors middleware
 
 const habitRouter = require("./routers/habit");
 const entieRouter = require("./routers/entry");
@@ -14,6 +15,9 @@ const port = process.env.PORT || 4000;
 app.use(express.json());
 app.use(bodyParser.json());
 
+app.use(cors({ origin: 'http://localhost:8080',
+// ... other options if needed
+}));
 app.use(habitRouter);
 app.use(entieRouter);
 app.use(statisticsRouter);

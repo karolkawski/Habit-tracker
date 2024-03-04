@@ -24,16 +24,13 @@ router.post("/api/user/add", async (req: Request, res: Response) => {
     });
 });
 
-router.post("/api/user/login", async (req: Request, res: Response) => {
-  console.log("🚀 ~ file: user.js:21 ~ router.post ~ req:", req);
+router.post("/api/user/login", async (req: Request, res: Response) => 
   const user = await User.findByCredentials(req.body.login, req.body.password);
   if (!user) {
     res.status(400).send("Unable to login");
     return;
   }
   const token = await user.generateAuthToken();
-  console.log("🚀 ~ file: user.js:28 ~ router.post ~ token:", token);
-  console.log(user);
   res.status(200).send({ user: user.getPublicData(), token });
 });
 

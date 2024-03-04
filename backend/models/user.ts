@@ -93,14 +93,6 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.statics.findByCredentials = async (login, password) => {
-  console.log(
-    "🚀 ~ file: user.js:69 ~ userSchema.statics.findByCredentials= ~ password:",
-    password
-  );
-  console.log(
-    "🚀 ~ file: user.js:69 ~ userSchema.statics.findByCredentials= ~ login:",
-    login
-  );
   const user = await User.findOne({ login });
 
   if (!user) {
