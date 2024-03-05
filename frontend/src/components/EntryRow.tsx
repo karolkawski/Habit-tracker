@@ -11,8 +11,6 @@ export const EntryRow = ({
   handleAddEntry,
   handleRemoveEntry,
 }: any) => {
-  console.log('🚀 ~ file: EntryRow.tsx:14 ~ entry:', entry);
-  console.log('🚀 ~ file: EntryRow.tsx:14 ~ habit:', habit);
   const { name, icon } = habit;
   const [isDone, setIsDone] = useState(!!entry);
 
@@ -65,7 +63,6 @@ export const EntryRow = ({
   }, []);
 
   useEffect(() => {
-    console.log('2', entry);
     if (entry) {
       setIsDone(true);
     } else {

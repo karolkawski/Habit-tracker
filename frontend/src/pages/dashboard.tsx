@@ -1,4 +1,4 @@
-import './dashboard.css';
+import './dashboard.scss';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { Header } from '../layout/Header/Header';
@@ -8,7 +8,10 @@ import { Cal } from '../Calendar/Calendar';
 import { EntryType } from '../types/Entrie.d';
 import data from '../assets/data';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchDataRequest } from '../store/actions/dataActions';
+import {
+  fetchDataRequest,
+  fetchDataSuccess,
+} from '../store/actions/dataActions';
 const config = {
   headers: { Authorization: `Bearer ${getTokenFromLocalStorage()}` },
 };
@@ -26,7 +29,7 @@ export const Dashboard = () => {
 
   const fetchHabitsByDate = () => {
     dispatch(fetchDataRequest());
-    return;
+
     axios
       .get('http://localhost:4000/api/habitsByDate', {
         ...config,
@@ -37,7 +40,7 @@ export const Dashboard = () => {
           setNoEntries(true);
           return;
         }
-        setHabits(res.data);
+        dispatch(fetchDataSuccess(res.data));
         setNoEntries(false);
       })
       .catch((e) => {
@@ -65,19 +68,18 @@ export const Dashboard = () => {
         newHabits[index].entry = addedEntry;
       }
     });
-    setHabits(newHabits);
+    // setHabits(newHabits);
   };
 
   const handleRemoveEntry = (removedEntry: EntryType) => {
     const habit_id = removedEntry.habit_id;
     const newHabits = [...habits];
     Object.values(newHabits).map(({ habit, entry }, index) => {
-      console.log(habit);
       if (habit._id === habit_id && entry) {
         newHabits[index].entry = null;
       }
     });
-    setHabits(newHabits);
+    // setHabits(newHabits);
   };
 
   return (
@@ -95,8 +97,8 @@ export const Dashboard = () => {
           <div className="Dashboard__List">
             <div className={`Dashboard__${type}`}>
               <div className="List__Label">{type} (x)</div>
-              {data ? (
-                data.map((habit) => (
+              {habits ? (
+                habits.map((habit) => (
                   <EntryRow
                     key={habit.id + 'key'}
                     habit={habit}

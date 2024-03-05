@@ -1,4 +1,4 @@
-// import './frequency.css';
+import './frequency.scss';
 interface FrequencyProps {
   size: string;
   days: {

@@ -1,4 +1,4 @@
-// import './ColorBox.scss';
+import './ColorBox.scss';
 
 const colorDirectory = {
   '#ffff00': 'yellow',

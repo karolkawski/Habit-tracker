@@ -1,4 +1,3 @@
-import './statistics.scss';
 import axios from 'axios';
 import LineChart from '../Charts/LineChart';
 import CalendarChart from '../Charts/CalendarChart';
@@ -10,7 +9,8 @@ import { faChartLine, faChartPie } from '@fortawesome/free-solid-svg-icons';
 import { useSelector } from 'react-redux';
 import useIsMobile from '../utils/isMobile';
 import { Header } from '../layout/Header/Header';
-import { Button } from 'flowbite-react';
+import { Button, ButtonGroup } from 'flowbite-react';
+
 export const Statistics = () => {
   const habits = useSelector((state: { data }) => state.data.habits);
   const isMobile = useIsMobile();
@@ -154,13 +154,15 @@ export const Statistics = () => {
             <p className="mb-0 mr-3 font-weight-bold d-flex justify-content-center align-items-center">
               YEAR:
             </p>
-            <DayPicker
-              selected={new Date()}
-              captionLayout="dropdown-buttons"
-              fromYear={2015}
-              toYear={2025}
-              onMonthChange={chageMonthOrYear}
-            />
+            <ButtonGroup className="custom-date-component" aria-label="">
+              <DayPicker
+                selected={new Date()}
+                captionLayout="dropdown-buttons"
+                fromYear={2015}
+                toYear={2025}
+                onMonthChange={chageMonthOrYear}
+              />
+            </ButtonGroup>
             <p className="mb-0 mr-3 font-weight-bold d-flex justify-content-center align-items-center ">
               HABIT:
             </p>
@@ -179,36 +181,41 @@ export const Statistics = () => {
         ) : (
           <div>
             <div className="Controls">
-              {chartType === 'linear' ? (
-                <Button
-                  variant="primary"
-                  onClick={() => changeChartType('linear')}
-                >
-                  <FontAwesomeIcon icon={faChartLine} /> Linear
-                </Button>
-              ) : (
-                <Button
-                  variant="secondary"
-                  onClick={() => changeChartType('linear')}
-                >
-                  <FontAwesomeIcon icon={faChartLine} /> Linear
-                </Button>
-              )}
-              {chartType === 'circle' ? (
-                <Button
-                  variant="primary"
-                  onClick={() => changeChartType('circle')}
-                >
-                  <FontAwesomeIcon icon={faChartPie} /> Circle
-                </Button>
-              ) : (
-                <Button
-                  variant="secondary"
-                  onClick={() => changeChartType('circle')}
-                >
-                  <FontAwesomeIcon icon={faChartPie} /> Circle
-                </Button>
-              )}
+              <ButtonGroup
+                className="Button__Toggle"
+                aria-label="Basic example"
+              >
+                {chartType === 'linear' ? (
+                  <Button
+                    variant="primary"
+                    onClick={() => changeChartType('linear')}
+                  >
+                    <FontAwesomeIcon icon={faChartLine} /> Linear
+                  </Button>
+                ) : (
+                  <Button
+                    variant="secondary"
+                    onClick={() => changeChartType('linear')}
+                  >
+                    <FontAwesomeIcon icon={faChartLine} /> Linear
+                  </Button>
+                )}
+                {chartType === 'circle' ? (
+                  <Button
+                    variant="primary"
+                    onClick={() => changeChartType('circle')}
+                  >
+                    <FontAwesomeIcon icon={faChartPie} /> Circle
+                  </Button>
+                ) : (
+                  <Button
+                    variant="secondary"
+                    onClick={() => changeChartType('circle')}
+                  >
+                    <FontAwesomeIcon icon={faChartPie} /> Circle
+                  </Button>
+                )}
+              </ButtonGroup>
             </div>
           </div>
         )}
@@ -219,46 +226,53 @@ export const Statistics = () => {
               <>
                 <PieChart data={Pie1ChartData} dimensions={{ margin: 20 }} />
                 <div className="Controls">
-                  <Button
-                    variant={pie1ChartTime === '7d' ? 'primary' : 'secondary'}
-                    onClick={() => {
-                      toogleTimeHandler('pie1', '7d');
-                    }}
+                  <ButtonGroup
+                    className="Button__Toggle"
+                    aria-label="Basic example"
                   >
-                    7d
-                  </Button>
-                  <Button
-                    variant={pie1ChartTime === '14d' ? 'primary' : 'secondary'}
-                    onClick={() => {
-                      toogleTimeHandler('pie1', '14d');
-                    }}
-                  >
-                    14d
-                  </Button>
-                  <Button
-                    variant={pie1ChartTime === '1m' ? 'primary' : 'secondary'}
-                    onClick={() => {
-                      toogleTimeHandler('pie1', '1m');
-                    }}
-                  >
-                    1m
-                  </Button>
-                  <Button
-                    variant={pie1ChartTime === '3m' ? 'primary' : 'secondary'}
-                    onClick={() => {
-                      toogleTimeHandler('pie1', '3m');
-                    }}
-                  >
-                    3m
-                  </Button>
-                  <Button
-                    variant={pie1ChartTime === '1y' ? 'primary' : 'secondary'}
-                    onClick={() => {
-                      toogleTimeHandler('pie1', '1y');
-                    }}
-                  >
-                    1y
-                  </Button>
+                    <Button
+                      variant={pie1ChartTime === '7d' ? 'primary' : 'secondary'}
+                      onClick={() => {
+                        toogleTimeHandler('pie1', '7d');
+                      }}
+                    >
+                      7d
+                    </Button>
+                    <Button
+                      variant={
+                        pie1ChartTime === '14d' ? 'primary' : 'secondary'
+                      }
+                      onClick={() => {
+                        toogleTimeHandler('pie1', '14d');
+                      }}
+                    >
+                      14d
+                    </Button>
+                    <Button
+                      variant={pie1ChartTime === '1m' ? 'primary' : 'secondary'}
+                      onClick={() => {
+                        toogleTimeHandler('pie1', '1m');
+                      }}
+                    >
+                      1m
+                    </Button>
+                    <Button
+                      variant={pie1ChartTime === '3m' ? 'primary' : 'secondary'}
+                      onClick={() => {
+                        toogleTimeHandler('pie1', '3m');
+                      }}
+                    >
+                      3m
+                    </Button>
+                    <Button
+                      variant={pie1ChartTime === '1y' ? 'primary' : 'secondary'}
+                      onClick={() => {
+                        toogleTimeHandler('pie1', '1y');
+                      }}
+                    >
+                      1y
+                    </Button>
+                  </ButtonGroup>
                 </div>
               </>
             ) : (
@@ -268,46 +282,53 @@ export const Statistics = () => {
               <>
                 <PieChart data={Pie2ChartData} dimensions={{ margin: 20 }} />
                 <div className="Controls">
-                  <Button
-                    variant={pie1ChartTime === '7d' ? 'primary' : 'secondary'}
-                    onClick={() => {
-                      toogleTimeHandler('pie2', '7d');
-                    }}
+                  <ButtonGroup
+                    className="Button__Toggle"
+                    aria-label="Basic example"
                   >
-                    7d
-                  </Button>
-                  <Button
-                    variant={pie2ChartTime === '14d' ? 'primary' : 'secondary'}
-                    onClick={() => {
-                      toogleTimeHandler('pie2', '14d');
-                    }}
-                  >
-                    14d
-                  </Button>
-                  <Button
-                    variant={pie2ChartTime === '1m' ? 'primary' : 'secondary'}
-                    onClick={() => {
-                      toogleTimeHandler('pie2', '1m');
-                    }}
-                  >
-                    1m
-                  </Button>
-                  <Button
-                    variant={pie2ChartTime === '3m' ? 'primary' : 'secondary'}
-                    onClick={() => {
-                      toogleTimeHandler('pie2', '3m');
-                    }}
-                  >
-                    3m
-                  </Button>
-                  <Button
-                    variant={pie2ChartTime === '1y' ? 'primary' : 'secondary'}
-                    onClick={() => {
-                      toogleTimeHandler('pie2', '1y');
-                    }}
-                  >
-                    1y
-                  </Button>
+                    <Button
+                      variant={pie1ChartTime === '7d' ? 'primary' : 'secondary'}
+                      onClick={() => {
+                        toogleTimeHandler('pie2', '7d');
+                      }}
+                    >
+                      7d
+                    </Button>
+                    <Button
+                      variant={
+                        pie2ChartTime === '14d' ? 'primary' : 'secondary'
+                      }
+                      onClick={() => {
+                        toogleTimeHandler('pie2', '14d');
+                      }}
+                    >
+                      14d
+                    </Button>
+                    <Button
+                      variant={pie2ChartTime === '1m' ? 'primary' : 'secondary'}
+                      onClick={() => {
+                        toogleTimeHandler('pie2', '1m');
+                      }}
+                    >
+                      1m
+                    </Button>
+                    <Button
+                      variant={pie2ChartTime === '3m' ? 'primary' : 'secondary'}
+                      onClick={() => {
+                        toogleTimeHandler('pie2', '3m');
+                      }}
+                    >
+                      3m
+                    </Button>
+                    <Button
+                      variant={pie2ChartTime === '1y' ? 'primary' : 'secondary'}
+                      onClick={() => {
+                        toogleTimeHandler('pie2', '1y');
+                      }}
+                    >
+                      1y
+                    </Button>
+                  </ButtonGroup>
                 </div>
               </>
             ) : (

@@ -35,6 +35,7 @@ export const Header = () => {
         <Navbar.Link href="/dashboard">Dashboard</Navbar.Link>{' '}
         <Navbar.Link href="/habits">Habits</Navbar.Link>{' '}
         <Navbar.Link href="/statistics">Statistics</Navbar.Link>
+        <Navbar.Link href="/settings">Settings</Navbar.Link>
       </Navbar.Collapse>
     </Navbar>
   );

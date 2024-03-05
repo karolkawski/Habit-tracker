@@ -1,4 +1,4 @@
-// import './Icon.scss';
+import './Icon.scss';
 
 export const Icon = ({ icon }: { icon: string }) => {
   return (

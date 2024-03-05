@@ -1,15 +1,44 @@
-import { Frequency } from '../components/UI/Frequency/Frequency';
-import { ColorBox } from '../components/UI/ColorBox/ColorBox';
-import { Button, Table } from 'flowbite-react';
-import { Header } from '../layout/Header/Header';
-import { Icon } from '../components/UI/Icon/Icon';
-import { Link } from 'react-router-dom';
-import data from '../assets/data';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
+import axios from 'axios';
+import {
+  fetchDataRequest,
+  fetchDataSuccess,
+} from '../store/actions/dataActions';
+import { getTokenFromLocalStorage } from '../utils/token';
+import { Header } from '../layout/Header/Header';
+import { Button, Table } from 'flowbite-react';
+import { ColorBox } from '../components/UI/ColorBox/ColorBox';
+import { Frequency } from '../components/UI/Frequency/Frequency';
+import { Link } from 'react-router-dom';
+import { Icon } from '../components/UI/Icon/Icon';
+
+const config = {
+  headers: { Authorization: `Bearer ${getTokenFromLocalStorage()}` },
+};
 
 export const Habits = () => {
+  const dispatch = useDispatch();
   const habits = useSelector((state: { data }) => state.data.habits);
+
+  const fetchHabits = async () => {
+    dispatch(fetchDataRequest());
+
+    try {
+      const fetchedHabits = await axios.get(
+        'http://localhost:4000/api/habits',
+        config
+      );
+      if (fetchedHabits) {
+        dispatch(fetchDataSuccess(fetchedHabits.data));
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+  useEffect(() => {
+    fetchHabits();
+  }, []);
 
   if (!habits) {
     return (
@@ -38,7 +67,7 @@ export const Habits = () => {
             {habits &&
               habits.map((item) => (
                 <Table.Row
-                  key={item.id}
+                  key={item._id}
                   className="bg-white dark:border-gray-700 dark:bg-gray-800"
                 >
                   <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
@@ -59,7 +88,7 @@ export const Habits = () => {
                     />
                   </Table.Cell>
                   <Table.Cell>
-                    <Link to={`/habits/${item.id}/edit`}>
+                    <Link to={`/habits/${item._id}`}>
                       <Button>Edit</Button>
                     </Link>
                   </Table.Cell>

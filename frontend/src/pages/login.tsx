@@ -13,7 +13,6 @@ export const Login = () => {
   const signIn = async () => {
     try {
       setIsLoading(true);
-      console.log(login, password);
       axios
         .post('http://localhost:4000/api/user/login', {
           login,
@@ -24,11 +23,10 @@ export const Login = () => {
           navigate('/dashboard');
         })
         .catch((e) => {
-          console.error(e);
-          console.log('Something went wrong during signing in: ', e);
+          console.error('Something went wrong during signing in: ', e);
         });
     } catch (err) {
-      console.log('Some error occured during signing in: ', err);
+      console.error('Some error occured during signing in: ', err);
     } finally {
       setIsLoading(false);
     }

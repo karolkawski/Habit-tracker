@@ -22,8 +22,6 @@ export function Cal({
   const [selected, setSelected] = React.useState<Date>(selectedDate);
 
   function CustomSelect(date: Date | undefined) {
-    console.log('🚀 ~ file: Calendar.tsx:24 ~ CustomSelect ~ date:', date);
-
     if (date === undefined) {
       return;
     }
