@@ -5,7 +5,18 @@ const data = [
     type: 'health',
     color: 'yellow',
     icon: 'default',
-    frequency: '',
+    frequency:{
+      days: {
+        Mon: true,
+        Tue: false,
+        Wed: true,
+        Thu: false,
+        Fri: true,
+        Sat: false,
+        Sun: true,
+      },
+      repeat: 'week'
+    },
   },
   {
     id: '56e822dd-7a3c-4c1d-927a-8c55ef2e419f',
@@ -13,7 +24,18 @@ const data = [
     type: 'education',
     color: 'green',
     icon: 'default',
-    frequency: '',
+    frequency:{
+      days: {
+        Mon: true,
+        Tue: false,
+        Wed: true,
+        Thu: false,
+        Fri: true,
+        Sat: false,
+        Sun: true,
+      },
+      repeat: 'week'
+    },
   },
   {
     id: '56e867dd-7a3c-4c1d-927a-8c55ef33419f',
@@ -21,7 +43,18 @@ const data = [
     type: 'education',
     color: 'blue',
     icon: 'default',
-    frequency: '',
+    frequency:{
+      days: {
+        Mon: true,
+        Tue: false,
+        Wed: true,
+        Thu: false,
+        Fri: true,
+        Sat: false,
+        Sun: true,
+      },
+      repeat: 'week'
+    },
   },
 ];
 

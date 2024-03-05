@@ -6,21 +6,27 @@ import { EntryRow } from '../components/EntryRow';
 import { getTokenFromLocalStorage } from '../utils/token';
 import { Cal } from '../Calendar/Calendar';
 import { EntryType } from '../types/Entrie.d';
-
+import data from '../assets/data';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchDataRequest } from '../store/actions/dataActions';
 const config = {
   headers: { Authorization: `Bearer ${getTokenFromLocalStorage()}` },
 };
 
 export const Dashboard = () => {
   const type = 'Tasks';
-  const [habits, setHabits] = useState<any>([]);
-  const [noEntries, setNoEntries] = useState(true);
+  const dispatch = useDispatch();
+
+  const habits = useSelector((state: { data }) => state.data.habits);
+  const [noEntries, setNoEntries] = useState(false);
 
   const [selectedDate, setSelectedDate] = useState<Date>(
     new Date(new Date().toISOString())
   );
 
   const fetchHabitsByDate = () => {
+    dispatch(fetchDataRequest());
+    return;
     axios
       .get('http://localhost:4000/api/habitsByDate', {
         ...config,
@@ -77,7 +83,7 @@ export const Dashboard = () => {
   return (
     <>
       <Header />
-      <div className="Dashboard">
+      <div className="Dashboard container mx-auto">
         <div className="Dashboard__Header Calendar">
           <Cal
             selectedDate={selectedDate}
@@ -89,12 +95,12 @@ export const Dashboard = () => {
           <div className="Dashboard__List">
             <div className={`Dashboard__${type}`}>
               <div className="List__Label">{type} (x)</div>
-              {!noEntries && habits ? (
-                habits.habitEntries.map(({ habit, entry }) => (
+              {data ? (
+                data.map((habit) => (
                   <EntryRow
-                    key={habit._id + 'key'}
+                    key={habit.id + 'key'}
                     habit={habit}
-                    entry={entry}
+                    entry={undefined}
                     selectedDate={selectedDate}
                     handleAddEntry={handleAddEntry}
                     handleRemoveEntry={handleRemoveEntry}

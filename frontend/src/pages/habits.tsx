@@ -5,9 +5,13 @@ import { Header } from '../layout/Header/Header';
 import { Icon } from '../components/UI/Icon/Icon';
 import { Link } from 'react-router-dom';
 import data from '../assets/data';
+import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
 
 export const Habits = () => {
-  if (!data) {
+  const habits = useSelector((state: { data }) => state.data.habits);
+
+  if (!habits) {
     return (
       <>
         <Header />
@@ -18,7 +22,7 @@ export const Habits = () => {
   return (
     <>
       <Header />
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto container mx-auto">
         <Table>
           <Table.Head>
             <Table.HeadCell>Name</Table.HeadCell>
@@ -31,8 +35,8 @@ export const Habits = () => {
             </Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
-            {data &&
-              data.map((item) => (
+            {habits &&
+              habits.map((item) => (
                 <Table.Row
                   key={item.id}
                   className="bg-white dark:border-gray-700 dark:bg-gray-800"
@@ -50,16 +54,8 @@ export const Habits = () => {
                   <Table.Cell>
                     <Frequency
                       size=""
-                      days={{
-                        Mon: false,
-                        Tue: false,
-                        Wed: false,
-                        Thu: false,
-                        Fri: false,
-                        Sat: false,
-                        Sun: false,
-                      }}
-                      repeat={''}
+                      days={item.frequency.days}
+                      repeat={item.frequency.repeat}
                     />
                   </Table.Cell>
                   <Table.Cell>
@@ -71,10 +67,10 @@ export const Habits = () => {
               ))}
           </Table.Body>
         </Table>
+        <Link to={`/add`}>
+          <Button>Add</Button>
+        </Link>
       </div>
-      <Link to={`/add`}>
-        <Button>Add</Button>
-      </Link>
     </>
   );
 };
