@@ -1,0 +1,75 @@
+
+  .icon-box {
+    display: inline-block;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    border-radius: 50%;
+    border: 0.5px solid #ccc;
+    width: 40px;
+    height: 40px;
+    margin: 0;
+    padding: 0;
+    padding-left: 0 !important;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+
+
+    input {
+      width: 40px !important;
+      height: 40px !important;
+      border-radius: 50% !important;
+      position: absolute;
+      margin: 0 !important;
+      padding: 0;
+
+      &:checked[type=checkbox] {
+        background-image: unset;
+        background: unset;
+        cursor: pointer;
+        border: 3px solid #000;
+      
+      }
+    }
+
+    .form-check-input:checked[type=checkbox] {
+      background-image: unset;
+      background: unset;
+      cursor: pointer;
+      border: 3px solid #000;
+    
+    }
+
+    .form-check-input:checked[type=radio] {
+      background-image: none;
+      background-color: unset;
+    }
+    
+    .form-check-input[type=checkbox] {
+      cursor: pointer;
+      background-image: unset;
+      background: unset;
+    }
+
+    .form-check-input[type=radio] {
+      background-color: unset
+    }
+    
+
+    &--plane::before {
+      content: "\f072";
+      position: absolute;
+    }
+
+    &--pencil::before {
+      content: "\f303";
+      position: absolute;
+    }
+
+    &--apple::before {
+      content: "\f5d1";
+      position: absolute;
+    }
+  }
