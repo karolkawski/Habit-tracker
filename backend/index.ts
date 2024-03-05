@@ -16,7 +16,6 @@ app.use(express.json());
 app.use(bodyParser.json());
 
 app.use(cors({ origin: 'http://localhost:8080',
-// ... other options if needed
 }));
 app.use(habitRouter);
 app.use(entieRouter);

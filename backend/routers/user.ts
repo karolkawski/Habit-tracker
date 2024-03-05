@@ -24,7 +24,7 @@ router.post("/api/user/add", async (req: Request, res: Response) => {
     });
 });
 
-router.post("/api/user/login", async (req: Request, res: Response) => 
+router.post("/api/user/login", async (req: Request, res: Response) => {
   const user = await User.findByCredentials(req.body.login, req.body.password);
   if (!user) {
     res.status(400).send("Unable to login");

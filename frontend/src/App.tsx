@@ -30,11 +30,11 @@ function App() {
       children: [
         {
           path: '/',
-          element: <Dashboard />,
+          element: <Login />,
         },
         {
           path: '/dashboard',
-          element: <Statistics />,
+          element: <Dashboard />,
         },
         {
           path: '/habits',
