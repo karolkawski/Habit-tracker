@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Icon } from './UI/Icon/Icon';
 import axios from 'axios';
+import { getTokenFromLocalStorage } from '../utils/token';
 // import HabitContext, { DashboardContext } from '../store/context';
-import { EntryType } from '../types/Entrie.d';
+// import { EntryType } from '../types/Entrie.d';
+const config = {
+  headers: { Authorization: `Bearer ${getTokenFromLocalStorage()}` },
+};
 
 export const EntryRow = ({
   habit,
@@ -16,17 +20,9 @@ export const EntryRow = ({
 
   const toggleEntry = () => {
     if (!entry) {
-      let token = 'xyz';
-      let config = {
-        headers: {
-          Authorization: 'Bearer ' + token,
-          'content-type': 'application/json',
-        },
-      };
-
       axios
         .post(
-          `http://localhost:4000//api/entries/add`,
+          `http://localhost:4000/api/entries/add`,
           {
             time: new Date(selectedDate),
             amount: 1,
@@ -46,7 +42,7 @@ export const EntryRow = ({
     }
 
     axios
-      .delete(`http://localhost:4000//api/entries/${entry._id}`)
+      .delete(`http://localhost:4000/api/entries/${entry._id}`, config)
       .then((res) => {
         if (res.data) {
           handleRemoveEntry(res.data);
@@ -82,8 +78,6 @@ export const EntryRow = ({
       </button>
       <div className="Dashboard__HabitDetails">
         <div className="Dashboard__HabitDetailsTitle">{name}</div>
-        {/* <div className='Dashboard__HabitDetailsTime'><Icon icon={'fa-clock'}/>12:23</div>
-          <div className='Dashboard__HabitDetailsStreak'><Icon icon={'fa-bullseye'}/>0</div> */}
       </div>
       <div className="Dashboard__HabitIcon">
         <Icon icon={icon} />

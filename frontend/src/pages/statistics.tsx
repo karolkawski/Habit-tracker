@@ -11,6 +11,12 @@ import { useSelector } from 'react-redux';
 import useIsMobile from '../utils/isMobile';
 import { Header } from '../layout/Header/Header';
 import { Button } from 'flowbite-react';
+import { getTokenFromLocalStorage } from '../utils/token';
+
+const config = {
+  headers: { Authorization: `Bearer ${getTokenFromLocalStorage()}` },
+};
+
 export const Statistics = () => {
   const habits = useSelector((state: { data }) => state.data.habits);
   const isMobile = useIsMobile();
@@ -42,6 +48,7 @@ export const Statistics = () => {
           habitID: habit === 'ALL' ? 'ALL' : habit._id,
           year: year,
         },
+        ...config,
       })
       .then((res) => {
         setCalendarChartData(res.data);
@@ -57,6 +64,7 @@ export const Statistics = () => {
         params: {
           time: pie1ChartTime,
         },
+        ...config,
       })
       .then((res) => {
         setPie1ChartData(res.data);
@@ -72,6 +80,7 @@ export const Statistics = () => {
           habitID: habit === 'ALL' ? 'ALL' : habit._id,
           time: pie2ChartTime,
         },
+        ...config,
       })
       .then((res) => {
         setPie2ChartData(res.data);

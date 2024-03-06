@@ -1,26 +1,23 @@
-
 const initialState = {
-  habits: null,
+  entries: null,
   today: null,
-  user: null,
   loading: true,
   error: null,
 };
 
 const dataReducer = (state = initialState, action) => {
-  console.log("🚀 ~ dataReducer ~ state:", state)
   switch (action.type) {
-    case 'FETCH_DATA_REQUEST':
+    case 'FETCH_ENTRY_REQUEST':
       return { ...state, loading: true, error: null };
-    case 'FETCH_DATA_SUCCESS':
-      if (state.habits && !state.loading) {
+    case 'FETCH_ENTRY_SUCCESS':
+      if (state.entries && !state.loading) {
         return;
       }
-      const newHabits = action.payload;
+      const todayEntries = action.payload;
       return {
         ...state,
         loading: false,
-        habits: newHabits,
+        entries: todayEntries,
         error: null,
       };
     case 'FETCH_DATA_ERROR':

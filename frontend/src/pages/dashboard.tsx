@@ -6,12 +6,12 @@ import { EntryRow } from '../components/EntryRow';
 import { getTokenFromLocalStorage } from '../utils/token';
 import { Cal } from '../Calendar/Calendar';
 import { EntryType } from '../types/Entrie.d';
-import data from '../assets/data';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchDataRequest,
-  fetchDataSuccess,
+  fetchTodaySuccess,
 } from '../store/actions/dataActions';
+
 const config = {
   headers: { Authorization: `Bearer ${getTokenFromLocalStorage()}` },
 };
@@ -20,8 +20,8 @@ export const Dashboard = () => {
   const type = 'Tasks';
   const dispatch = useDispatch();
 
-  const habits = useSelector((state: { data }) => state.data.habits);
-  const [noEntries, setNoEntries] = useState(false);
+  const todays = useSelector((state: { data }) => state.data.today);
+  const [noEntries, setNoEntries] = useState(true);
 
   const [selectedDate, setSelectedDate] = useState<Date>(
     new Date(new Date().toISOString())
@@ -40,7 +40,7 @@ export const Dashboard = () => {
           setNoEntries(true);
           return;
         }
-        dispatch(fetchDataSuccess(res.data));
+        dispatch(fetchTodaySuccess(res.data.habitEntries));
         setNoEntries(false);
       })
       .catch((e) => {
@@ -54,33 +54,15 @@ export const Dashboard = () => {
 
   useEffect(() => {
     fetchHabitsByDate();
-  }, [selectedDate]);
+  }, [selectedDate, dispatch]);
 
   const handleChangeDate = (date: Date): void => {
     setSelectedDate(date);
   };
 
-  const handleAddEntry = (addedEntry: EntryType): void => {
-    const habit_id = addedEntry.habit_id;
-    const newHabits = [...habits];
-    Object.values(newHabits).map(({ habit, entry }, index) => {
-      if (habit._id === habit_id && !entry) {
-        newHabits[index].entry = addedEntry;
-      }
-    });
-    // setHabits(newHabits);
-  };
+  const handleAddEntry = (addedEntry: EntryType): void => {};
 
-  const handleRemoveEntry = (removedEntry: EntryType) => {
-    const habit_id = removedEntry.habit_id;
-    const newHabits = [...habits];
-    Object.values(newHabits).map(({ habit, entry }, index) => {
-      if (habit._id === habit_id && entry) {
-        newHabits[index].entry = null;
-      }
-    });
-    // setHabits(newHabits);
-  };
+  const handleRemoveEntry = (removedEntry: EntryType) => {};
 
   return (
     <>
@@ -97,12 +79,12 @@ export const Dashboard = () => {
           <div className="Dashboard__List">
             <div className={`Dashboard__${type}`}>
               <div className="List__Label">{type} (x)</div>
-              {habits ? (
-                habits.map((habit) => (
+              {!noEntries && todays ? (
+                Object.values(todays).map(({ habit, entry }) => (
                   <EntryRow
-                    key={habit.id + 'key'}
+                    key={habit._id + 'key'}
                     habit={habit}
-                    entry={undefined}
+                    entry={entry}
                     selectedDate={selectedDate}
                     handleAddEntry={handleAddEntry}
                     handleRemoveEntry={handleRemoveEntry}

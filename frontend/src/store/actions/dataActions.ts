@@ -7,6 +7,11 @@ export const fetchDataSuccess = (data) => ({
   payload: data,
 });
 
+export const fetchTodaySuccess = (data) => ({
+  type: 'FETCH_TODAY_SUCCESS',
+  payload: data,
+});
+
 export const fetchDataError = (error: string) => ({
   type: 'FETCH_DATA_ERROR',
   payload: error,
