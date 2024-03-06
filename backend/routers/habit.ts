@@ -86,7 +86,7 @@ router.get("/api/todayHabits", auth,  (req: Request, res: Response) => {
   const dayIndex = currentTime.getDay();
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const currentDay = days[dayIndex];
-  const query: Frequency = { frequency: { days: {} } };
+  const query: any = { frequency: { days: days } };
   query.frequency.days[currentDay] = true;
 
   Habit.find(query)
@@ -115,12 +115,13 @@ router.get("/api/habitsByDate", auth,  (req: Request<{}, {}, { time?: string }>,
         }
     }
 
-  const dayIndex = new Date(time!).getDay();
+  const dayIndex = new Date(time!).getDay() -1;
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const currentDay = days[dayIndex];
-  const query: Frequency = { frequency: { days: {} } };
-  query.frequency.days[currentDay] = true;
-
+  // const query: any = { frequency: { days: {} } };
+  // query.frequency.days[currentDay] = true;
+  const query :any = {};
+  query[`frequency.days.${currentDay}`] = true;
   const startOfDay = new Date(time!);
   startOfDay.setHours(0, 0, 0, 0);
   const endOfDay = new Date(time!);
