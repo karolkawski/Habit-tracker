@@ -7,18 +7,25 @@ import { useState, useEffect } from 'react';
 import { DayPicker } from 'react-day-picker';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartLine, faChartPie } from '@fortawesome/free-solid-svg-icons';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useIsMobile from '../utils/isMobile';
 import { Header } from '../layout/Header/Header';
-import { Button } from 'flowbite-react';
+import { Button, Dropdown } from 'flowbite-react';
 import { getTokenFromLocalStorage } from '../utils/token';
+import {
+  fetchDataRequest,
+  fetchDataSuccess,
+} from '../store/actions/habitActions';
 
 const config = {
   headers: { Authorization: `Bearer ${getTokenFromLocalStorage()}` },
 };
 
 export const Statistics = () => {
+  const dispatch = useDispatch();
+
   const habits = useSelector((state: { habit }) => state.habit.habits);
+  console.log('🚀 ~ Statistics ~ habits:', habits);
   const isMobile = useIsMobile();
   const [year, setYear] = useState<number>(new Date().getFullYear());
   const [habit, setHabit] = useState<any>('ALL');
@@ -31,7 +38,21 @@ export const Statistics = () => {
   const [Pie2ChartData, setPie2ChartData] = useState([]);
   const [pie1ChartTime, setPie1ChartTime] = useState('3m');
   const [pie2ChartTime, setPie2ChartTime] = useState('3m');
+  const fetchHabits = async () => {
+    dispatch(fetchDataRequest());
 
+    try {
+      const fetchedHabits = await axios.get(
+        'http://localhost:4000/api/habits',
+        config
+      );
+      if (fetchedHabits) {
+        dispatch(fetchDataSuccess(fetchedHabits.data));
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
   function getCurrentDimension(scale: number) {
     const heatmapWrapper: HTMLElement | null =
       document.querySelector('.Statistic__Chart');
@@ -40,7 +61,6 @@ export const Statistics = () => {
       height: heatmapWrapper ? heatmapWrapper.clientHeight * scale : 0,
     };
   }
-
   const fetchEntriesStats = () => {
     axios
       .get('http://localhost:4000/api/statistics/entries', {
@@ -57,7 +77,6 @@ export const Statistics = () => {
         console.error(e);
       });
   };
-
   const fetchHabitsStats = () => {
     axios
       .get('http://localhost:4000/api/statistics/habits', {
@@ -108,6 +127,7 @@ export const Statistics = () => {
   }, [year, habit]);
 
   useEffect(() => {
+    fetchHabits();
     fetchStats();
   }, []);
 
@@ -120,15 +140,14 @@ export const Statistics = () => {
       setPie2ChartTime(value);
     }
   };
+
   function chageMonthOrYear(date: Date | undefined) {
     if (date === undefined) {
       return;
     }
 
-    const selectedMonth: number = date.getMonth() + 1;
     const selectedYear: number = date.getFullYear();
     setYear(selectedYear);
-    // setMonth(selectedMonth);
   }
 
   const changeChartType = (type: 'linear' | 'circle') => {
@@ -150,10 +169,11 @@ export const Statistics = () => {
     };
   }, [chartWrapperSize]);
 
-  if (habits && habits.length === 0) {
-    return <>NONE</>;
-  }
+  // if (habits && habits.length === 0) {
+  //   return <>NONE</>;
+  // }
 
+  console.log(habits);
   return (
     <>
       <Header />
@@ -173,10 +193,28 @@ export const Statistics = () => {
             <p className="mb-0 mr-3 font-weight-bold d-flex justify-content-center align-items-center ">
               HABIT:
             </p>
+            <Dropdown label={habit && habit !== 'ALL' ? habit.name : 'ALL'}>
+              <Dropdown.Item
+                onClick={() => handleSelectHabit('ALL')}
+                href={`#/ALL`}
+              >
+                ALL
+              </Dropdown.Item>
+              {habits &&
+                habits.map((habit, index) => (
+                  <Dropdown.Item
+                    key={index}
+                    onClick={() => handleSelectHabit(habit)}
+                    href={`#/${habit._id}`}
+                  >
+                    {habit.name}
+                  </Dropdown.Item>
+                ))}
+            </Dropdown>
           </div>
         </div>
         <div>
-          <div className="ChartPill Statistic__Chart" sm={12} md={12} lg={12}>
+          <div className="ChartPill Statistic__Chart">
             <CalendarChart
               data={calendarChartData}
               dimensions={{ margin: { top: 0, right: 0, bottom: 0, left: 50 } }}
@@ -190,14 +228,14 @@ export const Statistics = () => {
             <div className="Controls">
               {chartType === 'linear' ? (
                 <Button
-                  variant="primary"
+                  color="primary"
                   onClick={() => changeChartType('linear')}
                 >
                   <FontAwesomeIcon icon={faChartLine} /> Linear
                 </Button>
               ) : (
                 <Button
-                  variant="secondary"
+                  color="secondary"
                   onClick={() => changeChartType('linear')}
                 >
                   <FontAwesomeIcon icon={faChartLine} /> Linear
@@ -205,14 +243,14 @@ export const Statistics = () => {
               )}
               {chartType === 'circle' ? (
                 <Button
-                  variant="primary"
+                  color="primary"
                   onClick={() => changeChartType('circle')}
                 >
                   <FontAwesomeIcon icon={faChartPie} /> Circle
                 </Button>
               ) : (
                 <Button
-                  variant="secondary"
+                  color="secondary"
                   onClick={() => changeChartType('circle')}
                 >
                   <FontAwesomeIcon icon={faChartPie} /> Circle
@@ -229,7 +267,7 @@ export const Statistics = () => {
                 <PieChart data={Pie1ChartData} dimensions={{ margin: 20 }} />
                 <div className="Controls">
                   <Button
-                    variant={pie1ChartTime === '7d' ? 'primary' : 'secondary'}
+                    color={pie1ChartTime === '7d' ? 'primary' : 'secondary'}
                     onClick={() => {
                       toogleTimeHandler('pie1', '7d');
                     }}
@@ -237,7 +275,7 @@ export const Statistics = () => {
                     7d
                   </Button>
                   <Button
-                    variant={pie1ChartTime === '14d' ? 'primary' : 'secondary'}
+                    color={pie1ChartTime === '14d' ? 'primary' : 'secondary'}
                     onClick={() => {
                       toogleTimeHandler('pie1', '14d');
                     }}
@@ -245,7 +283,7 @@ export const Statistics = () => {
                     14d
                   </Button>
                   <Button
-                    variant={pie1ChartTime === '1m' ? 'primary' : 'secondary'}
+                    color={pie1ChartTime === '1m' ? 'primary' : 'secondary'}
                     onClick={() => {
                       toogleTimeHandler('pie1', '1m');
                     }}
@@ -253,7 +291,7 @@ export const Statistics = () => {
                     1m
                   </Button>
                   <Button
-                    variant={pie1ChartTime === '3m' ? 'primary' : 'secondary'}
+                    color={pie1ChartTime === '3m' ? 'primary' : 'secondary'}
                     onClick={() => {
                       toogleTimeHandler('pie1', '3m');
                     }}
@@ -261,7 +299,7 @@ export const Statistics = () => {
                     3m
                   </Button>
                   <Button
-                    variant={pie1ChartTime === '1y' ? 'primary' : 'secondary'}
+                    color={pie1ChartTime === '1y' ? 'primary' : 'secondary'}
                     onClick={() => {
                       toogleTimeHandler('pie1', '1y');
                     }}
@@ -278,7 +316,7 @@ export const Statistics = () => {
                 <PieChart data={Pie2ChartData} dimensions={{ margin: 20 }} />
                 <div className="Controls">
                   <Button
-                    variant={pie1ChartTime === '7d' ? 'primary' : 'secondary'}
+                    color={pie1ChartTime === '7d' ? 'primary' : 'secondary'}
                     onClick={() => {
                       toogleTimeHandler('pie2', '7d');
                     }}
@@ -286,7 +324,7 @@ export const Statistics = () => {
                     7d
                   </Button>
                   <Button
-                    variant={pie2ChartTime === '14d' ? 'primary' : 'secondary'}
+                    color={pie2ChartTime === '14d' ? 'primary' : 'secondary'}
                     onClick={() => {
                       toogleTimeHandler('pie2', '14d');
                     }}
@@ -294,7 +332,7 @@ export const Statistics = () => {
                     14d
                   </Button>
                   <Button
-                    variant={pie2ChartTime === '1m' ? 'primary' : 'secondary'}
+                    color={pie2ChartTime === '1m' ? 'primary' : 'secondary'}
                     onClick={() => {
                       toogleTimeHandler('pie2', '1m');
                     }}
@@ -302,7 +340,7 @@ export const Statistics = () => {
                     1m
                   </Button>
                   <Button
-                    variant={pie2ChartTime === '3m' ? 'primary' : 'secondary'}
+                    color={pie2ChartTime === '3m' ? 'primary' : 'secondary'}
                     onClick={() => {
                       toogleTimeHandler('pie2', '3m');
                     }}
@@ -310,7 +348,7 @@ export const Statistics = () => {
                     3m
                   </Button>
                   <Button
-                    variant={pie2ChartTime === '1y' ? 'primary' : 'secondary'}
+                    color={pie2ChartTime === '1y' ? 'primary' : 'secondary'}
                     onClick={() => {
                       toogleTimeHandler('pie2', '1y');
                     }}
