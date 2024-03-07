@@ -21,19 +21,9 @@ const entryReducer = (state = initialState, action) => {
       };
     case 'FETCH_ENTRY_ERROR':
       return { ...state, loading: false, error: action.payload };
-
     case 'ISDONE_ENTRY_SET':
-      const entry = action.payload;
-      console.log('🚀 ~ entryReducer ~ entry:', entry);
-      const entryDone = entry.isDone;
-      console.log('🚀 ~ entryReducer ~ entryDone:', entryDone);
-
       return { ...state, loading: false, error: action.payload };
     case 'ISUNDONE_ENTRY_SET':
-      // const entry = action.payload;
-      // console.log('🚀 ~ entryReducer ~ entry:', entry);
-      // const entryDone = entry.isDone;
-      // console.log('🚀 ~ entryReducer ~ entryDone:', entryDone);
       return { ...state, loading: false, error: action.payload };
     default:
       return state;

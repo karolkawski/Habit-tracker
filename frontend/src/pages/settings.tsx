@@ -3,37 +3,39 @@ import { Header } from '../layout/Header/Header';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
+import { getTokenFromLocalStorage } from '../utils/token';
+
+const config = {
+  headers: { Authorization: `Bearer ${getTokenFromLocalStorage()}` },
+};
 
 export const Settings = () => {
-  const settings = useSelector((state: { habit }) => state.habit.settings);
+  const darkMode = useSelector(
+    (state: { settings }) => state.settings.darkMode
+  );
 
-  const [darkMode, setDarkMode] = useState<boolean>(false);
   const handleChangeDarmMode = (darkMode: boolean) => {
-    fetchSettingsStats();
+    addSetiingsDarkMode(darkMode);
   };
 
-  const fetchSettingsStats = () => {
+  const addSetiingsDarkMode = (darkMode) => {
     axios
-      .post('/api/settings/add', {
-        name: 'darkMode',
-        value: true,
-      })
+      .post(
+        'http://localhost:4000/api/settings/add',
+        {
+          name: 'darkMode',
+          value: darkMode,
+        },
+        config
+      )
       .then((res) => {
-        setDarkMode(true);
+        setDarkMode(darkMode);
       })
       .catch((e) => {
         console.error(e);
       });
   };
 
-  useEffect(() => {
-    const dmode = settings
-      ? settings.find((setting) => setting.name === 'darkMode')
-      : false;
-    if (dmode) {
-      setDarkMode(!!dmode.value);
-    }
-  }, [settings]);
   return (
     <>
       <Header />
