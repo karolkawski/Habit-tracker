@@ -1,8 +1,10 @@
 import { createStore, combineReducers } from 'redux';
-import dataReducer from './reducers/habitsReducer';
+import habitReducer from './reducers/habitsReducer';
+import entryReducer from './reducers/entryReducer';
 
 const rootReducer = combineReducers({
-  data: dataReducer,
+  habit: habitReducer,
+  entry: entryReducer,
 });
 
 const store = createStore(rootReducer);

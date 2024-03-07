@@ -4,7 +4,7 @@ import axios from 'axios';
 import {
   fetchDataRequest,
   fetchDataSuccess,
-} from '../store/actions/dataActions';
+} from '../store/actions/habitActions';
 import { getTokenFromLocalStorage } from '../utils/token';
 import { Header } from '../layout/Header/Header';
 import { Button, Table } from 'flowbite-react';
@@ -19,7 +19,7 @@ const config = {
 
 export const Habits = () => {
   const dispatch = useDispatch();
-  const habits = useSelector((state: { data }) => state.data.habits);
+  const habits = useSelector((state: { habit }) => state.habit.habits);
 
   const fetchHabits = async () => {
     dispatch(fetchDataRequest());

@@ -18,7 +18,7 @@ const config = {
 };
 
 export const Statistics = () => {
-  const habits = useSelector((state: { data }) => state.data.habits);
+  const habits = useSelector((state: { habit }) => state.habit.habits);
   const isMobile = useIsMobile();
   const [year, setYear] = useState<number>(new Date().getFullYear());
   const [habit, setHabit] = useState<any>('ALL');

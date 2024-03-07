@@ -11,7 +11,7 @@ import axios from 'axios';
 import { Header } from '../layout/Header/Header';
 
 export const Habit = () => {
-  const habits = useSelector((state: { data }) => state.data.habits);
+  const habits = useSelector((state: { habit }) => state.habit.habits);
   const [rel, setRel] = useState(false);
   const navigate = useNavigate();
   const params = useParams();

@@ -1,12 +1,11 @@
 const initialState = {
   habits: null,
-  today: null,
   user: null,
   loading: true,
   error: null,
 };
 
-const dataReducer = (state = initialState, action) => {
+const habitReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'FETCH_DATA_REQUEST':
       return { ...state, loading: true, error: null };
@@ -22,13 +21,13 @@ const dataReducer = (state = initialState, action) => {
         error: null,
       };
     case 'FETCH_TODAY_SUCCESS':
-      if (state.today && !state.loading) {
+      if (state.habits && !state.loading) {
         return;
       }
       const newToday = action.payload;
       return {
         ...state,
-        today: newToday,
+        habits: newToday,
         error: null,
       };
     case 'FETCH_DATA_ERROR':
@@ -38,4 +37,4 @@ const dataReducer = (state = initialState, action) => {
   }
 };
 
-export default dataReducer;
+export default habitReducer;

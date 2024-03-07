@@ -8,9 +8,11 @@ import { Cal } from '../Calendar/Calendar';
 import { EntryType } from '../types/Entrie.d';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  fetchDataRequest,
-  fetchTodaySuccess,
-} from '../store/actions/dataActions';
+  fetchEntryRequest,
+  fetchEntrySuccess,
+  setIsDoneEntry,
+  setIsUndoneEntry,
+} from '../store/actions/entryActions';
 
 const config = {
   headers: { Authorization: `Bearer ${getTokenFromLocalStorage()}` },
@@ -20,7 +22,8 @@ export const Dashboard = () => {
   const type = 'Tasks';
   const dispatch = useDispatch();
 
-  const todays = useSelector((state: { data }) => state.data.today);
+  const todayHabits = useSelector((state: { entry }) => state.entry.entries);
+  console.log('🚀 ~ Dashboard ~ todayHabits:', todayHabits);
   const [noEntries, setNoEntries] = useState(true);
 
   const [selectedDate, setSelectedDate] = useState<Date>(
@@ -28,7 +31,7 @@ export const Dashboard = () => {
   );
 
   const fetchHabitsByDate = () => {
-    dispatch(fetchDataRequest());
+    dispatch(fetchEntryRequest());
 
     axios
       .get('http://localhost:4000/api/habitsByDate', {
@@ -36,11 +39,12 @@ export const Dashboard = () => {
         params: { time: selectedDate },
       })
       .then((res) => {
-        if (res.data.length === 0) {
+        console.log('🚀 ~ .then ~ res:', res);
+        if (res.data.habitEntries && res.data.habitEntries.length === 0) {
           setNoEntries(true);
           return;
         }
-        dispatch(fetchTodaySuccess(res.data.habitEntries));
+        dispatch(fetchEntrySuccess(res.data.habitEntries));
         setNoEntries(false);
       })
       .catch((e) => {
@@ -60,9 +64,30 @@ export const Dashboard = () => {
     setSelectedDate(date);
   };
 
-  const handleAddEntry = (addedEntry: EntryType): void => {};
+  const handleAddEntry = (addedEntry: EntryType): void => {
+    const habit_id = addedEntry.habit_id;
+    const newHabits = [...todayHabits];
+    Object.values(newHabits).map(({ habit, entry }, index) => {
+      if (habit._id === habit_id && !entry) {
+        newHabits[index].entry = addedEntry;
+      }
+    });
 
-  const handleRemoveEntry = (removedEntry: EntryType) => {};
+    dispatch(setIsDoneEntry(newHabits));
+  };
+
+  const handleRemoveEntry = (removedEntry: EntryType) => {
+    const habit_id = removedEntry.habit_id;
+    const newHabits = [...todayHabits];
+    Object.values(newHabits).map(({ habit, entry }, index) => {
+      if (habit._id === habit_id && entry) {
+        newHabits[index].entry = null;
+      }
+    });
+    dispatch(setIsUndoneEntry(newHabits));
+  };
+
+  console.log(noEntries, todayHabits);
 
   return (
     <>
@@ -79,8 +104,8 @@ export const Dashboard = () => {
           <div className="Dashboard__List">
             <div className={`Dashboard__${type}`}>
               <div className="List__Label">{type} (x)</div>
-              {!noEntries && todays ? (
-                Object.values(todays).map(({ habit, entry }) => (
+              {!noEntries && todayHabits ? (
+                Object.values(todayHabits).map(({ habit, entry }) => (
                   <EntryRow
                     key={habit._id + 'key'}
                     habit={habit}

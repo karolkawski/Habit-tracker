@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 
 export const Settings = () => {
-  const settings = useSelector((state: { data }) => state.data.settings);
+  const settings = useSelector((state: { habit }) => state.habit.settings);
 
   const [darkMode, setDarkMode] = useState<boolean>(false);
   const handleChangeDarmMode = (darkMode: boolean) => {
