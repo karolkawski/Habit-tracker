@@ -24,7 +24,7 @@ import { Link } from 'react-router-dom';
 
 export const Header = () => {
   return (
-    <Navbar fluid rounded>
+    <Navbar>
       <Navbar.Brand as={Link} href="https://flowbite-react.com">
         <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
           Flowbite React
