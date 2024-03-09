@@ -1,5 +1,5 @@
 import { Button, ButtonGroup } from 'flowbite-react';
-import { Header } from '../layout/Header/Header';
+import { Navigation } from '../layout/Navigation/Navigation';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
@@ -38,7 +38,7 @@ export const Settings = () => {
 
   return (
     <>
-      <Header />
+      <Navigation />
       <div>
         <h5>Dark mode</h5>
         <ButtonGroup className="Button__Toggle" aria-label="Basic example">

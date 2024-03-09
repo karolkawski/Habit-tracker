@@ -1,5 +1,5 @@
-import { Header } from '../layout/Header/Header';
-import { useNavigate } from 'react-router-dom';
+import { Navigation } from '../layout/Navigation/Navigation';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Button,
   Label,
@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { getTokenFromLocalStorage } from '../utils/token';
+import { HabitType } from '../types/Habit.d';
 
 interface MyFormValues {
   _id: string;
@@ -105,9 +106,24 @@ const iconsForm = [
 const config = {
   headers: { Authorization: `Bearer ${getTokenFromLocalStorage()}` },
 };
-export const Add = () => {
+export const HabitForm = ({ isAdd }) => {
   const habits = useSelector((state: { habit }) => state.habit.habits);
+  let habit: HabitType | undefined;
   const navigate = useNavigate();
+  const params = useParams();
+
+  if (!habits) {
+    return <></>;
+  }
+
+  if (!isAdd) {
+    habit = habits.find((habit: HabitType) => habit._id === params.id);
+  }
+
+  if (!habit && !isAdd) {
+    return <></>;
+  }
+
   const initialValues: MyFormValues = {
     _id: uuidv4(),
     name: '',
@@ -130,23 +146,50 @@ export const Add = () => {
     },
   };
 
+  const handleDeleteHabit = () => {
+    console.log('delete');
+    axios
+      .delete(`http://localhost:4000/api/habits/${params.id}`, config)
+      .then((res) => {
+        navigate('/habits');
+      })
+      .catch((error: any) => {
+        console.error(error);
+      });
+  };
+
   return (
     <>
-      <Header />
+      <Navigation />
       <div className="container mx-auto">
         <h4 className="py-5">New habit</h4>
         <Formik
-          initialValues={initialValues}
+          initialValues={isAdd ? initialValues : habit}
           onSubmit={(values) => {
-            console.log(JSON.stringify(values, null, 2));
+            if (isAdd) {
+              axios
+                .post(
+                  'http://localhost:4000/api/habits/add',
+                  { ...values },
+                  config
+                )
+                .then((res) => {
+                  console.log(res.data);
+                  navigate('/habits');
+                })
+                .catch((error: any) => {
+                  console.error(error);
+                });
+              return;
+            }
+
             axios
-              .post(
-                'http://localhost:4000/api/habits/add',
+              .patch(
+                `http://localhost:4000/api/habits/${values._id}`,
                 { ...values },
                 config
               )
               .then((res) => {
-                console.log(res.data);
                 navigate('/habits');
               })
               .catch((error: any) => {
@@ -304,9 +347,20 @@ export const Add = () => {
                 </Select>
               </div>
               <div className="flex justify-end">
-                <Button type="submit" color="success">
-                  Submit
-                </Button>
+                {isAdd ? (
+                  <Button type="submit" color="success">
+                    Submit
+                  </Button>
+                ) : (
+                  <>
+                    <Button color="danger" onClick={handleDeleteHabit}>
+                      Delete
+                    </Button>
+                    <Button type="submit" color="success">
+                      Update
+                    </Button>
+                  </>
+                )}
               </div>
             </form>
           )}

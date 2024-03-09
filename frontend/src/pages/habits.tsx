@@ -6,7 +6,7 @@ import {
   fetchDataSuccess,
 } from '../store/actions/habitActions';
 import { getTokenFromLocalStorage } from '../utils/token';
-import { Header } from '../layout/Header/Header';
+import { Navigation } from '../layout/Navigation/Navigation';
 import { Button, Table } from 'flowbite-react';
 import { ColorBox } from '../components/UI/ColorBox/ColorBox';
 import { Frequency } from '../components/UI/Frequency/Frequency';
@@ -43,14 +43,14 @@ export const Habits = () => {
   if (!habits) {
     return (
       <>
-        <Header />
+        <Navigation />
       </>
     );
   }
 
   return (
     <>
-      <Header />
+      <Navigation />
       <div className="overflow-x-auto container mx-auto">
         <Table>
           <Table.Head>
@@ -71,7 +71,7 @@ export const Habits = () => {
                   className="bg-white dark:border-gray-700 dark:bg-gray-800"
                 >
                   <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                    {item.name}
+                    <Link to={`/habits/${item._id}`}>{item.name}</Link>
                   </Table.Cell>
                   <Table.Cell> {item.type}</Table.Cell>
                   <Table.Cell>
@@ -82,13 +82,13 @@ export const Habits = () => {
                   </Table.Cell>
                   <Table.Cell>
                     <Frequency
-                      size=""
+                      size="s"
                       days={item.frequency.days}
                       repeat={item.frequency.repeat}
                     />
                   </Table.Cell>
                   <Table.Cell>
-                    <Link to={`/habits/${item._id}`}>
+                    <Link to={`/habits/${item._id}/edit`}>
                       <Button>Edit</Button>
                     </Link>
                   </Table.Cell>

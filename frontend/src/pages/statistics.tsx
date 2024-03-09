@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartLine, faChartPie } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import useIsMobile from '../utils/isMobile';
-import { Header } from '../layout/Header/Header';
+import { Navigation } from '../layout/Navigation/Navigation';
 import { Button, Dropdown } from 'flowbite-react';
 import { getTokenFromLocalStorage } from '../utils/token';
 import {
@@ -25,7 +25,6 @@ export const Statistics = () => {
   const dispatch = useDispatch();
 
   const habits = useSelector((state: { habit }) => state.habit.habits);
-  console.log('🚀 ~ Statistics ~ habits:', habits);
   const isMobile = useIsMobile();
   const [year, setYear] = useState<number>(new Date().getFullYear());
   const [habit, setHabit] = useState<any>('ALL');
@@ -176,7 +175,7 @@ export const Statistics = () => {
   console.log(habits);
   return (
     <>
-      <Header />
+      <Navigation />
       <div className={'Statistics container'}>
         <div>
           <div className="my-1 d-flex flex-div">

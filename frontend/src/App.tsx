@@ -1,7 +1,5 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Habit } from './pages/habit';
-import { Add } from './pages/add';
-import { Edit } from './pages/edit';
 import { Root } from './pages/root';
 import { Habits } from './pages/habits';
 import { Statistics } from './pages/statistics';
@@ -10,10 +8,9 @@ import { Login } from './pages/login';
 import { Dashboard } from './pages/dashboard';
 import { Provider } from 'react-redux';
 import store from './store/store';
+import { HabitForm } from './Forms/HabitForm';
 
 function App() {
-  // const [loading, setLoading] = useState(true);
-
   const router = createBrowserRouter([
     {
       path: '/',
@@ -45,11 +42,11 @@ function App() {
         },
         {
           path: '/habits/:id/edit',
-          element: <Edit />,
+          element: <HabitForm isAdd={false} />,
         },
         {
           path: 'add',
-          element: <Add />,
+          element: <HabitForm isAdd={true} />,
         },
       ],
     },
@@ -58,7 +55,6 @@ function App() {
     <>
       <Provider store={store}>
         <RouterProvider router={router} />
-        {/* <ParticlesAnimate /> */}
       </Provider>
     </>
   );

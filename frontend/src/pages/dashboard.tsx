@@ -1,8 +1,8 @@
 import './dashboard.scss';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import { Header } from '../layout/Header/Header';
-import { EntryRow } from '../components/EntryRow';
+import { Navigation } from '../layout/Navigation/Navigation';
+import { EntryRow } from '../Entry/EntryRow';
 import { getTokenFromLocalStorage } from '../utils/token';
 import { Cal } from '../Calendar/Calendar';
 import { EntryType } from '../types/Entrie.d';
@@ -91,9 +91,9 @@ export const Dashboard = () => {
 
   return (
     <>
-      <Header />
+      <Navigation />
       <div className="Dashboard container mx-auto">
-        <div className="Dashboard__Header Calendar">
+        <div className="Dashboard__Navigation Calendar">
           <Cal
             selectedDate={selectedDate}
             handleChangeDate={handleChangeDate}

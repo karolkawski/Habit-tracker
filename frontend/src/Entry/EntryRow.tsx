@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Icon } from './UI/Icon/Icon';
+import { Icon } from '../components/UI/Icon/Icon';
 import axios from 'axios';
 import { getTokenFromLocalStorage } from '../utils/token';
 const config = {

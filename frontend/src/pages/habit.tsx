@@ -8,8 +8,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { HabitType } from '../types/Habit.d';
 import axios from 'axios';
-import { Header } from '../layout/Header/Header';
+import { Navigation } from '../layout/Navigation/Navigation';
+import { getTokenFromLocalStorage } from '../utils/token';
 
+const config = {
+  headers: { Authorization: `Bearer ${getTokenFromLocalStorage()}` },
+};
 export const Habit = () => {
   const habits = useSelector((state: { habit }) => state.habit.habits);
   const [rel, setRel] = useState(false);
@@ -33,28 +37,18 @@ export const Habit = () => {
   }
 
   const handleDeleteHabit = () => {
-    let token = 'xyz';
-    let config = {
-      headers: {
-        Authorization: 'Bearer ' + token,
-        'content-type': 'application/json',
-      },
-    };
     axios
       .delete(`http://localhost:4000/api/habits/${params.id}`, config)
       .then((res) => {
-        const filteredHabits = habits.filter(
-          (habit: HabitType) => habit._id !== params.id
-        );
-        navigate('/');
+        navigate('/habits');
       })
       .catch((error: any) => {
         console.error(error);
       });
   };
   return (
-    <>
-      <Header />
+    <div className="container mx-auto">
+      <Navigation />
       {!habit ? (
         <>NO EXIST</>
       ) : (
@@ -76,11 +70,13 @@ export const Habit = () => {
             <Frequency size={''} {...habit.frequency} />
           </div>
           <div className="Habit__actions">
-            <Button color="danger">Delete</Button>
+            <Button color="danger" onClick={handleDeleteHabit}>
+              Delete
+            </Button>
             <Back />
           </div>
         </>
       )}
-    </>
+    </div>
   );
 };
