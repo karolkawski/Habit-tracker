@@ -4,9 +4,9 @@ import './Back.scss';
 export const Back = () => {
   return (
     <div className="return-section">
-      <Link to={`/habits`}>
-        <Button color="secondary">Back</Button>
-      </Link>
+      <Button color="primary">
+        <Link to={`/habits`}>Back</Link>
+      </Button>
     </div>
   );
 };
