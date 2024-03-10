@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { format, endOfWeek, isWithinInterval, startOfWeek } from 'date-fns';
 import 'react-day-picker/dist/style.css';
-import './Calendar.css';
+import './Calendar.scss';
 import {
   CaptionProps,
   DayPicker,
@@ -79,44 +79,47 @@ export function Cal({
     return (
       <>
         <h2>{format(props.displayMonth, 'MMM yyy')}</h2>
-        <Button
-          color={'outline-dark'}
-          disabled={!previousMonth}
-          onClick={() => {
-            const date = new Date(selected);
+        <div className="flex justify-end">
+          <Button
+            color={'blue'}
+            className="mr-2"
+            disabled={!previousMonth}
+            onClick={() => {
+              const date = new Date(selected);
 
-            date.setDate(selected.getDate() - 7);
-            date.setHours(selected.getHours());
-            date.setMinutes(selected.getMinutes());
-            date.setSeconds(selected.getSeconds());
+              date.setDate(selected.getDate() - 7);
+              date.setHours(selected.getHours());
+              date.setMinutes(selected.getMinutes());
+              date.setSeconds(selected.getSeconds());
 
-            if (date.getMonth() !== currentMonth.getMonth()) {
-              previousMonth && goToMonth(previousMonth);
-            }
-            CustomSelect(date);
-          }}
-        >
-          {'<'}
-        </Button>
-        <Button
-          color={'outline-dark'}
-          disabled={!nextMonth}
-          onClick={() => {
-            const date = new Date(selected);
+              if (date.getMonth() !== currentMonth.getMonth()) {
+                previousMonth && goToMonth(previousMonth);
+              }
+              CustomSelect(date);
+            }}
+          >
+            {'<'}
+          </Button>
+          <Button
+            color={'blue'}
+            disabled={!nextMonth}
+            onClick={() => {
+              const date = new Date(selected);
 
-            date.setDate(selected.getDate() + 7);
-            date.setHours(selected.getHours());
-            date.setMinutes(selected.getMinutes());
-            date.setSeconds(selected.getSeconds());
+              date.setDate(selected.getDate() + 7);
+              date.setHours(selected.getHours());
+              date.setMinutes(selected.getMinutes());
+              date.setSeconds(selected.getSeconds());
 
-            if (date.getMonth() !== currentMonth.getMonth()) {
-              nextMonth && goToMonth(nextMonth);
-            }
-            CustomSelect(date);
-          }}
-        >
-          {'>'}
-        </Button>
+              if (date.getMonth() !== currentMonth.getMonth()) {
+                nextMonth && goToMonth(nextMonth);
+              }
+              CustomSelect(date);
+            }}
+          >
+            {'>'}
+          </Button>
+        </div>
       </>
     );
   }

@@ -1,52 +1,57 @@
 
+.Calendar{
 
-
-.Calendar .rdp-month.rdp-caption_start.rdp-caption_end {
+    .rdp-month.rdp-caption_start.rdp-caption_end {
         width: 100%;
     }
 
 
-    .Calendar  .rdp {
+    .rdp {
         margin: 10px 0px;
     }
-    .Calendar  table.rdp-table {
+    table.rdp-table {
         width: 100%;
         max-width: 100%;
+        background-color: #fff;
+        margin-top: 25px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 5px;
     }
 
-    .Calendar thead.rdp-head {
+    thead.rdp-head {
         width: 100%;
     }
 
-    .Calendar  tr.rdp-head_row {
+    tr.rdp-head_row {
         width: 100%;
         display: flex;
     }
 
-    .Calendar  th.rdp-head_cell {
+    th.rdp-head_cell {
         flex: 1;
     }
 
- .Calendar   tbody.rdp-tbody {
+    tbody.rdp-tbody {
         width: 100%;
         display: flex;
         max-width: 100%;
     }
 
-    .Calendar   tr.rdp-row {
+    tr.rdp-row {
         width: 100%;
         min-width: 100%;
         display: flex;
     }
 
-    .Calendar   td.rdp-cell, th.rdp-head_cell {
+    td.rdp-cell, th.rdp-head_cell {
         flex: 1;
         justify-content: center;
         align-items: center;
         display: flex;
     }
 
-    .Calendar__Info {
+    &__Info {
         display: flex;
         border-bottom: 1px solid #ccc;
         width: 100%;
@@ -54,17 +59,17 @@
         align-items: center;
         margin-bottom: 10px;
 
+        .col {
+            margin: 0;
+            padding: 0;
+        }
+    }
 
+    &__Actions {
+        margin-bottom: 10px;
+        margin-left: 0;
+        margin-right: 0;
     }
-    .Calendar__Info  .col {
-        margin: 0;
-        padding: 0;
-    }
-    
-.Calendar__Actions {
-    margin-bottom: 10px;
-    margin-left: 0;
-    margin-right: 0;
 }
 
 .tooltip {
