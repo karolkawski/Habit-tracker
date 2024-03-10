@@ -80,7 +80,6 @@ export function Cal({
         <h2>{format(props.displayMonth, 'MMM yyy')}</h2>
         <div className="flex justify-end">
           <Button
-            color={'blue'}
             className="mr-2"
             disabled={!previousMonth}
             onClick={() => {
@@ -100,7 +99,6 @@ export function Cal({
             {'<'}
           </Button>
           <Button
-            color={'blue'}
             disabled={!nextMonth}
             onClick={() => {
               const date = new Date(selected);

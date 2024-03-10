@@ -113,7 +113,9 @@ export const Dashboard = () => {
                   />
                 ))
               ) : (
-                <div className="nodata">No entries</div>
+                <div className="flex h-20 bg-white justify-center items-center border-gray-100 my-5">
+                  No entries
+                </div>
               )}
             </div>
           </div>
