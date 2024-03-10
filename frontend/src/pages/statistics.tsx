@@ -184,10 +184,7 @@ export const Statistics = () => {
                 onMonthChange={chageMonthOrYear}
               />
               <p className="mb-0 mr-3">HABIT:</p>
-              <Dropdown
-                label={habit && habit !== 'ALL' ? habit.name : 'ALL'}
-                color={'default'}
-              >
+              <Dropdown label={habit && habit !== 'ALL' ? habit.name : 'ALL'}>
                 <Dropdown.Item
                   onClick={() => handleSelectHabit('ALL')}
                   href={`#/ALL`}
@@ -235,7 +232,10 @@ export const Statistics = () => {
                   </Button>
                 )}
                 {chartType === 'circle' ? (
-                  <Button onClick={() => changeChartType('circle')}>
+                  <Button
+                    color="blue"
+                    onClick={() => changeChartType('circle')}
+                  >
                     <FontAwesomeIcon icon={faChartPie} /> Circle
                   </Button>
                 ) : (
@@ -257,7 +257,7 @@ export const Statistics = () => {
                   <PieChart data={Pie1ChartData} dimensions={{ margin: 20 }} />
                   <div className="py-10 flex justify-center items-center">
                     <Button
-                      color={pie1ChartTime === '7d' ? '' : 'gray'}
+                      color={pie1ChartTime === '7d' ? 'blue' : 'gray'}
                       onClick={() => {
                         toogleTimeHandler('pie1', '7d');
                       }}
@@ -265,7 +265,7 @@ export const Statistics = () => {
                       7d
                     </Button>
                     <Button
-                      color={pie1ChartTime === '14d' ? '' : 'gray'}
+                      color={pie1ChartTime === '14d' ? 'blue' : 'gray'}
                       onClick={() => {
                         toogleTimeHandler('pie1', '14d');
                       }}
@@ -273,7 +273,7 @@ export const Statistics = () => {
                       14d
                     </Button>
                     <Button
-                      color={pie1ChartTime === '1m' ? '' : 'gray'}
+                      color={pie1ChartTime === '1m' ? 'blue' : 'gray'}
                       onClick={() => {
                         toogleTimeHandler('pie1', '1m');
                       }}
@@ -281,7 +281,7 @@ export const Statistics = () => {
                       1m
                     </Button>
                     <Button
-                      color={pie1ChartTime === '3m' ? '' : 'gray'}
+                      color={pie1ChartTime === '3m' ? 'blue' : 'gray'}
                       onClick={() => {
                         toogleTimeHandler('pie1', '3m');
                       }}
@@ -289,7 +289,7 @@ export const Statistics = () => {
                       3m
                     </Button>
                     <Button
-                      color={pie1ChartTime === '1y' ? '' : 'gray'}
+                      color={pie1ChartTime === '1y' ? 'blue' : 'gray'}
                       onClick={() => {
                         toogleTimeHandler('pie1', '1y');
                       }}
@@ -306,7 +306,7 @@ export const Statistics = () => {
                   <PieChart data={Pie2ChartData} dimensions={{ margin: 20 }} />
                   <div className="py-10 flex justify-center items-center">
                     <Button
-                      color={pie1ChartTime === '7d' ? '' : 'gray'}
+                      color={pie1ChartTime === '7d' ? 'blue' : 'gray'}
                       onClick={() => {
                         toogleTimeHandler('pie2', '7d');
                       }}
@@ -314,7 +314,7 @@ export const Statistics = () => {
                       7d
                     </Button>
                     <Button
-                      color={pie2ChartTime === '14d' ? '' : 'gray'}
+                      color={pie2ChartTime === '14d' ? 'blue' : 'gray'}
                       onClick={() => {
                         toogleTimeHandler('pie2', '14d');
                       }}
@@ -322,7 +322,7 @@ export const Statistics = () => {
                       14d
                     </Button>
                     <Button
-                      color={pie2ChartTime === '1m' ? '' : 'gray'}
+                      color={pie2ChartTime === '1m' ? 'blue' : 'gray'}
                       onClick={() => {
                         toogleTimeHandler('pie2', '1m');
                       }}
@@ -330,7 +330,7 @@ export const Statistics = () => {
                       1m
                     </Button>
                     <Button
-                      color={pie2ChartTime === '3m' ? '' : 'gray'}
+                      color={pie2ChartTime === '3m' ? 'blue' : 'gray'}
                       onClick={() => {
                         toogleTimeHandler('pie2', '3m');
                       }}
@@ -338,7 +338,7 @@ export const Statistics = () => {
                       3m
                     </Button>
                     <Button
-                      color={pie2ChartTime === '1y' ? '' : 'gray'}
+                      color={pie2ChartTime === '1y' ? 'blue' : 'gray'}
                       onClick={() => {
                         toogleTimeHandler('pie2', '1y');
                       }}
