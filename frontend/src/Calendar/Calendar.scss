@@ -14,7 +14,7 @@
         max-width: 100%;
         background-color: #fff;
         margin-top: 25px;
-        border: 1px solid #ccc;
+        border: 1px solid rgb(243, 244, 246);
         border-radius: 5px;
         padding: 5px;
     }
@@ -37,6 +37,9 @@
         display: flex;
         max-width: 100%;
     }
+    .rdp-day_selected, .rdp-day_selected:focus-visible, .rdp-day_selected:hover {
+        background-color: rgb(14, 116, 144);
+    }
 
     tr.rdp-row {
         width: 100%;
@@ -53,7 +56,7 @@
 
     &__Info {
         display: flex;
-        border-bottom: 1px solid #ccc;
+        border-bottom: 1px solid rgb(243, 244, 246);
         width: 100%;
         justify-content:space-between;
         align-items: center;

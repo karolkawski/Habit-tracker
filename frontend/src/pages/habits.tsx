@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom';
 import { Icon } from '../components/UI/Icon/Icon';
 import { ContentWrapper } from '../Layout/ContentWrapper';
 import { AuthHeader } from '../auth/AuthHeader';
+import { Header } from '../components/UI/Header/Header';
 
 export const Habits = () => {
   const dispatch = useDispatch();
@@ -49,16 +50,15 @@ export const Habits = () => {
     <>
       <Navigation />
       <ContentWrapper>
+        <Header title={'Habits'} />
         <Table>
           <Table.Head>
             <Table.HeadCell>Name</Table.HeadCell>
             <Table.HeadCell>Type</Table.HeadCell>
-            <Table.HeadCell>Color</Table.HeadCell>
-            <Table.HeadCell>Icon</Table.HeadCell>
-            <Table.HeadCell>Frequency</Table.HeadCell>
-            <Table.HeadCell>
-              <span className="sr-only">Edit</span>
-            </Table.HeadCell>
+            <Table.HeadCell className="text-center">Color</Table.HeadCell>
+            <Table.HeadCell className="text-center">Icon</Table.HeadCell>
+            <Table.HeadCell className="text-center">Frequency</Table.HeadCell>
+            <Table.HeadCell className="flex justify-end">Action</Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
             {habits &&
@@ -74,28 +74,30 @@ export const Habits = () => {
                   <Table.Cell>
                     <ColorBox color={item.color} />
                   </Table.Cell>
-                  <Table.Cell>
+                  <Table.Cell className="text-center">
                     <Icon icon={item.icon} />
                   </Table.Cell>
-                  <Table.Cell>
+                  <Table.Cell className="text-left">
                     <Frequency
                       size="s"
                       days={item.frequency.days}
                       repeat={item.frequency.repeat}
                     />
                   </Table.Cell>
-                  <Table.Cell>
-                    <Link to={`/habits/${item._id}/edit`}>
-                      <Button>Edit</Button>
-                    </Link>
+                  <Table.Cell className="flex justify-end">
+                    <Button>
+                      <Link to={`/habits/${item._id}/edit`}>Edit</Link>
+                    </Button>
                   </Table.Cell>
                 </Table.Row>
               ))}
           </Table.Body>
         </Table>
-        <Link to={`/add`}>
-          <Button>Add</Button>
-        </Link>
+        <div className="flex justify-end mt-5 mr-5">
+          <Button>
+            <Link to={`/add`}>Add </Link>
+          </Button>
+        </div>
       </ContentWrapper>
     </>
   );
