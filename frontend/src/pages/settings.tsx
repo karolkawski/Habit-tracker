@@ -1,9 +1,10 @@
-import { Button, ButtonGroup } from 'flowbite-react';
+import { ToggleSwitch } from 'flowbite-react';
 import { Navigation } from '../Layout/Navigation/Navigation';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { ContentWrapper } from '../Layout/ContentWrapper';
 import { AuthHeader } from '../auth/AuthHeader';
+import { Header } from '../components/UI/Header/Header';
 
 export const Settings = () => {
   const darkMode = useSelector(
@@ -36,21 +37,16 @@ export const Settings = () => {
     <>
       <Navigation />
       <ContentWrapper>
-        <h5>Dark mode</h5>
-        <ButtonGroup className="Button__Toggle" aria-label="Basic example">
-          <Button
-            color={darkMode ? 'primary' : 'secondary'}
-            onClick={() => handleChangeDarmMode(true)}
-          >
-            ON
-          </Button>
-          <Button
-            color={!darkMode ? 'primary' : 'secondary'}
-            onClick={() => handleChangeDarmMode(false)}
-          >
-            OFF
-          </Button>
-        </ButtonGroup>
+        <Header title={'Settings'} />
+
+        <ToggleSwitch
+          checked={darkMode}
+          id="darkMode"
+          label="Dark mode"
+          onChange={() => {
+            handleChangeDarmMode(!darkMode);
+          }}
+        />
       </ContentWrapper>
     </>
   );

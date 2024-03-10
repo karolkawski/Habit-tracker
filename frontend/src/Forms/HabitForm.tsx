@@ -16,6 +16,7 @@ import axios from 'axios';
 import { HabitType } from '../types/Habit.d';
 import { ContentWrapper } from '../Layout/ContentWrapper';
 import { AuthHeader } from '../auth/AuthHeader';
+import { Header } from '../components/UI/Header/Header';
 
 interface MyFormValues {
   _id: string;
@@ -160,7 +161,8 @@ export const HabitForm = ({ isAdd }) => {
     <>
       <Navigation />
       <ContentWrapper>
-        <h4 className="py-5">New habit</h4>
+        <Header title={'New habit'} />
+
         <Formik
           initialValues={isAdd ? initialValues : habit}
           onSubmit={(values) => {
