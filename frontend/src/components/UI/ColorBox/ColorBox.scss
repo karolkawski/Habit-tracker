@@ -1,0 +1,73 @@
+.ColorBox  {
+display: flex;
+justify-content: center;
+align-items: center;
+
+}
+.color-box{
+    border-radius: 50%;
+    border: 0.5px solid #ccc;
+    background: #ccc;
+    width: 25px;
+    height: 25px;
+    position: relative;
+
+    &--yellow {
+      background: #ffff00;
+    
+    }
+    &--red {
+      background: #e40000;
+    
+    }
+    &--green {
+      background: #00ff00;
+    
+    }
+    &--blue {
+      background: #0000ff;
+    
+    }
+
+    input{
+      opacity: 0.5;
+      width: 25px !important;
+      height: 25px !important;
+      border-radius: 50% !important;
+      position: relative;
+      top: -5px;
+
+      &:checked[type=checkbox]{
+        background-image: unset;
+        background: unset;
+        cursor: pointer;
+        border: 3px solid #000;
+      
+      }
+    }
+    .form-check-input:checked[type=radio] {
+      background-image: none;
+      background-color: unset;
+    }
+
+    .form-check-input[type=radio] {
+      background-color: unset
+    }
+
+    .form-check-input:checked[type=checkbox]{
+      background-image: unset;
+      background: unset;
+      cursor: pointer;
+      border: 3px solid #000;
+    
+    }
+    .form-check-input[type=checkbox] {
+      cursor: pointer;
+      background-image: unset;
+      background: unset;
+    }
+  
+  }
+  
+
+  
