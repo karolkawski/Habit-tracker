@@ -11,16 +11,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import useIsMobile from '../utils/isMobile';
 import { Navigation } from '../Layout/Navigation/Navigation';
 import { Button, Dropdown } from 'flowbite-react';
-import { getTokenFromLocalStorage } from '../utils/token';
 import {
   fetchDataRequest,
   fetchDataSuccess,
 } from '../store/actions/habitActions';
 import { ContentWrapper } from '../Layout/ContentWrapper';
-
-const config = {
-  headers: { Authorization: `Bearer ${getTokenFromLocalStorage()}` },
-};
+import { AuthHeader } from '../auth/AuthHeader';
 
 export const Statistics = () => {
   const dispatch = useDispatch();
@@ -44,7 +40,7 @@ export const Statistics = () => {
     try {
       const fetchedHabits = await axios.get(
         'http://localhost:4000/api/habits',
-        config
+        AuthHeader
       );
       if (fetchedHabits) {
         dispatch(fetchDataSuccess(fetchedHabits.data));
@@ -68,7 +64,7 @@ export const Statistics = () => {
           habitID: habit === 'ALL' ? 'ALL' : habit._id,
           year: year,
         },
-        ...config,
+        ...AuthHeader,
       })
       .then((res) => {
         setCalendarChartData(res.data);
@@ -83,7 +79,7 @@ export const Statistics = () => {
         params: {
           time: pie1ChartTime,
         },
-        ...config,
+        ...AuthHeader,
       })
       .then((res) => {
         setPie1ChartData(res.data);
@@ -99,7 +95,7 @@ export const Statistics = () => {
           habitID: habit === 'ALL' ? 'ALL' : habit._id,
           time: pie2ChartTime,
         },
-        ...config,
+        ...AuthHeader,
       })
       .then((res) => {
         setPie2ChartData(res.data);

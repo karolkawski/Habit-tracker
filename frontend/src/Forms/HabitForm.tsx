@@ -13,9 +13,9 @@ import { Formik } from 'formik';
 import { v4 as uuidv4 } from 'uuid';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-import { getTokenFromLocalStorage } from '../utils/token';
 import { HabitType } from '../types/Habit.d';
 import { ContentWrapper } from '../Layout/ContentWrapper';
+import { AuthHeader } from '../auth/AuthHeader';
 
 interface MyFormValues {
   _id: string;
@@ -104,9 +104,6 @@ const iconsForm = [
   },
 ];
 
-const config = {
-  headers: { Authorization: `Bearer ${getTokenFromLocalStorage()}` },
-};
 export const HabitForm = ({ isAdd }) => {
   const habits = useSelector((state: { habit }) => state.habit.habits);
   let habit: HabitType | undefined;
@@ -150,7 +147,7 @@ export const HabitForm = ({ isAdd }) => {
   const handleDeleteHabit = () => {
     console.log('delete');
     axios
-      .delete(`http://localhost:4000/api/habits/${params.id}`, config)
+      .delete(`http://localhost:4000/api/habits/${params.id}`, AuthHeader)
       .then((res) => {
         navigate('/habits');
       })
@@ -172,7 +169,7 @@ export const HabitForm = ({ isAdd }) => {
                 .post(
                   'http://localhost:4000/api/habits/add',
                   { ...values },
-                  config
+                  AuthHeader
                 )
                 .then((res) => {
                   console.log(res.data);
@@ -188,7 +185,7 @@ export const HabitForm = ({ isAdd }) => {
               .patch(
                 `http://localhost:4000/api/habits/${values._id}`,
                 { ...values },
-                config
+                AuthHeader
               )
               .then((res) => {
                 navigate('/habits');

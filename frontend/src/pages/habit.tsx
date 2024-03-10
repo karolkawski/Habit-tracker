@@ -9,12 +9,9 @@ import { useEffect, useState } from 'react';
 import { HabitType } from '../types/Habit.d';
 import axios from 'axios';
 import { Navigation } from '../Layout/Navigation/Navigation';
-import { getTokenFromLocalStorage } from '../utils/token';
 import { ContentWrapper } from '../Layout/ContentWrapper';
+import { AuthHeader } from '../auth/AuthHeader';
 
-const config = {
-  headers: { Authorization: `Bearer ${getTokenFromLocalStorage()}` },
-};
 export const Habit = () => {
   const habits = useSelector((state: { habit }) => state.habit.habits);
   const [rel, setRel] = useState(false);
@@ -39,7 +36,7 @@ export const Habit = () => {
 
   const handleDeleteHabit = () => {
     axios
-      .delete(`http://localhost:4000/api/habits/${params.id}`, config)
+      .delete(`http://localhost:4000/api/habits/${params.id}`, AuthHeader)
       .then((res) => {
         navigate('/habits');
       })

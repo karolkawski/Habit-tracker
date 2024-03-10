@@ -3,7 +3,6 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { Navigation } from '../Layout/Navigation/Navigation';
 import { EntryRow } from '../Entry/EntryRow';
-import { getTokenFromLocalStorage } from '../utils/token';
 import { Cal } from '../Calendar/Calendar';
 import { EntryType } from '../types/Entrie.d';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,10 +13,7 @@ import {
   setIsUndoneEntry,
 } from '../store/actions/entryActions';
 import { ContentWrapper } from '../Layout/ContentWrapper';
-
-const config = {
-  headers: { Authorization: `Bearer ${getTokenFromLocalStorage()}` },
-};
+import { AuthHeader } from '../auth/AuthHeader';
 
 export const Dashboard = () => {
   const type = 'Tasks';
@@ -36,7 +32,7 @@ export const Dashboard = () => {
 
     axios
       .get('http://localhost:4000/api/habitsByDate', {
-        ...config,
+        ...AuthHeader,
         params: { time: selectedDate },
       })
       .then((res) => {

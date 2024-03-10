@@ -2,13 +2,8 @@ import { Button, ButtonGroup } from 'flowbite-react';
 import { Navigation } from '../Layout/Navigation/Navigation';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
-import { getTokenFromLocalStorage } from '../utils/token';
 import { ContentWrapper } from '../Layout/ContentWrapper';
-
-const config = {
-  headers: { Authorization: `Bearer ${getTokenFromLocalStorage()}` },
-};
+import { AuthHeader } from '../auth/AuthHeader';
 
 export const Settings = () => {
   const darkMode = useSelector(
@@ -27,7 +22,7 @@ export const Settings = () => {
           name: 'darkMode',
           value: darkMode,
         },
-        config
+        AuthHeader
       )
       .then((res) => {
         setDarkMode(darkMode);

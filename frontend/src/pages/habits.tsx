@@ -5,7 +5,6 @@ import {
   fetchDataRequest,
   fetchDataSuccess,
 } from '../store/actions/habitActions';
-import { getTokenFromLocalStorage } from '../utils/token';
 import { Navigation } from '../Layout/Navigation/Navigation';
 import { Button, Table } from 'flowbite-react';
 import { ColorBox } from '../components/UI/ColorBox/ColorBox';
@@ -13,10 +12,7 @@ import { Frequency } from '../components/UI/Frequency/Frequency';
 import { Link } from 'react-router-dom';
 import { Icon } from '../components/UI/Icon/Icon';
 import { ContentWrapper } from '../Layout/ContentWrapper';
-
-const config = {
-  headers: { Authorization: `Bearer ${getTokenFromLocalStorage()}` },
-};
+import { AuthHeader } from '../auth/AuthHeader';
 
 export const Habits = () => {
   const dispatch = useDispatch();
@@ -28,7 +24,7 @@ export const Habits = () => {
     try {
       const fetchedHabits = await axios.get(
         'http://localhost:4000/api/habits',
-        config
+        AuthHeader
       );
       if (fetchedHabits) {
         dispatch(fetchDataSuccess(fetchedHabits.data));

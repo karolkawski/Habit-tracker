@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Icon } from '../components/UI/Icon/Icon';
 import axios from 'axios';
-import { getTokenFromLocalStorage } from '../utils/token';
-const config = {
-  headers: { Authorization: `Bearer ${getTokenFromLocalStorage()}` },
-};
+import { AuthHeader } from '../auth/AuthHeader';
 
 export const EntryRow = ({
   habit,
@@ -27,7 +24,7 @@ export const EntryRow = ({
             count_mode: habit.count_mode,
             habit_id: habit._id,
           },
-          config
+          AuthHeader
         )
         .then((res) => {
           handleAddEntry(res.data);
@@ -40,7 +37,7 @@ export const EntryRow = ({
     }
 
     axios
-      .delete(`http://localhost:4000/api/entries/${entry._id}`, config)
+      .delete(`http://localhost:4000/api/entries/${entry._id}`, AuthHeader)
       .then((res) => {
         if (res.data) {
           handleRemoveEntry(res.data);
