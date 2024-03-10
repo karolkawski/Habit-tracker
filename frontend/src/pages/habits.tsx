@@ -6,12 +6,13 @@ import {
   fetchDataSuccess,
 } from '../store/actions/habitActions';
 import { getTokenFromLocalStorage } from '../utils/token';
-import { Navigation } from '../layout/Navigation/Navigation';
+import { Navigation } from '../Layout/Navigation/Navigation';
 import { Button, Table } from 'flowbite-react';
 import { ColorBox } from '../components/UI/ColorBox/ColorBox';
 import { Frequency } from '../components/UI/Frequency/Frequency';
 import { Link } from 'react-router-dom';
 import { Icon } from '../components/UI/Icon/Icon';
+import { ContentWrapper } from '../Layout/ContentWrapper';
 
 const config = {
   headers: { Authorization: `Bearer ${getTokenFromLocalStorage()}` },
@@ -51,7 +52,7 @@ export const Habits = () => {
   return (
     <>
       <Navigation />
-      <div className="overflow-x-auto container mx-auto">
+      <ContentWrapper>
         <Table>
           <Table.Head>
             <Table.HeadCell>Name</Table.HeadCell>
@@ -99,7 +100,7 @@ export const Habits = () => {
         <Link to={`/add`}>
           <Button>Add</Button>
         </Link>
-      </div>
+      </ContentWrapper>
     </>
   );
 };

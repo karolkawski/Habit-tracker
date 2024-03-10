@@ -9,13 +9,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartLine, faChartPie } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import useIsMobile from '../utils/isMobile';
-import { Navigation } from '../layout/Navigation/Navigation';
+import { Navigation } from '../Layout/Navigation/Navigation';
 import { Button, Dropdown } from 'flowbite-react';
 import { getTokenFromLocalStorage } from '../utils/token';
 import {
   fetchDataRequest,
   fetchDataSuccess,
 } from '../store/actions/habitActions';
+import { ContentWrapper } from '../Layout/ContentWrapper';
 
 const config = {
   headers: { Authorization: `Bearer ${getTokenFromLocalStorage()}` },
@@ -168,213 +169,216 @@ export const Statistics = () => {
     };
   }, [chartWrapperSize]);
 
-  // if (habits && habits.length === 0) {
-  //   return <>NONE</>;
-  // }
-
   console.log(habits);
   return (
     <>
       <Navigation />
-      <div className={'Statistics container'}>
-        <div>
-          <div className="my-1 d-flex flex-div">
-            <p className="mb-0 mr-3 font-weight-bold d-flex justify-content-center align-items-center">
-              YEAR:
-            </p>
-            <DayPicker
-              selected={new Date()}
-              captionLayout="dropdown-buttons"
-              fromYear={2015}
-              toYear={2025}
-              onMonthChange={chageMonthOrYear}
-            />
-            <p className="mb-0 mr-3 font-weight-bold d-flex justify-content-center align-items-center ">
-              HABIT:
-            </p>
-            <Dropdown label={habit && habit !== 'ALL' ? habit.name : 'ALL'}>
-              <Dropdown.Item
-                onClick={() => handleSelectHabit('ALL')}
-                href={`#/ALL`}
-              >
-                ALL
-              </Dropdown.Item>
-              {habits &&
-                habits.map((habit, index) => (
-                  <Dropdown.Item
-                    key={index}
-                    onClick={() => handleSelectHabit(habit)}
-                    href={`#/${habit._id}`}
-                  >
-                    {habit.name}
-                  </Dropdown.Item>
-                ))}
-            </Dropdown>
-          </div>
-        </div>
-        <div>
-          <div className="ChartPill Statistic__Chart">
-            <CalendarChart
-              data={calendarChartData}
-              dimensions={{ margin: { top: 0, right: 0, bottom: 0, left: 50 } }}
-            />
-          </div>
-        </div>
-        {!isMobile ? (
-          <></>
-        ) : (
+      <ContentWrapper>
+        <div className={'Statistics container'}>
           <div>
-            <div className="Controls">
-              {chartType === 'linear' ? (
-                <Button
-                  color="primary"
-                  onClick={() => changeChartType('linear')}
+            <div className="my-1 d-flex flex-div">
+              <p className="mb-0 mr-3 font-weight-bold d-flex justify-content-center align-items-center">
+                YEAR:
+              </p>
+              <DayPicker
+                selected={new Date()}
+                captionLayout="dropdown-buttons"
+                fromYear={2015}
+                toYear={2025}
+                onMonthChange={chageMonthOrYear}
+              />
+              <p className="mb-0 mr-3 font-weight-bold d-flex justify-content-center align-items-center ">
+                HABIT:
+              </p>
+              <Dropdown label={habit && habit !== 'ALL' ? habit.name : 'ALL'}>
+                <Dropdown.Item
+                  onClick={() => handleSelectHabit('ALL')}
+                  href={`#/ALL`}
                 >
-                  <FontAwesomeIcon icon={faChartLine} /> Linear
-                </Button>
-              ) : (
-                <Button
-                  color="secondary"
-                  onClick={() => changeChartType('linear')}
-                >
-                  <FontAwesomeIcon icon={faChartLine} /> Linear
-                </Button>
-              )}
-              {chartType === 'circle' ? (
-                <Button
-                  color="primary"
-                  onClick={() => changeChartType('circle')}
-                >
-                  <FontAwesomeIcon icon={faChartPie} /> Circle
-                </Button>
-              ) : (
-                <Button
-                  color="secondary"
-                  onClick={() => changeChartType('circle')}
-                >
-                  <FontAwesomeIcon icon={faChartPie} /> Circle
-                </Button>
-              )}
+                  ALL
+                </Dropdown.Item>
+                {habits &&
+                  habits.map((habit, index) => (
+                    <Dropdown.Item
+                      key={index}
+                      onClick={() => handleSelectHabit(habit)}
+                      href={`#/${habit._id}`}
+                    >
+                      {habit.name}
+                    </Dropdown.Item>
+                  ))}
+              </Dropdown>
             </div>
           </div>
-        )}
+          <div>
+            <div className="ChartPill Statistic__Chart">
+              <CalendarChart
+                data={calendarChartData}
+                dimensions={{
+                  margin: { top: 0, right: 0, bottom: 0, left: 50 },
+                }}
+              />
+            </div>
+          </div>
+          {!isMobile ? (
+            <></>
+          ) : (
+            <div>
+              <div className="Controls">
+                {chartType === 'linear' ? (
+                  <Button
+                    color="primary"
+                    onClick={() => changeChartType('linear')}
+                  >
+                    <FontAwesomeIcon icon={faChartLine} /> Linear
+                  </Button>
+                ) : (
+                  <Button
+                    color="secondary"
+                    onClick={() => changeChartType('linear')}
+                  >
+                    <FontAwesomeIcon icon={faChartLine} /> Linear
+                  </Button>
+                )}
+                {chartType === 'circle' ? (
+                  <Button
+                    color="primary"
+                    onClick={() => changeChartType('circle')}
+                  >
+                    <FontAwesomeIcon icon={faChartPie} /> Circle
+                  </Button>
+                ) : (
+                  <Button
+                    color="secondary"
+                    onClick={() => changeChartType('circle')}
+                  >
+                    <FontAwesomeIcon icon={faChartPie} /> Circle
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
 
-        <div>
-          <div className="ChartPill pieCharts">
-            {!isMobile || chartType === 'circle' ? (
-              <>
-                <PieChart data={Pie1ChartData} dimensions={{ margin: 20 }} />
-                <div className="Controls">
-                  <Button
-                    color={pie1ChartTime === '7d' ? 'primary' : 'secondary'}
-                    onClick={() => {
-                      toogleTimeHandler('pie1', '7d');
-                    }}
-                  >
-                    7d
-                  </Button>
-                  <Button
-                    color={pie1ChartTime === '14d' ? 'primary' : 'secondary'}
-                    onClick={() => {
-                      toogleTimeHandler('pie1', '14d');
-                    }}
-                  >
-                    14d
-                  </Button>
-                  <Button
-                    color={pie1ChartTime === '1m' ? 'primary' : 'secondary'}
-                    onClick={() => {
-                      toogleTimeHandler('pie1', '1m');
-                    }}
-                  >
-                    1m
-                  </Button>
-                  <Button
-                    color={pie1ChartTime === '3m' ? 'primary' : 'secondary'}
-                    onClick={() => {
-                      toogleTimeHandler('pie1', '3m');
-                    }}
-                  >
-                    3m
-                  </Button>
-                  <Button
-                    color={pie1ChartTime === '1y' ? 'primary' : 'secondary'}
-                    onClick={() => {
-                      toogleTimeHandler('pie1', '1y');
-                    }}
-                  >
-                    1y
-                  </Button>
-                </div>
-              </>
-            ) : (
-              <></>
-            )}
-            {!isMobile || chartType === 'circle' ? (
-              <>
-                <PieChart data={Pie2ChartData} dimensions={{ margin: 20 }} />
-                <div className="Controls">
-                  <Button
-                    color={pie1ChartTime === '7d' ? 'primary' : 'secondary'}
-                    onClick={() => {
-                      toogleTimeHandler('pie2', '7d');
-                    }}
-                  >
-                    7d
-                  </Button>
-                  <Button
-                    color={pie2ChartTime === '14d' ? 'primary' : 'secondary'}
-                    onClick={() => {
-                      toogleTimeHandler('pie2', '14d');
-                    }}
-                  >
-                    14d
-                  </Button>
-                  <Button
-                    color={pie2ChartTime === '1m' ? 'primary' : 'secondary'}
-                    onClick={() => {
-                      toogleTimeHandler('pie2', '1m');
-                    }}
-                  >
-                    1m
-                  </Button>
-                  <Button
-                    color={pie2ChartTime === '3m' ? 'primary' : 'secondary'}
-                    onClick={() => {
-                      toogleTimeHandler('pie2', '3m');
-                    }}
-                  >
-                    3m
-                  </Button>
-                  <Button
-                    color={pie2ChartTime === '1y' ? 'primary' : 'secondary'}
-                    onClick={() => {
-                      toogleTimeHandler('pie2', '1y');
-                    }}
-                  >
-                    1y
-                  </Button>
-                </div>
-              </>
-            ) : (
-              <></>
-            )}
-          </div>
-        </div>
-        <div>
-          <div className="ChartPill lineChart">
-            <div id="tolltip-linear">
-              <div className="tooltip__date"></div>
-              <div className="tooltip__content"></div>
+          <div>
+            <div className="ChartPill pieCharts">
+              {!isMobile || chartType === 'circle' ? (
+                <>
+                  <PieChart data={Pie1ChartData} dimensions={{ margin: 20 }} />
+                  <div className="Controls">
+                    <Button
+                      color={pie1ChartTime === '7d' ? 'primary' : 'secondary'}
+                      onClick={() => {
+                        toogleTimeHandler('pie1', '7d');
+                      }}
+                    >
+                      7d
+                    </Button>
+                    <Button
+                      color={pie1ChartTime === '14d' ? 'primary' : 'secondary'}
+                      onClick={() => {
+                        toogleTimeHandler('pie1', '14d');
+                      }}
+                    >
+                      14d
+                    </Button>
+                    <Button
+                      color={pie1ChartTime === '1m' ? 'primary' : 'secondary'}
+                      onClick={() => {
+                        toogleTimeHandler('pie1', '1m');
+                      }}
+                    >
+                      1m
+                    </Button>
+                    <Button
+                      color={pie1ChartTime === '3m' ? 'primary' : 'secondary'}
+                      onClick={() => {
+                        toogleTimeHandler('pie1', '3m');
+                      }}
+                    >
+                      3m
+                    </Button>
+                    <Button
+                      color={pie1ChartTime === '1y' ? 'primary' : 'secondary'}
+                      onClick={() => {
+                        toogleTimeHandler('pie1', '1y');
+                      }}
+                    >
+                      1y
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <></>
+              )}
+              {!isMobile || chartType === 'circle' ? (
+                <>
+                  <PieChart data={Pie2ChartData} dimensions={{ margin: 20 }} />
+                  <div className="Controls">
+                    <Button
+                      color={pie1ChartTime === '7d' ? 'primary' : 'secondary'}
+                      onClick={() => {
+                        toogleTimeHandler('pie2', '7d');
+                      }}
+                    >
+                      7d
+                    </Button>
+                    <Button
+                      color={pie2ChartTime === '14d' ? 'primary' : 'secondary'}
+                      onClick={() => {
+                        toogleTimeHandler('pie2', '14d');
+                      }}
+                    >
+                      14d
+                    </Button>
+                    <Button
+                      color={pie2ChartTime === '1m' ? 'primary' : 'secondary'}
+                      onClick={() => {
+                        toogleTimeHandler('pie2', '1m');
+                      }}
+                    >
+                      1m
+                    </Button>
+                    <Button
+                      color={pie2ChartTime === '3m' ? 'primary' : 'secondary'}
+                      onClick={() => {
+                        toogleTimeHandler('pie2', '3m');
+                      }}
+                    >
+                      3m
+                    </Button>
+                    <Button
+                      color={pie2ChartTime === '1y' ? 'primary' : 'secondary'}
+                      onClick={() => {
+                        toogleTimeHandler('pie2', '1y');
+                      }}
+                    >
+                      1y
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <></>
+              )}
             </div>
-            {chartType === 'linear' ? (
-              <LineChart data={calendarChartData} dimensions={{ margin: 0 }} />
-            ) : (
-              <></>
-            )}
+          </div>
+          <div>
+            <div className="ChartPill lineChart">
+              <div id="tolltip-linear">
+                <div className="tooltip__date"></div>
+                <div className="tooltip__content"></div>
+              </div>
+              {chartType === 'linear' ? (
+                <LineChart
+                  data={calendarChartData}
+                  dimensions={{ margin: 0 }}
+                />
+              ) : (
+                <></>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      </ContentWrapper>
     </>
   );
 };

@@ -1,7 +1,7 @@
 import './dashboard.scss';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import { Navigation } from '../layout/Navigation/Navigation';
+import { Navigation } from '../Layout/Navigation/Navigation';
 import { EntryRow } from '../Entry/EntryRow';
 import { getTokenFromLocalStorage } from '../utils/token';
 import { Cal } from '../Calendar/Calendar';
@@ -13,6 +13,7 @@ import {
   setIsDoneEntry,
   setIsUndoneEntry,
 } from '../store/actions/entryActions';
+import { ContentWrapper } from '../Layout/ContentWrapper';
 
 const config = {
   headers: { Authorization: `Bearer ${getTokenFromLocalStorage()}` },
@@ -92,7 +93,7 @@ export const Dashboard = () => {
   return (
     <>
       <Navigation />
-      <div className="Dashboard container mx-auto">
+      <ContentWrapper>
         <div className="Dashboard__Navigation Calendar">
           <Cal
             selectedDate={selectedDate}
@@ -121,7 +122,7 @@ export const Dashboard = () => {
             </div>
           </div>
         </div>
-      </div>
+      </ContentWrapper>
     </>
   );
 };

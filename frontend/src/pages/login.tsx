@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { storeTokenInLocalStorage } from '../utils/token';
 import { useNavigate } from 'react-router-dom';
 import { Button, Checkbox, Label, TextInput } from 'flowbite-react';
+import { ContentWrapper } from '../Layout/ContentWrapper';
 
 export const Login = () => {
   const [login] = useState('karol1');
@@ -37,37 +38,39 @@ export const Login = () => {
   }
 
   return (
-    <div
-      className="flex flex-col justify-center items-center"
-      style={{ height: '100vh' }}
-    >
-      <form className="flex max-w-md flex-col gap-4">
-        <div>
-          <div className="mb-2 block">
-            <Label htmlFor="login" value="Your email" />
+    <ContentWrapper>
+      <div
+        className="flex flex-col justify-center items-center"
+        style={{ height: '100vh' }}
+      >
+        <form className="flex max-w-md flex-col gap-4">
+          <div>
+            <div className="mb-2 block">
+              <Label htmlFor="login" value="Your email" />
+            </div>
+            <TextInput id="login" type="text" placeholder="login" required />
           </div>
-          <TextInput id="login" type="text" placeholder="login" required />
-        </div>
-        <div>
-          <div className="mb-2 block">
-            <Label htmlFor="password1" value="Your password" />
+          <div>
+            <div className="mb-2 block">
+              <Label htmlFor="password1" value="Your password" />
+            </div>
+            <TextInput id="password1" type="password" required />
           </div>
-          <TextInput id="password1" type="password" required />
-        </div>
-        <div className="flex items-center gap-2">
-          <Checkbox id="remember" />
-          <Label htmlFor="remember">Remember me</Label>
-        </div>
-        <Button
-          type="submit"
-          onClick={(e) => {
-            e.preventDefault();
-            signIn();
-          }}
-        >
-          Submit
-        </Button>
-      </form>
-    </div>
+          <div className="flex items-center gap-2">
+            <Checkbox id="remember" />
+            <Label htmlFor="remember">Remember me</Label>
+          </div>
+          <Button
+            type="submit"
+            onClick={(e) => {
+              e.preventDefault();
+              signIn();
+            }}
+          >
+            Submit
+          </Button>
+        </form>
+      </div>
+    </ContentWrapper>
   );
 };

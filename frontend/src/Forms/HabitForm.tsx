@@ -1,4 +1,4 @@
-import { Navigation } from '../layout/Navigation/Navigation';
+import { Navigation } from '../Layout/Navigation/Navigation';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   Button,
@@ -15,6 +15,7 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { getTokenFromLocalStorage } from '../utils/token';
 import { HabitType } from '../types/Habit.d';
+import { ContentWrapper } from '../Layout/ContentWrapper';
 
 interface MyFormValues {
   _id: string;
@@ -161,7 +162,7 @@ export const HabitForm = ({ isAdd }) => {
   return (
     <>
       <Navigation />
-      <div className="container mx-auto">
+      <ContentWrapper>
         <h4 className="py-5">New habit</h4>
         <Formik
           initialValues={isAdd ? initialValues : habit}
@@ -366,7 +367,7 @@ export const HabitForm = ({ isAdd }) => {
           )}
         </Formik>
         <Back />
-      </div>
+      </ContentWrapper>
     </>
   );
 };

@@ -8,8 +8,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { HabitType } from '../types/Habit.d';
 import axios from 'axios';
-import { Navigation } from '../layout/Navigation/Navigation';
+import { Navigation } from '../Layout/Navigation/Navigation';
 import { getTokenFromLocalStorage } from '../utils/token';
+import { ContentWrapper } from '../Layout/ContentWrapper';
 
 const config = {
   headers: { Authorization: `Bearer ${getTokenFromLocalStorage()}` },
@@ -47,36 +48,38 @@ export const Habit = () => {
       });
   };
   return (
-    <div className="container mx-auto">
+    <>
       <Navigation />
-      {!habit ? (
-        <>NO EXIST</>
-      ) : (
-        <>
-          <h2>Habit NO:{habit._id}</h2>
-          <h2>Habit name: {habit.name}</h2>
-          <div className="Habit__details">
-            <h3>Details</h3>
-            <div>type: {habit.type}</div>
-            <div>
-              color: <ColorBox color={habit.color} />
+      <ContentWrapper>
+        {!habit ? (
+          <>NO EXIST</>
+        ) : (
+          <>
+            <h2>Habit NO:{habit._id}</h2>
+            <h2>Habit name: {habit.name}</h2>
+            <div className="Habit__details">
+              <h3>Details</h3>
+              <div>type: {habit.type}</div>
+              <div>
+                color: <ColorBox color={habit.color} />
+              </div>
+              <div>
+                icon: <Icon icon={habit.icon} />
+              </div>
+              <div>frequency: {habit.frequency.repeat}</div>
             </div>
-            <div>
-              icon: <Icon icon={habit.icon} />
+            <div className="Habit__stats">
+              <Frequency size={''} {...habit.frequency} />
             </div>
-            <div>frequency: {habit.frequency.repeat}</div>
-          </div>
-          <div className="Habit__stats">
-            <Frequency size={''} {...habit.frequency} />
-          </div>
-          <div className="Habit__actions">
-            <Button color="danger" onClick={handleDeleteHabit}>
-              Delete
-            </Button>
-            <Back />
-          </div>
-        </>
-      )}
-    </div>
+            <div className="Habit__actions">
+              <Button color="danger" onClick={handleDeleteHabit}>
+                Delete
+              </Button>
+              <Back />
+            </div>
+          </>
+        )}
+      </ContentWrapper>
+    </>
   );
 };

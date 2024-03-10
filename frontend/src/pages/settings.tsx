@@ -1,9 +1,10 @@
 import { Button, ButtonGroup } from 'flowbite-react';
-import { Navigation } from '../layout/Navigation/Navigation';
+import { Navigation } from '../Layout/Navigation/Navigation';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { getTokenFromLocalStorage } from '../utils/token';
+import { ContentWrapper } from '../Layout/ContentWrapper';
 
 const config = {
   headers: { Authorization: `Bearer ${getTokenFromLocalStorage()}` },
@@ -39,7 +40,7 @@ export const Settings = () => {
   return (
     <>
       <Navigation />
-      <div>
+      <ContentWrapper>
         <h5>Dark mode</h5>
         <ButtonGroup className="Button__Toggle" aria-label="Basic example">
           <Button
@@ -55,7 +56,7 @@ export const Settings = () => {
             OFF
           </Button>
         </ButtonGroup>
-      </div>
+      </ContentWrapper>
     </>
   );
 };
