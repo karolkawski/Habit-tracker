@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
-import { format, endOfWeek, isWithinInterval, startOfWeek } from 'date-fns';
 import 'react-day-picker/dist/style.css';
 import './Calendar.scss';
+import React, { useEffect } from 'react';
+import { format, endOfWeek, isWithinInterval, startOfWeek } from 'date-fns';
 import {
   CaptionProps,
   DayPicker,
@@ -9,14 +9,14 @@ import {
   RowProps,
   useNavigation,
 } from 'react-day-picker';
-import { Button } from 'flowbite-react';
+import { Button, ButtonGroup } from 'flowbite-react';
 
 export function Cal({
   selectedDate,
   handleChangeDate,
 }: {
   selectedDate: Date;
-  handleChangeDate: () => void;
+  handleChangeDate: (date: Date) => void;
 }) {
   const [selected, setSelected] = React.useState<Date>(selectedDate);
 
@@ -47,82 +47,60 @@ export function Cal({
 
   useEffect(() => {
     handleChangeDate(selected);
-  }, [selected]);
-
-  const changeDateCalculation = (direction: 'prev' | 'next'): Date => {
-    const date = selected;
-
-    switch (direction) {
-      case 'prev':
-        date.setDate(date.getDate() - 7);
-        date.setHours(selected.getHours());
-        date.setMinutes(selected.getMinutes());
-        date.setSeconds(selected.getSeconds());
-        break;
-      case 'next':
-        date.setDate(date.getDate() + 7);
-        date.setHours(selected.getHours());
-        date.setMinutes(selected.getMinutes());
-        date.setSeconds(selected.getSeconds());
-        break;
-      default:
-        break;
-    }
-    return date;
-  };
+  }, [handleChangeDate, selected]);
 
   function CustomCaption(props: CaptionProps) {
-    const { goToMonth, nextMonth, previousMonth, currentMonth, goToDate } =
+    const { goToMonth, nextMonth, previousMonth, currentMonth } =
       useNavigation();
 
     return (
       <>
-        <h2>{format(props.displayMonth, 'MMM yyy')}</h2>
-        <div className="flex justify-end">
-          <Button
-            className="mr-2"
-            disabled={!previousMonth}
-            onClick={() => {
-              const date = new Date(selected);
+        <div className="flex justify-between">
+          <h1 className="flex justify-center items-center text-xl">
+            {format(props.displayMonth, 'MMM yyy')}
+          </h1>
+          <ButtonGroup>
+            <Button
+              className="mr-2"
+              disabled={!previousMonth}
+              onClick={() => {
+                const date = new Date(selected);
 
-              date.setDate(selected.getDate() - 7);
-              date.setHours(selected.getHours());
-              date.setMinutes(selected.getMinutes());
-              date.setSeconds(selected.getSeconds());
+                date.setDate(selected.getDate() - 7);
+                date.setHours(selected.getHours());
+                date.setMinutes(selected.getMinutes());
+                date.setSeconds(selected.getSeconds());
 
-              if (date.getMonth() !== currentMonth.getMonth()) {
-                previousMonth && goToMonth(previousMonth);
-              }
-              CustomSelect(date);
-            }}
-          >
-            {'<'}
-          </Button>
-          <Button
-            disabled={!nextMonth}
-            onClick={() => {
-              const date = new Date(selected);
+                if (date.getMonth() !== currentMonth.getMonth()) {
+                  previousMonth && goToMonth(previousMonth);
+                }
+                CustomSelect(date);
+              }}
+            >
+              {'<'}
+            </Button>
+            <Button
+              disabled={!nextMonth}
+              onClick={() => {
+                const date = new Date(selected);
 
-              date.setDate(selected.getDate() + 7);
-              date.setHours(selected.getHours());
-              date.setMinutes(selected.getMinutes());
-              date.setSeconds(selected.getSeconds());
+                date.setDate(selected.getDate() + 7);
+                date.setHours(selected.getHours());
+                date.setMinutes(selected.getMinutes());
+                date.setSeconds(selected.getSeconds());
 
-              if (date.getMonth() !== currentMonth.getMonth()) {
-                nextMonth && goToMonth(nextMonth);
-              }
-              CustomSelect(date);
-            }}
-          >
-            {'>'}
-          </Button>
+                if (date.getMonth() !== currentMonth.getMonth()) {
+                  nextMonth && goToMonth(nextMonth);
+                }
+                CustomSelect(date);
+              }}
+            >
+              {'>'}
+            </Button>
+          </ButtonGroup>
         </div>
       </>
     );
-  }
-  let footer = <p>Please pick a day.</p>;
-  if (selected) {
-    footer = <p>You picked {format(selected, 'PP')}.</p>;
   }
   return (
     <DayPicker

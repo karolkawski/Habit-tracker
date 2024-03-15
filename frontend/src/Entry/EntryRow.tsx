@@ -13,6 +13,10 @@ export const EntryRow = ({
   const { name, icon } = habit;
   const [isDone, setIsDone] = useState(!!entry);
 
+  const isDoneStyles = {
+    true: 'bg-secondary',
+    false: 'bg-white',
+  };
   const toggleEntry = () => {
     if (!entry) {
       axios
@@ -62,19 +66,17 @@ export const EntryRow = ({
   }, [entry, selectedDate]);
 
   return (
-    <div className="Dashboard__Habit">
+    <div className="flex flex-row items-center border-b-[1px] py-2">
       <button
-        className={`Dashboard__HabitDone ${
-          isDone && 'Dashboard__HabitDone--done'
-        }`}
+        className={`Dashboard__HabitDone w-10 h-10 rounded-[50%] border-[1px] mr-5 pointer text-white  ${isDoneStyles[isDone]}`}
         onClick={() => toggleEntry()}
       >
-        <Icon icon={'fa-check'} />
+        {isDone ? <Icon icon={'check'} /> : ''}
       </button>
-      <div className="Dashboard__HabitDetails">
-        <div className="Dashboard__HabitDetailsTitle">{name}</div>
+      <div className="flex flex-col w-full">
+        <div className="text-base">{name}</div>
       </div>
-      <div className="Dashboard__HabitIcon">
+      <div className="border-[1px] border-black w-10 h-10 p-2 rounded flex justify-center bg-white">
         <Icon icon={icon} />
       </div>
     </div>
