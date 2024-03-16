@@ -17,6 +17,7 @@ import { HabitType } from '../types/Habit.d';
 import { ContentWrapper } from '../Layout/ContentWrapper';
 import { AuthHeader } from '../auth/AuthHeader';
 import { Header } from '../components/UI/Header/Header';
+import { ButtonCustomTheme } from '../theme/ButtonCustomTheme';
 
 interface MyFormValues {
   _id: string;
@@ -85,7 +86,7 @@ const iconsForm = [
   {
     className: 'icon-box icon-box--apple',
     id: 'fa-apple',
-    value: 'apple',
+    value: 'apple-whole',
     name: 'icon',
     label: 'Apple',
   },
@@ -128,7 +129,7 @@ export const HabitForm = ({ isAdd }) => {
     name: '',
     type: 'other',
     color: '#ffff00',
-    icon: 'fa-plane',
+    icon: 'plane',
     count_mode: false,
     amount: 1,
     frequency: {
@@ -240,6 +241,7 @@ export const HabitForm = ({ isAdd }) => {
                         name={color.name}
                         className={color.className}
                         onChange={props.handleChange}
+                        checked={props.values.color == color.value}
                         value={color.value}
                       />
                       <Label htmlFor={color.id} className="ml-2">
@@ -259,6 +261,7 @@ export const HabitForm = ({ isAdd }) => {
                         id={icon.id}
                         value={icon.value}
                         name={icon.name}
+                        checked={props.values.icon === icon.value}
                         onChange={props.handleChange}
                       />
                       <Label htmlFor="icon" className="ml-2">
@@ -347,7 +350,11 @@ export const HabitForm = ({ isAdd }) => {
               </div>
               <div className="flex justify-end">
                 {isAdd ? (
-                  <Button type="submit" color="success">
+                  <Button
+                    type="submit"
+                    theme={ButtonCustomTheme}
+                    color="secondary"
+                  >
                     Submit
                   </Button>
                 ) : (
@@ -355,7 +362,11 @@ export const HabitForm = ({ isAdd }) => {
                     <Button color="danger" onClick={handleDeleteHabit}>
                       Delete
                     </Button>
-                    <Button type="submit" color="success">
+                    <Button
+                      type="submit"
+                      theme={ButtonCustomTheme}
+                      color="secondary"
+                    >
                       Update
                     </Button>
                   </>

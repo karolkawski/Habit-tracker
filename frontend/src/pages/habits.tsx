@@ -15,6 +15,7 @@ import { ContentWrapper } from '../Layout/ContentWrapper';
 import { AuthHeader } from '../auth/AuthHeader';
 import { Header } from '../components/UI/Header/Header';
 import { TableCustomTheme } from '../theme/TableCustomTheme';
+import { ButtonCustomTheme } from '../theme/ButtonCustomTheme';
 
 export const Habits = () => {
   const dispatch = useDispatch();
@@ -45,7 +46,7 @@ export const Habits = () => {
         <Navigation />
         <ContentWrapper>
           <div className="flex justify-center mt-5">
-            <Button>
+            <Button theme={ButtonCustomTheme} color="secondary">
               <Link to={`/add`}>Add </Link>
             </Button>
           </div>
@@ -93,7 +94,7 @@ export const Habits = () => {
                     />
                   </Table.Cell>
                   <Table.Cell className="flex justify-end">
-                    <Button>
+                    <Button theme={ButtonCustomTheme} color="secondary">
                       <Link to={`/habits/${item._id}/edit`}>Edit</Link>
                     </Button>
                   </Table.Cell>
@@ -102,7 +103,7 @@ export const Habits = () => {
           </Table.Body>
         </Table>
         <div className="flex justify-end my-5 px-4 md:px-6">
-          <Button>
+          <Button theme={ButtonCustomTheme} color="secondary">
             <Link to={`/add`}>Add </Link>
           </Button>
         </div>
