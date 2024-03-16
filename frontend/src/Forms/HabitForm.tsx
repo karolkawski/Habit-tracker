@@ -18,93 +18,8 @@ import { ContentWrapper } from '../Layout/ContentWrapper';
 import { AuthHeader } from '../auth/AuthHeader';
 import { Header } from '../components/UI/Header/Header';
 import { ButtonCustomTheme } from '../theme/ButtonCustomTheme';
-
-interface MyFormValues {
-  _id: string;
-  name: string;
-  type: string;
-  color: string;
-  icon: string;
-  count_mode: boolean;
-  amount: number;
-  frequency: {
-    days: {
-      Mon: boolean;
-      Tue: boolean;
-      Wed: boolean;
-      Thu: boolean;
-      Fri: boolean;
-      Sat: boolean;
-      Sun: boolean;
-    };
-    repeat: string;
-  };
-}
-
-enum DayOfWeek {
-  Mon = 'Mon',
-  Tue = 'Tue',
-  Wed = 'Wed',
-  Thu = 'Thu',
-  Fri = 'Fri',
-  Sat = 'Sat',
-  Sun = 'Sun',
-}
-
-const colorFormBoxes = [
-  {
-    name: 'color',
-    value: '#0000ff',
-    className: 'color-box color-box--blue',
-    label: 'Blue',
-    id: 'color1',
-  },
-  {
-    name: 'color',
-    value: '#ffff00',
-    className: 'color-box color-box--yellow',
-    label: 'Yellow',
-    id: 'color2',
-  },
-  {
-    name: 'color',
-    value: '#00ff00',
-    className: 'color-box color-box--green',
-    label: 'Green',
-    id: 'color3',
-  },
-  {
-    name: 'color',
-    value: '#e40000',
-    className: 'color-box color-box--red',
-    label: 'Red',
-    id: 'color4',
-  },
-];
-
-const iconsForm = [
-  {
-    className: 'icon-box icon-box--apple',
-    id: 'fa-apple',
-    value: 'apple-whole',
-    name: 'icon',
-    label: 'Apple',
-  },
-  {
-    className: 'icon-box icon-box--pencil',
-    id: 'fa-pencil',
-    value: 'pencil',
-    name: 'icon',
-    label: 'Pencil',
-  },
-  {
-    className: 'icon-box icon-box--plane',
-    id: 'fa-plane',
-    value: 'plane',
-    name: 'icon',
-    label: 'Plane',
-  },
-];
+import { MyFormValues } from './FormTypes.d';
+import { colorFormBoxes, iconsForm } from './FormOptions';
 
 export const HabitForm = ({ isAdd }) => {
   const habits = useSelector((state: { habit }) => state.habit.habits);
@@ -359,7 +274,11 @@ export const HabitForm = ({ isAdd }) => {
                   </Button>
                 ) : (
                   <>
-                    <Button color="danger" onClick={handleDeleteHabit}>
+                    <Button
+                      color="failure"
+                      className="mr-2"
+                      onClick={handleDeleteHabit}
+                    >
                       Delete
                     </Button>
                     <Button

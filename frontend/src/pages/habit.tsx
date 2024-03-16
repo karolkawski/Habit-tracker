@@ -51,30 +51,36 @@ export const Habit = () => {
         {!habit ? (
           <>NO EXIST</>
         ) : (
-          <>
-            <h2>Habit NO:{habit._id}</h2>
-            <h2>Habit name: {habit.name}</h2>
-            <div className="Habit__details">
-              <h3>Details</h3>
-              <div>type: {habit.type}</div>
-              <div>
-                color: <ColorBox color={habit.color} />
+          <div className="mx-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+              <div className="font-bold">NO:</div>
+              <div>{habit._id}</div>
+              <div className="font-bold">Name:</div>
+              <div>{habit.name}</div>
+              <div className="font-bold">Type</div>
+              <div>{habit.type}</div>
+              <div className="font-bold">Color:</div>
+              <div className="flex">
+                <ColorBox color={habit.color} />
               </div>
+              <div className="font-bold">Icon:</div>
               <div>
-                icon: <Icon icon={habit.icon} />
+                <Icon icon={habit.icon} />
               </div>
-              <div>frequency: {habit.frequency.repeat}</div>
+              <div className="font-bold">Frequency:</div>
+              <div>{habit.frequency.repeat}</div>
+              <div className="font-bold">Days:</div>
+              <div className="flex">
+                <Frequency size={''} {...habit.frequency} />
+              </div>
             </div>
-            <div className="Habit__stats">
-              <Frequency size={''} {...habit.frequency} />
-            </div>
-            <div className="Habit__actions">
-              <Button color="danger" onClick={handleDeleteHabit}>
+            <div className="flex justify-end mt-10 right-5 bottom-5 fixed md:relative md:right-0">
+              <Button color="failure" onClick={handleDeleteHabit}>
                 Delete
               </Button>
-              <Back />
             </div>
-          </>
+            <Back />
+          </div>
         )}
       </ContentWrapper>
     </>

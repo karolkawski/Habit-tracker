@@ -182,19 +182,20 @@ export const Statistics = () => {
     <>
       <Navigation />
       <ContentWrapper>
-        <div className={'Statistics'}>
-          <div className="mb-1 flex justify-between md:justify-start items-center">
+        <div className={'Statistics mb-10'}>
+          <div className="mb-5 flex justify-between md:justify-start items-center">
             <div className="flex justify-center items-center">
               <p className="mb-0 mr-3 bold">YEAR:</p>
-              <DayPicker
-                selected={new Date()}
-                captionLayout="dropdown-buttons"
-                fromYear={new Date().getFullYear() - 4}
-                toYear={new Date().getFullYear()}
-                onMonthChange={chageMonthOrYear}
-              />
+              <Dropdown size={'sm'} label={new Date().getFullYear()}>
+                <Dropdown.Item
+                  onClick={() => handleSelectHabit(new Date().getFullYear())}
+                  href={`#/${new Date().getFullYear()}`}
+                >
+                  {new Date().getFullYear()}
+                </Dropdown.Item>
+              </Dropdown>
             </div>
-            <div className="flex justify-center items-center">
+            <div className="ml-2 flex justify-center items-center">
               <p className="mb-0 mr-3">HABIT:</p>
               <Dropdown
                 size={'sm'}
