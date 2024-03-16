@@ -13,9 +13,7 @@ export const ParticlesAnimate = () => {
     });
   }, []);
 
-  const particlesLoaded = (container) => {
-    console.log(container);
-  };
+  const particlesLoaded = (container) => {};
 
   return (
     init && (

@@ -15,7 +15,9 @@ const CalendarChart = ({
   const [chartParentWidth, setChartWrapperSize] = useState(300);
   useEffect(() => {
     const parentW =
-      document.querySelector('.Statistic__Chart')?.clientWidth || margin.left;
+      document.querySelector('#heat-map')?.clientWidth > 800
+        ? document.querySelector('#heat-map')?.clientWidth
+        : 800;
 
     setChartWrapperSize(parentW - margin.left);
 
@@ -205,8 +207,8 @@ const CalendarChart = ({
         ? (dayofMonth - 1) / 7
         : dayofMonth / 7
       : dayofMonth % 7 === 0
-      ? (dayofMonth - 1) / 7 + 1
-      : dayofMonth / 7 + 1;
+        ? (dayofMonth - 1) / 7 + 1
+        : dayofMonth / 7 + 1;
 
     if (startDayOfWeek != 0 && dayofMonth / 7 < 7 && dayofWeek === 0) {
       monthWeekDay = monthWeekDay - 1;
@@ -286,7 +288,7 @@ const CalendarChart = ({
 
   const makeTooltip = () => {
     const tooltip = d3
-      .select('.Statistic__Chart')
+      .select('#heat-map')
       .append('div')
       .style('visibilty', 'hidden')
       .style('opacity', '0')
@@ -356,7 +358,7 @@ const CalendarChart = ({
       ref={svgRef}
       width={svgWidth + margin.left}
       height={svgHeight + 50}
-      style={{ padding: '10px', border: '1px solid #ccc' }}
+      style={{ padding: '10px', border: '1px solid #ccc', overflow: 'auto' }}
     />
   );
 };

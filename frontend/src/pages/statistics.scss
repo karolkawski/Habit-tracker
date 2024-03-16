@@ -1,44 +1,4 @@
 
-.Statistics {
-  margin: auto;
-  align-items: center;
-  display: block;
-
-  .rdp-nav {
-    display: none;
-  }
-
-  .rdp-head {
-    display: none;
-  }
-
-  .rdp-tbody {
-    display: none;
-  }
-
-  .rdp-dropdown_month {
-    display: none;
-  }
-
-  .custom-date-component {
-    .rdp {
-      padding: 0;
-      margin: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-  }
-}
-.Statistic {
-  &__Chart {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-bottom: 50px;
-  }
-}
-
 .tooltip {
     font-size: 12px;
     height: auto;
@@ -62,21 +22,6 @@
     font-size: 12px;
   
   }
-  .Button__Toggle {
-    margin: auto;
-    display: block;
-  }
-  .Controls {
-    display: flex;
-  }
-
-  .lineChart {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-  }
 
   #tolltip-linear  {
     font-size: 12px;
@@ -93,12 +38,3 @@
     pointer-events: none;
     display: none;
   }
-
-.Controls {
-  padding: 50px 0px;
-}
-
-.ChartPill {
-  background-color: #fff;
-  border-radius: 8px;
-}

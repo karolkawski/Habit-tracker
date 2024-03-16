@@ -7,3 +7,8 @@
 body {
     background-color: #f1faee;
 }
+
+[type='radio']:checked {
+    background-color: transparent;
+    border: 2px solid #0e7490
+  }

@@ -4,6 +4,7 @@ import { storeTokenInLocalStorage } from '../utils/token';
 import { useNavigate } from 'react-router-dom';
 import { Button, Checkbox, Label, TextInput } from 'flowbite-react';
 import { ContentWrapper } from '../Layout/ContentWrapper';
+import { ButtonCustomTheme } from '../theme/ButtonCustomTheme';
 
 export const Login = () => {
   const [login] = useState('karol1');
@@ -61,6 +62,8 @@ export const Login = () => {
             <Label htmlFor="remember">Remember me</Label>
           </div>
           <Button
+            theme={ButtonCustomTheme}
+            color="secondary"
             type="submit"
             onClick={(e) => {
               e.preventDefault();

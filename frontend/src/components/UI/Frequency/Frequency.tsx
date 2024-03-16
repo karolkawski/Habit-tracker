@@ -1,4 +1,5 @@
-import './frequency.scss';
+import { enableStyle, sDayWrapperStyle, sDaysBoxStyle } from './styleOptions';
+
 interface FrequencyProps {
   size: string;
   days: {
@@ -14,19 +15,24 @@ interface FrequencyProps {
 }
 
 export const Frequency = ({ size = '', days, repeat }: FrequencyProps) => {
+  const isSmall = size === 's';
   if (!days || !repeat) {
     return <>brak danych</>;
   }
 
   return (
-    <div className={`Frequency ${size === 's' ? 'Frequency--s' : ''}`}>
-      <div className="Frequency__repeat">{repeat}</div>
-      <div className="Frequency__days">
+    <div className={`flex h-8 flex-row items-center justify-center`}>
+      <div className="flex h-8">
         {Object.entries(days).map(([dayName, dayValue]) => (
-          <div className="Frequency__day" key={dayName}>
-            <div className={'Frequency__week'}>{dayName.substring(0, 1)}</div>
+          <div
+            className={`flex ${sDayWrapperStyle[isSmall]} flex-col items-center`}
+            key={dayName}
+          >
+            <div className={`flex-1 text-center text-xs w-3`}>
+              {dayName.substring(0, 1)}
+            </div>
             <div
-              className={'days-box days-box--' + (dayValue ? 'true' : 'false')}
+              className={`${sDaysBoxStyle[isSmall]} rounded ${enableStyle[dayValue]}`}
             ></div>
           </div>
         ))}

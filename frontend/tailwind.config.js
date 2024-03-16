@@ -9,7 +9,7 @@ module.exports = {
     extend: {
       color: {
         primary: '#19364C',
-        secondary: '#419AF2',
+        secondary: '#0e7490',
         danger: '#F27841',
         warning: '#F2C141',
       },
@@ -22,7 +22,7 @@ module.exports = {
       },
       backgroundColor: {
         primary: '#19364C',
-        secondary: '#419AF2',
+        secondary: '#0e7490',
         danger: '#F27841',
         warning: '#F2C141',
       },

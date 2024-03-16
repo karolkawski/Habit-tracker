@@ -91,7 +91,6 @@ const LineChart = ({ data, dimensions }: { data: any; dimensions: any }) => {
       .attr('transform', 'translate(0,25)')
 
       .on('touchmouse mousemove', function (event, d) {
-        //@ts-ignore
         const mousePos = d3.pointer(event, this);
         const tooltip = d3.select('#tolltip-linear');
 
@@ -127,7 +126,6 @@ const LineChart = ({ data, dimensions }: { data: any; dimensions: any }) => {
       const newTransform = event.transform;
 
       const newXScale = newTransform.rescaleX(xScale);
-      const newYScale = newTransform.rescaleY(yScale);
 
       svg.select<SVGSVGElement>('#x-axis').call(d3.axisBottom(newXScale));
 
@@ -168,7 +166,7 @@ const LineChart = ({ data, dimensions }: { data: any; dimensions: any }) => {
   }, [data]);
 
   useEffect(() => {
-    const parentW = document.querySelector('.lineChart')?.clientWidth || 0;
+    const parentW = document.querySelector('#line-chart')?.clientWidth || 0;
     setChartWrapperSize(parentW - ofsets.left);
     const svgEl = d3.select(svgRef.current);
     svgEl.selectAll('*').remove();

@@ -41,7 +41,6 @@ router.get("/api/habits/:id", auth,  (req: Request, res: Response) => {
  * Add new habit
  */
 router.post("/api/habits/add", auth, async  (req: Request, res: Response) => {
-  console.log("🚀 ~ router.post ~ req:", req.body)
   delete req.body._id;
   let cancelRequest = false;
 

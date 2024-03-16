@@ -1,4 +1,3 @@
-import './dashboard.scss';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { Navigation } from '../Layout/Navigation/Navigation';
@@ -20,7 +19,6 @@ export const Dashboard = () => {
   const dispatch = useDispatch();
 
   const todayHabits = useSelector((state: { entry }) => state.entry.entries);
-  console.log('🚀 ~ Dashboard ~ todayHabits:', todayHabits);
   const [noEntries, setNoEntries] = useState(true);
 
   const [selectedDate, setSelectedDate] = useState<Date>(
@@ -36,7 +34,6 @@ export const Dashboard = () => {
         params: { time: selectedDate },
       })
       .then((res) => {
-        console.log('🚀 ~ .then ~ res:', res);
         if (res.data.habitEntries && res.data.habitEntries.length === 0) {
           setNoEntries(true);
           return;
@@ -84,8 +81,6 @@ export const Dashboard = () => {
     dispatch(setIsUndoneEntry(newHabits));
   };
 
-  console.log(noEntries, todayHabits);
-
   return (
     <>
       <Navigation />
@@ -96,28 +91,28 @@ export const Dashboard = () => {
             handleChangeDate={handleChangeDate}
           />
         </div>
-        <div className="Dashboard__Body">
-          <div className="Dashboard__Title"> Your today's runtime</div>
-          <div className="Dashboard__List">
-            <div className={`Dashboard__${type}`}>
-              <div className="List__Label">{type} (x)</div>
-              {!noEntries && todayHabits ? (
-                Object.values(todayHabits).map(({ habit, entry }) => (
-                  <EntryRow
-                    key={habit._id + 'key'}
-                    habit={habit}
-                    entry={entry}
-                    selectedDate={selectedDate}
-                    handleAddEntry={handleAddEntry}
-                    handleRemoveEntry={handleRemoveEntry}
-                  />
-                ))
-              ) : (
-                <div className="flex h-20 bg-white justify-center items-center border-gray-100 my-5">
-                  No entries
-                </div>
-              )}
+        <div>
+          <div className="text-xl pb-5">Your today's runtime</div>
+          <div>
+            <div className="text-lg pb-5">
+              {type} ({todayHabits ? todayHabits.length : 0})
             </div>
+            {!noEntries && todayHabits ? (
+              Object.values(todayHabits).map(({ habit, entry }) => (
+                <EntryRow
+                  key={habit._id + 'key'}
+                  habit={habit}
+                  entry={entry}
+                  selectedDate={selectedDate}
+                  handleAddEntry={handleAddEntry}
+                  handleRemoveEntry={handleRemoveEntry}
+                />
+              ))
+            ) : (
+              <div className="flex h-20 bg-white justify-center items-center border-gray-100 my-5">
+                No entries
+              </div>
+            )}
           </div>
         </div>
       </ContentWrapper>

@@ -5,7 +5,7 @@ import React from 'react';
 const PieChart = ({ data, dimensions }: { data: any; dimensions: any }) => {
   const svgRef = React.useRef(null);
   const { margin } = dimensions;
-  const ofsets = { left: 50 };
+  const ofsets = { left: 0 };
   const [chartParentWidth, setChartWrapperSize] = useState(300);
   const height = 300;
 
@@ -27,7 +27,7 @@ const PieChart = ({ data, dimensions }: { data: any; dimensions: any }) => {
     e.target.style.strokeWidth = '1px';
     e.target.style.stroke = 'rgb(0,0,0)';
 
-    let selectedLegend = [];
+    const selectedLegend = [];
     selectedLegend.push(d.data.name);
 
     svg.select('#close-btn').style('opacity', '1');
@@ -115,7 +115,7 @@ const PieChart = ({ data, dimensions }: { data: any; dimensions: any }) => {
       .enter()
       .append('g')
       .attr('transform', function (d, i) {
-        return 'translate(' + 0 + ',' + (i * 15 + 20) + ')';
+        return 'translate(' + 10 + ',' + (i * 15 + 20) + ')';
       })
       .attr('class', 'legend');
 
@@ -146,7 +146,7 @@ const PieChart = ({ data, dimensions }: { data: any; dimensions: any }) => {
 
   useEffect(() => {
     const parentW =
-      document.querySelector('.pieCharts')?.clientWidth || ofsets.left;
+      document.querySelector('#pie-chart')?.clientWidth || ofsets.left;
 
     setChartWrapperSize(parentW - ofsets.left);
     const svgEl = d3.select(svgRef.current);

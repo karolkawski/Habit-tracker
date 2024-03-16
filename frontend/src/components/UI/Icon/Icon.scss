@@ -16,50 +16,6 @@
     justify-content: center;
     align-items: center;
 
-
-    input {
-      border-radius: 50% !important;
-      position: absolute;
-      margin: 0 !important;
-      padding: 0;
-
-      &::before {
-      background-color: red;
-      }
-
-      &:checked[type=checkbox] {
-        background-image: unset;
-        background: unset;
-        cursor: pointer;
-        border: 3px solid #000;
-      
-      }
-    }
-
-    .form-check-input:checked[type=checkbox] {
-      background-image: unset;
-      background: unset;
-      cursor: pointer;
-      border: 3px solid #000;
-    
-    }
-
-    .form-check-input:checked[type=radio] {
-      background-image: none;
-      background-color: unset;
-    }
-    
-    .form-check-input[type=checkbox] {
-      cursor: pointer;
-      background-image: unset;
-      background: unset;
-    }
-
-    .form-check-input[type=radio] {
-      background-color: unset
-    }
-    
-
     &--plane::before {
       content: "\f072";
       position: absolute;

@@ -17,93 +17,9 @@ import { HabitType } from '../types/Habit.d';
 import { ContentWrapper } from '../Layout/ContentWrapper';
 import { AuthHeader } from '../auth/AuthHeader';
 import { Header } from '../components/UI/Header/Header';
-
-interface MyFormValues {
-  _id: string;
-  name: string;
-  type: string;
-  color: string;
-  icon: string;
-  count_mode: boolean;
-  amount: number;
-  frequency: {
-    days: {
-      Mon: boolean;
-      Tue: boolean;
-      Wed: boolean;
-      Thu: boolean;
-      Fri: boolean;
-      Sat: boolean;
-      Sun: boolean;
-    };
-    repeat: string;
-  };
-}
-
-enum DayOfWeek {
-  Mon = 'Mon',
-  Tue = 'Tue',
-  Wed = 'Wed',
-  Thu = 'Thu',
-  Fri = 'Fri',
-  Sat = 'Sat',
-  Sun = 'Sun',
-}
-
-const colorFormBoxes = [
-  {
-    name: 'color',
-    value: '#0000ff',
-    className: 'color-box color-box--blue',
-    label: 'Blue',
-    id: 'color1',
-  },
-  {
-    name: 'color',
-    value: '#ffff00',
-    className: 'color-box color-box--yellow',
-    label: 'Yellow',
-    id: 'color2',
-  },
-  {
-    name: 'color',
-    value: '#00ff00',
-    className: 'color-box color-box--green',
-    label: 'Green',
-    id: 'color3',
-  },
-  {
-    name: 'color',
-    value: '#e40000',
-    className: 'color-box color-box--red',
-    label: 'Red',
-    id: 'color4',
-  },
-];
-
-const iconsForm = [
-  {
-    className: 'icon-box icon-box--apple',
-    id: 'fa-apple',
-    value: 'apple',
-    name: 'icon',
-    label: 'Apple',
-  },
-  {
-    className: 'icon-box icon-box--pencil',
-    id: 'fa-pencil',
-    value: 'pencil',
-    name: 'icon',
-    label: 'Pencil',
-  },
-  {
-    className: 'icon-box icon-box--plane',
-    id: 'fa-plane',
-    value: 'plane',
-    name: 'icon',
-    label: 'Plane',
-  },
-];
+import { ButtonCustomTheme } from '../theme/ButtonCustomTheme';
+import { MyFormValues } from './FormTypes.d';
+import { colorFormBoxes, iconsForm } from './FormOptions';
 
 export const HabitForm = ({ isAdd }) => {
   const habits = useSelector((state: { habit }) => state.habit.habits);
@@ -128,7 +44,7 @@ export const HabitForm = ({ isAdd }) => {
     name: '',
     type: 'other',
     color: '#ffff00',
-    icon: 'fa-plane',
+    icon: 'plane',
     count_mode: false,
     amount: 1,
     frequency: {
@@ -146,7 +62,6 @@ export const HabitForm = ({ isAdd }) => {
   };
 
   const handleDeleteHabit = () => {
-    console.log('delete');
     axios
       .delete(`http://localhost:4000/api/habits/${params.id}`, AuthHeader)
       .then((res) => {
@@ -241,6 +156,7 @@ export const HabitForm = ({ isAdd }) => {
                         name={color.name}
                         className={color.className}
                         onChange={props.handleChange}
+                        checked={props.values.color == color.value}
                         value={color.value}
                       />
                       <Label htmlFor={color.id} className="ml-2">
@@ -260,6 +176,7 @@ export const HabitForm = ({ isAdd }) => {
                         id={icon.id}
                         value={icon.value}
                         name={icon.name}
+                        checked={props.values.icon === icon.value}
                         onChange={props.handleChange}
                       />
                       <Label htmlFor="icon" className="ml-2">
@@ -348,15 +265,27 @@ export const HabitForm = ({ isAdd }) => {
               </div>
               <div className="flex justify-end">
                 {isAdd ? (
-                  <Button type="submit" color="success">
+                  <Button
+                    type="submit"
+                    theme={ButtonCustomTheme}
+                    color="secondary"
+                  >
                     Submit
                   </Button>
                 ) : (
                   <>
-                    <Button color="danger" onClick={handleDeleteHabit}>
+                    <Button
+                      color="failure"
+                      className="mr-2"
+                      onClick={handleDeleteHabit}
+                    >
                       Delete
                     </Button>
-                    <Button type="submit" color="success">
+                    <Button
+                      type="submit"
+                      theme={ButtonCustomTheme}
+                      color="secondary"
+                    >
                       Update
                     </Button>
                   </>
