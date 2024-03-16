@@ -3,20 +3,21 @@ import axios from 'axios';
 import LineChart from '../Charts/LineChart';
 import CalendarChart from '../Charts/CalendarChart';
 import PieChart from '../Charts/PieChart';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { DayPicker } from 'react-day-picker';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartLine, faChartPie } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import useIsMobile from '../utils/isMobile';
 import { Navigation } from '../Layout/Navigation/Navigation';
-import { Button, Dropdown } from 'flowbite-react';
+import { Button, ButtonGroup, Dropdown } from 'flowbite-react';
 import {
   fetchDataRequest,
   fetchDataSuccess,
 } from '../store/actions/habitActions';
 import { ContentWrapper } from '../Layout/ContentWrapper';
 import { AuthHeader } from '../auth/AuthHeader';
+import { ButtonCustomTheme } from '../theme/ButtonCustomTheme';
 
 export const Statistics = () => {
   const dispatch = useDispatch();
@@ -28,6 +29,7 @@ export const Statistics = () => {
   const [chartWrapperSize, setChartWrapperSize] = useState(
     getCurrentDimension(1)
   );
+  const chartWrapperRef = useRef(null);
   const [chartType, setChartType] = useState<'linear' | 'circle'>('linear');
   const [calendarChartData, setCalendarChartData] = useState([]);
   const [Pie1ChartData, setPie1ChartData] = useState([]);
@@ -51,7 +53,7 @@ export const Statistics = () => {
   };
   function getCurrentDimension(scale: number) {
     const heatmapWrapper: HTMLElement | null =
-      document.querySelector('.Statistic__Chart');
+      document.querySelector('#heat-map');
     return {
       width: heatmapWrapper ? heatmapWrapper.clientWidth * scale : 0,
       height: heatmapWrapper ? heatmapWrapper.clientHeight * scale : 0,
@@ -150,7 +152,6 @@ export const Statistics = () => {
     setChartType(type);
   };
 
-  //@ts-ignore //!to change
   const handleSelectHabit = (habit: any) => setHabit(habit);
 
   useEffect(() => {
@@ -165,26 +166,40 @@ export const Statistics = () => {
     };
   }, [chartWrapperSize]);
 
-  console.log(habits);
+  // Obsługa przewijania
+  useEffect(() => {
+    const wrapper = chartWrapperRef.current;
+    if (wrapper) {
+      wrapper.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'auto',
+      });
+    }
+  }, [calendarChartData]);
+
   return (
     <>
       <Navigation />
       <ContentWrapper>
-        <div className={'Statistics container'}>
-          <div>
-            <div className="my-1 flex justify-start items-center">
-              <p className="mb-0 mr-3 font-weight-bold d-flex justify-content-center align-items-center">
-                YEAR:
-              </p>
+        <div className={'Statistics'}>
+          <div className="mb-1 flex justify-between md:justify-start items-center">
+            <div className="flex justify-center items-center">
+              <p className="mb-0 mr-3 bold">YEAR:</p>
               <DayPicker
                 selected={new Date()}
                 captionLayout="dropdown-buttons"
-                fromYear={2015}
-                toYear={2025}
+                fromYear={new Date().getFullYear() - 4}
+                toYear={new Date().getFullYear()}
                 onMonthChange={chageMonthOrYear}
               />
+            </div>
+            <div className="flex justify-center items-center">
               <p className="mb-0 mr-3">HABIT:</p>
-              <Dropdown label={habit && habit !== 'ALL' ? habit.name : 'ALL'}>
+              <Dropdown
+                size={'sm'}
+                label={habit && habit !== 'ALL' ? habit.name : 'ALL'}
+              >
                 <Dropdown.Item
                   onClick={() => handleSelectHabit('ALL')}
                   href={`#/ALL`}
@@ -204,27 +219,41 @@ export const Statistics = () => {
               </Dropdown>
             </div>
           </div>
-          <div>
-            <div className="ChartPill Statistic__Chart">
-              <CalendarChart
-                data={calendarChartData}
-                dimensions={{
-                  margin: { top: 0, right: 0, bottom: 0, left: 50 },
-                }}
-              />
+          <div className="mb-10">
+            {/* Dodano kontener przewijania */}
+            <div
+              className="overflow-x-scroll w-[100%] h-[100%] md:overflow-hidden mb-10"
+              id="heat-map"
+              ref={chartWrapperRef}
+            >
+              <div className="min-w-[800px]">
+                <div className="bg-white rounded flex justify-center items-center min-w-[800px]">
+                  <CalendarChart
+                    data={calendarChartData}
+                    dimensions={{
+                      margin: { top: 0, right: 0, bottom: 0, left: 50 },
+                    }}
+                  />
+                </div>
+              </div>
             </div>
           </div>
           {!isMobile ? (
             <></>
           ) : (
-            <div>
-              <div className="py-10 flex justify-center items-center">
+            <div className="pb-10 flex justify-center items-center">
+              <ButtonGroup>
                 {chartType === 'linear' ? (
-                  <Button onClick={() => changeChartType('linear')}>
+                  <Button
+                    color={'secondary'}
+                    onClick={() => changeChartType('linear')}
+                    theme={ButtonCustomTheme}
+                  >
                     <FontAwesomeIcon icon={faChartLine} /> Linear
                   </Button>
                 ) : (
                   <Button
+                    theme={ButtonCustomTheme}
                     color={'gray'}
                     onClick={() => changeChartType('linear')}
                   >
@@ -233,31 +262,33 @@ export const Statistics = () => {
                 )}
                 {chartType === 'circle' ? (
                   <Button
-                    color="blue"
+                    theme={ButtonCustomTheme}
+                    color="secondary"
                     onClick={() => changeChartType('circle')}
                   >
                     <FontAwesomeIcon icon={faChartPie} /> Circle
                   </Button>
                 ) : (
                   <Button
+                    theme={ButtonCustomTheme}
                     color={'gray'}
                     onClick={() => changeChartType('circle')}
                   >
                     <FontAwesomeIcon icon={faChartPie} /> Circle
                   </Button>
                 )}
-              </div>
+              </ButtonGroup>
             </div>
           )}
-
-          <div>
-            <div className="ChartPill pieCharts">
-              {!isMobile || chartType === 'circle' ? (
-                <>
-                  <PieChart data={Pie1ChartData} dimensions={{ margin: 20 }} />
-                  <div className="py-10 flex justify-center items-center">
+          <div className="bg-white rounded" id="pie-chart">
+            {!isMobile || chartType === 'circle' ? (
+              <>
+                <PieChart data={Pie1ChartData} dimensions={{ margin: 20 }} />
+                <div className="py-10 flex justify-center items-center">
+                  <ButtonGroup>
                     <Button
-                      color={pie1ChartTime === '7d' ? 'blue' : 'gray'}
+                      theme={ButtonCustomTheme}
+                      color={pie1ChartTime === '7d' ? 'secondary' : 'gray'}
                       onClick={() => {
                         toogleTimeHandler('pie1', '7d');
                       }}
@@ -265,7 +296,8 @@ export const Statistics = () => {
                       7d
                     </Button>
                     <Button
-                      color={pie1ChartTime === '14d' ? 'blue' : 'gray'}
+                      theme={ButtonCustomTheme}
+                      color={pie1ChartTime === '14d' ? 'secondary' : 'gray'}
                       onClick={() => {
                         toogleTimeHandler('pie1', '14d');
                       }}
@@ -273,7 +305,8 @@ export const Statistics = () => {
                       14d
                     </Button>
                     <Button
-                      color={pie1ChartTime === '1m' ? 'blue' : 'gray'}
+                      theme={ButtonCustomTheme}
+                      color={pie1ChartTime === '1m' ? 'secondary' : 'gray'}
                       onClick={() => {
                         toogleTimeHandler('pie1', '1m');
                       }}
@@ -281,7 +314,8 @@ export const Statistics = () => {
                       1m
                     </Button>
                     <Button
-                      color={pie1ChartTime === '3m' ? 'blue' : 'gray'}
+                      theme={ButtonCustomTheme}
+                      color={pie1ChartTime === '3m' ? 'secondary' : 'gray'}
                       onClick={() => {
                         toogleTimeHandler('pie1', '3m');
                       }}
@@ -289,24 +323,28 @@ export const Statistics = () => {
                       3m
                     </Button>
                     <Button
-                      color={pie1ChartTime === '1y' ? 'blue' : 'gray'}
+                      theme={ButtonCustomTheme}
+                      color={pie1ChartTime === '1y' ? 'secondary' : 'gray'}
                       onClick={() => {
                         toogleTimeHandler('pie1', '1y');
                       }}
                     >
                       1y
                     </Button>
-                  </div>
-                </>
-              ) : (
-                <></>
-              )}
-              {!isMobile || chartType === 'circle' ? (
-                <>
-                  <PieChart data={Pie2ChartData} dimensions={{ margin: 20 }} />
-                  <div className="py-10 flex justify-center items-center">
+                  </ButtonGroup>
+                </div>
+              </>
+            ) : (
+              <></>
+            )}
+            {!isMobile || chartType === 'circle' ? (
+              <>
+                <PieChart data={Pie2ChartData} dimensions={{ margin: 20 }} />
+                <div className="py-10 flex justify-center items-center">
+                  <ButtonGroup>
                     <Button
-                      color={pie1ChartTime === '7d' ? 'blue' : 'gray'}
+                      theme={ButtonCustomTheme}
+                      color={pie1ChartTime === '7d' ? 'secondary' : 'gray'}
                       onClick={() => {
                         toogleTimeHandler('pie2', '7d');
                       }}
@@ -314,7 +352,8 @@ export const Statistics = () => {
                       7d
                     </Button>
                     <Button
-                      color={pie2ChartTime === '14d' ? 'blue' : 'gray'}
+                      theme={ButtonCustomTheme}
+                      color={pie2ChartTime === '14d' ? 'secondary' : 'gray'}
                       onClick={() => {
                         toogleTimeHandler('pie2', '14d');
                       }}
@@ -322,7 +361,8 @@ export const Statistics = () => {
                       14d
                     </Button>
                     <Button
-                      color={pie2ChartTime === '1m' ? 'blue' : 'gray'}
+                      theme={ButtonCustomTheme}
+                      color={pie2ChartTime === '1m' ? 'secondary' : 'gray'}
                       onClick={() => {
                         toogleTimeHandler('pie2', '1m');
                       }}
@@ -330,7 +370,8 @@ export const Statistics = () => {
                       1m
                     </Button>
                     <Button
-                      color={pie2ChartTime === '3m' ? 'blue' : 'gray'}
+                      theme={ButtonCustomTheme}
+                      color={pie2ChartTime === '3m' ? 'secondary' : 'gray'}
                       onClick={() => {
                         toogleTimeHandler('pie2', '3m');
                       }}
@@ -338,35 +379,34 @@ export const Statistics = () => {
                       3m
                     </Button>
                     <Button
-                      color={pie2ChartTime === '1y' ? 'blue' : 'gray'}
+                      theme={ButtonCustomTheme}
+                      color={pie2ChartTime === '1y' ? 'secondary' : 'gray'}
                       onClick={() => {
                         toogleTimeHandler('pie2', '1y');
                       }}
                     >
                       1y
                     </Button>
-                  </div>
-                </>
-              ) : (
-                <></>
-              )}
-            </div>
+                  </ButtonGroup>
+                </div>
+              </>
+            ) : (
+              <></>
+            )}
           </div>
-          <div>
-            <div className="ChartPill lineChart">
-              <div id="tolltip-linear">
-                <div className="tooltip__date"></div>
-                <div className="tooltip__content"></div>
-              </div>
-              {chartType === 'linear' ? (
-                <LineChart
-                  data={calendarChartData}
-                  dimensions={{ margin: 0 }}
-                />
-              ) : (
-                <></>
-              )}
+          <div
+            className="bg-white rounded relative pointer flex justify-center items-center"
+            id="line-chart"
+          >
+            <div id="tolltip-linear">
+              <div className="tooltip__date"></div>
+              <div className="tooltip__content"></div>
             </div>
+            {chartType === 'linear' ? (
+              <LineChart data={calendarChartData} dimensions={{ margin: 0 }} />
+            ) : (
+              <></>
+            )}
           </div>
         </div>
       </ContentWrapper>

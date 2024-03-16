@@ -6,7 +6,7 @@ export const Navigation = () => {
     <Navbar>
       <Navbar.Brand as={Link} href="https://flowbite-react.com">
         <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-          Flowbite React
+          Habits tracker
         </span>
       </Navbar.Brand>
       <Navbar.Toggle />

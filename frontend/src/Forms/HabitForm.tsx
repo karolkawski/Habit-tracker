@@ -146,7 +146,6 @@ export const HabitForm = ({ isAdd }) => {
   };
 
   const handleDeleteHabit = () => {
-    console.log('delete');
     axios
       .delete(`http://localhost:4000/api/habits/${params.id}`, AuthHeader)
       .then((res) => {

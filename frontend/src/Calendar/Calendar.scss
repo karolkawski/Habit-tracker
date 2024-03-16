@@ -56,3 +56,28 @@
         display: flex;
     }
 }
+
+
+.Statistics {
+
+    .rdp {
+        margin: 0;
+    }
+
+    .rdp-nav {
+      display: none;
+    }
+  
+    .rdp-head {
+      display: none;
+    }
+  
+    .rdp-tbody {
+      display: none;
+    }
+  
+    .rdp-dropdown_month {
+      display: none;
+    }
+  
+  }

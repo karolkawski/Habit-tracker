@@ -34,7 +34,6 @@ export const Dashboard = () => {
         params: { time: selectedDate },
       })
       .then((res) => {
-        console.log('🚀 ~ .then ~ res:', res);
         if (res.data.habitEntries && res.data.habitEntries.length === 0) {
           setNoEntries(true);
           return;
@@ -81,8 +80,6 @@ export const Dashboard = () => {
     });
     dispatch(setIsUndoneEntry(newHabits));
   };
-
-  console.log(noEntries, todayHabits);
 
   return (
     <>
