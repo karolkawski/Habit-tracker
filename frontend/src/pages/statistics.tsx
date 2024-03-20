@@ -4,7 +4,6 @@ import LineChart from '../Charts/LineChart';
 import CalendarChart from '../Charts/CalendarChart';
 import PieChart from '../Charts/PieChart';
 import { useState, useEffect, useRef } from 'react';
-import { DayPicker } from 'react-day-picker';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartLine, faChartPie } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
@@ -23,6 +22,8 @@ export const Statistics = () => {
   const dispatch = useDispatch();
 
   const habits = useSelector((state: { habit }) => state.habit.habits);
+  const token = useSelector((state: { user }) => state.user.token);
+
   const isMobile = useIsMobile();
   const [year, setYear] = useState<number>(new Date().getFullYear());
   const [habit, setHabit] = useState<any>('ALL');
@@ -42,7 +43,7 @@ export const Statistics = () => {
     try {
       const fetchedHabits = await axios.get(
         'http://localhost:4000/api/habits',
-        AuthHeader
+        AuthHeader(token)
       );
       if (fetchedHabits) {
         dispatch(fetchDataSuccess(fetchedHabits.data));
@@ -66,7 +67,7 @@ export const Statistics = () => {
           habitID: habit === 'ALL' ? 'ALL' : habit._id,
           year: year,
         },
-        ...AuthHeader,
+        ...AuthHeader(token),
       })
       .then((res) => {
         setCalendarChartData(res.data);
@@ -81,7 +82,7 @@ export const Statistics = () => {
         params: {
           time: pie1ChartTime,
         },
-        ...AuthHeader,
+        ...AuthHeader(token),
       })
       .then((res) => {
         setPie1ChartData(res.data);
@@ -97,7 +98,7 @@ export const Statistics = () => {
           habitID: habit === 'ALL' ? 'ALL' : habit._id,
           time: pie2ChartTime,
         },
-        ...AuthHeader,
+        ...AuthHeader(token),
       })
       .then((res) => {
         setPie2ChartData(res.data);
@@ -127,7 +128,7 @@ export const Statistics = () => {
   useEffect(() => {
     fetchHabits();
     fetchStats();
-  }, []);
+  }, [token]);
 
   const toogleTimeHandler = (chart: 'pie1' | 'pie2', value: any) => {
     if (chart === 'pie1') {

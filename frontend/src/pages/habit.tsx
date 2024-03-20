@@ -14,6 +14,8 @@ import { AuthHeader } from '../auth/AuthHeader';
 
 export const Habit = () => {
   const habits = useSelector((state: { habit }) => state.habit.habits);
+  const token = useSelector((state: { user }) => state.user.token);
+
   const [rel, setRel] = useState(false);
   const navigate = useNavigate();
   const params = useParams();
@@ -36,7 +38,10 @@ export const Habit = () => {
 
   const handleDeleteHabit = () => {
     axios
-      .delete(`http://localhost:4000/api/habits/${params.id}`, AuthHeader)
+      .delete(
+        `http://localhost:4000/api/habits/${params.id}`,
+        AuthHeader(token)
+      )
       .then((res) => {
         navigate('/habits');
       })

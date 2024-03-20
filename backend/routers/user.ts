@@ -47,7 +47,7 @@ router.get("/api/users", auth, async (req: Request, res: Response) => {
   res.status(200).send(users);
 });
 
-router.post("/api/users/logout", auth, async (req: AuthenticatedRequest, res : Response) => {
+router.post("/api/user/logout", auth, async (req: AuthenticatedRequest, res : Response) => {
   try {
     if (req.user) {
         req.user.tokens = [];

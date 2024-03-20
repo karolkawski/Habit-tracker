@@ -28,7 +28,7 @@ export const EntryRow = ({
             count_mode: habit.count_mode,
             habit_id: habit._id,
           },
-          AuthHeader
+          AuthHeader(token)
         )
         .then((res) => {
           handleAddEntry(res.data);
@@ -41,7 +41,10 @@ export const EntryRow = ({
     }
 
     axios
-      .delete(`http://localhost:4000/api/entries/${entry._id}`, AuthHeader)
+      .delete(
+        `http://localhost:4000/api/entries/${entry._id}`,
+        AuthHeader(token)
+      )
       .then((res) => {
         if (res.data) {
           handleRemoveEntry(res.data);

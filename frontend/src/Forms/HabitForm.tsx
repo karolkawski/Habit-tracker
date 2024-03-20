@@ -23,6 +23,8 @@ import { colorFormBoxes, iconsForm } from './FormOptions';
 
 export const HabitForm = ({ isAdd }) => {
   const habits = useSelector((state: { habit }) => state.habit.habits);
+  const token = useSelector((state: { user }) => state.user.token);
+
   let habit: HabitType | undefined;
   const navigate = useNavigate();
   const params = useParams();
@@ -63,7 +65,10 @@ export const HabitForm = ({ isAdd }) => {
 
   const handleDeleteHabit = () => {
     axios
-      .delete(`http://localhost:4000/api/habits/${params.id}`, AuthHeader)
+      .delete(
+        `http://localhost:4000/api/habits/${params.id}`,
+        AuthHeader(token)
+      )
       .then((res) => {
         navigate('/habits');
       })
@@ -86,10 +91,9 @@ export const HabitForm = ({ isAdd }) => {
                 .post(
                   'http://localhost:4000/api/habits/add',
                   { ...values },
-                  AuthHeader
+                  AuthHeader(token)
                 )
                 .then((res) => {
-                  console.log(res.data);
                   navigate('/habits');
                 })
                 .catch((error: any) => {
@@ -102,7 +106,7 @@ export const HabitForm = ({ isAdd }) => {
               .patch(
                 `http://localhost:4000/api/habits/${values._id}`,
                 { ...values },
-                AuthHeader
+                AuthHeader(token)
               )
               .then((res) => {
                 navigate('/habits');

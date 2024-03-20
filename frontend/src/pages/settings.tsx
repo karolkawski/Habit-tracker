@@ -7,6 +7,8 @@ import { AuthHeader } from '../auth/AuthHeader';
 import { Header } from '../components/UI/Header/Header';
 
 export const Settings = () => {
+  const token = useSelector((state: { user }) => state.user.token);
+
   const darkMode = useSelector(
     (state: { settings }) => state.settings.darkMode
   );
@@ -23,7 +25,7 @@ export const Settings = () => {
           name: 'darkMode',
           value: darkMode,
         },
-        AuthHeader
+        AuthHeader(token)
       )
       .then((res) => {
         setDarkMode(darkMode);
