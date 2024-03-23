@@ -1,4 +1,4 @@
-import express, {Router, Request, Response} from "express";
+import express, { Router, Request, Response } from "express";
 import Habit, { HabitDocument } from "../models/habit";
 const router: Router = express.Router();
 import Entry from "../models/entry";
@@ -7,7 +7,7 @@ import dateRange from "../utils/dateRange";
 import getDaysArray from "../utils/getDaysArray";
 import auth from "../middleware/auth";
 import { HabitType } from "../types/Habit";
-
+import getLastThreeMonths from "../utils/getLastThreeMonths";
 router.get("/api/statistics/entries", auth, (req: Request, res: Response) => {
   const { habitID, year } = req.query;
 
@@ -17,7 +17,6 @@ router.get("/api/statistics/entries", auth, (req: Request, res: Response) => {
   }
 
   const numericYear = parseInt(year as string, 10);
-
 
   const firstDayOfYear = new Date(Date.UTC(numericYear, 0, 1));
   const lastDayOfYear = new Date(Date.UTC(numericYear + 1, 0, 1));
@@ -34,7 +33,7 @@ router.get("/api/statistics/entries", auth, (req: Request, res: Response) => {
         const dataArray = dateRange(firstDayOfYear, lastDayOfYear);
         const dateMap = new Map();
 
-        entries.forEach((entry: { time: any; amount: any; }) => {
+        entries.forEach((entry: { time: any; amount: any }) => {
           const { time, amount } = entry;
           const dateKey = time.toISOString().split("T")[0];
           if (!dateMap.has(dateKey)) {
@@ -43,7 +42,7 @@ router.get("/api/statistics/entries", auth, (req: Request, res: Response) => {
           dateMap.set(dateKey, dateMap.get(dateKey) + amount);
         });
 
-        dataArray.forEach((entry: { date: { toISOString: () => string; }; value: any; }) => {
+        dataArray.forEach((entry: { date: { toISOString: () => string }; value: any }) => {
           const dateKey = entry.date.toISOString().split("T")[0];
           if (dateMap.has(dateKey)) {
             entry.value = dateMap.get(dateKey);
@@ -65,29 +64,38 @@ router.get("/api/statistics/entries", auth, (req: Request, res: Response) => {
     })
       .then((entries: any[]) => {
         const dataArray = getDaysArray(firstDayOfYear, lastDayOfYear);
-        let data: { date: any; value: any; }[] = [];
+        let data: { date: any; value: any }[] = [];
 
         //preprocess response
-        entries.map((entry: { time: any; amount: any; }) => {
+        entries.map((entry: { time: any; amount: any }) => {
           const { time, amount } = entry;
           data.push({ date: time, value: amount });
         });
 
         const secondArrayMap = new Map(
-          data.map((item) => [
+          data.map(item => [
             `${item.date.getFullYear()}-${item.date.getMonth()}-${item.date.getDay()}`,
             item.value,
           ])
         );
 
         // Override values in the first array with values from the second array
-        const mergedArray = dataArray.map((item: { date: { getFullYear: () => any; getMonth: () => any; getDay: () => any; }; value: any; }) => ({
-          date: item.date,
-          value:
-            secondArrayMap.get(
-              `${item.date.getFullYear()}-${item.date.getMonth()}-${item.date.getDay()}`
-            ) || item.value,
-        }));
+        const mergedArray = dataArray.map(
+          (item: {
+            date: {
+              getFullYear: () => any;
+              getMonth: () => any;
+              getDay: () => any;
+            };
+            value: any;
+          }) => ({
+            date: item.date,
+            value:
+              secondArrayMap.get(
+                `${item.date.getFullYear()}-${item.date.getMonth()}-${item.date.getDay()}`
+              ) || item.value,
+          })
+        );
 
         res.status(201).send(mergedArray);
       })
@@ -123,14 +131,57 @@ router.get("/api/statistics/habits", auth, async (req: Request, res: Response) =
   }
 });
 
-router.get("/api/statistics/weekday", auth, (req: Request, res: Response) => {
+router.get(
+  "/api/statistics/currentMonthhHabitEntries",
+  auth,
+  async (req: Request, res: Response) => {
+    const currentTime = new Date();
+    let months = await getLastThreeMonths(currentTime);
+    const { habit_id } = req.query;
+
+    if (!habit_id) {
+      res.status(404).send("Missing habit");
+      return;
+    }
+    try {
+      const response = await Promise.all(
+        months.map(async month => {
+          const startOfMonth = new Date(Date.UTC(month.year, month.month - 1, 1));
+          const endOfMonth = new Date(Date.UTC(month.year, month.month, 0));
+          const entries = await Entry.find({
+            time: {
+              $gte: startOfMonth,
+              $lt: endOfMonth,
+            },
+            habit_id: habit_id,
+          });
+          const processedEntries = entries.map(entry => {
+            const date = new Date(entry.time);
+            date.setHours(0);
+            date.setMinutes(0);
+            date.setSeconds(0);
+            return { date };
+          });
+
+          return { ...month, entries: processedEntries };
+        })
+      );
+
+      res.status(201).send(response);
+    } catch (error) {
+      res.status(400).send(error);
+    }
+  }
+);
+
+router.get("/api/statistics/habitWeekdays", auth, (req: Request, res: Response) => {
   const { habitID, time } = req.query;
   const dayNames = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
   const response: { name: string; value: number }[] = [];
   const currentTime = new Date();
   const startDate = calculateTimeGap(currentTime, time);
 
-  dayNames.map((day) => {
+  dayNames.map(day => {
     response.push({ name: day, value: 0 });
   });
 
@@ -142,7 +193,7 @@ router.get("/api/statistics/weekday", auth, (req: Request, res: Response) => {
       },
     })
       .then((entries: any[]) => {
-        entries.map((entry: { time: any; }) => {
+        entries.map((entry: { time: any }) => {
           const { time } = entry;
           const dayIndex = new Date(time).getDay();
           response[dayIndex] = {
@@ -164,7 +215,7 @@ router.get("/api/statistics/weekday", auth, (req: Request, res: Response) => {
       habit_id: habitID,
     })
       .then((entries: any[]) => {
-        entries.map((entry: { time: any; }) => {
+        entries.map((entry: { time: any }) => {
           const { time } = entry;
           const dayIndex = new Date(time).getDay();
           response[dayIndex] = {
