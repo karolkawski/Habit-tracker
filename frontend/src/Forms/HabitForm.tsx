@@ -268,6 +268,8 @@ export const HabitForm = ({ isAdd }) => {
                 </Select>
               </div>
               <div className="flex justify-end">
+                <Back />
+
                 {isAdd ? (
                   <Button
                     type="submit"
@@ -298,7 +300,6 @@ export const HabitForm = ({ isAdd }) => {
             </form>
           )}
         </Formik>
-        <Back />
       </ContentWrapper>
     </>
   );

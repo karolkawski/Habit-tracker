@@ -3,7 +3,7 @@ import { Button } from 'flowbite-react';
 import { ButtonCustomTheme } from '../../../theme/ButtonCustomTheme';
 export const Back = () => {
   return (
-    <div className="mt-10 left-5 bottom-5 fixed">
+    <div className="mr-5">
       <Button theme={ButtonCustomTheme} color="secondary">
         <Link to={`/habits`}>Back</Link>
       </Button>
