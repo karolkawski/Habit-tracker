@@ -93,7 +93,7 @@ export const Statistics = () => {
   };
   const fetchWeekdayStats = () => {
     axios
-      .get('http://localhost:4000/api/statistics/weekday', {
+      .get('http://localhost:4000/api/statistics/habitWeekdays', {
         params: {
           habitID: habit === 'ALL' ? 'ALL' : habit._id,
           time: pie2ChartTime,
