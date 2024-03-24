@@ -120,8 +120,6 @@ export const Habit = () => {
         ? doneDays[monthIndex].entries.find((d) => {
             const dateFromDoneDays =
               typeof d.date === 'string' ? new Date(d.date) : d.date;
-
-            console.log(dateFromDoneDays, propsDate);
             return dateFromDoneDays.getTime() === propsDate.getTime();
           })
         : false;

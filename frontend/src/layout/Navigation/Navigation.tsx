@@ -15,7 +15,6 @@ export const Navigation = () => {
       axios
         .post('http://localhost:4000/api/user/logout', {}, AuthHeader(token))
         .then((response) => {
-          console.log('🚀 ~ .then ~ response:', response);
           dispatch(removeTokenSuccess());
         })
         .catch((e) => {
