@@ -1,7 +1,7 @@
 import Settings from "../models/settings";
 import express, { Router, Request, Response } from "express";
-const router: Router = express.Router();
 import auth from "../middleware/auth";
+const router: Router = express.Router();
 
 router.get("/api/settings", auth, (req: Request, res: Response) => {
   Settings.find({})

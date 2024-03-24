@@ -1,7 +1,10 @@
 import express, { Router, Request, Response } from "express";
-import Habit, { HabitDocument } from "../models/habit";
-import Entry, { EntryDocument } from "../models/entry";
+import Habit from "../models/habit";
+import Entry from "../models/entry";
+import { EntryDocument } from "../types/models/Entry";
+import { HabitDocument } from "../types/models/Habit";
 import auth from "../middleware/auth";
+
 const router: Router = express.Router();
 
 /**

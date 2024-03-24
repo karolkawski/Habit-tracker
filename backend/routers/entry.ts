@@ -2,8 +2,9 @@ import express, { Router, Request, Response } from "express";
 import Entry from "../models/entry";
 import Habit from "../models/habit";
 import auth from "../middleware/auth";
-import { EntryDocument } from "../models/entry";
+import { EntryDocument } from "../types/models/Entry";
 import { EntryType } from "../types/Entry";
+
 const router: Router = express.Router();
 
 /**

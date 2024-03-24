@@ -1,11 +1,13 @@
 import express, { Router, Request, Response } from "express";
-import Habit, { HabitDocument } from "../models/habit";
-const router: Router = express.Router();
-import Entry, { EntryDocument } from "../models/entry";
+import Habit from "../models/habit";
+import Entry from "../models/entry";
+import { HabitDocument } from "../types/models/Habit";
+import { EntryDocument } from "../types/models/Entry";
 import calculateTimeGap from "../utils/calculateTimeGap";
 import dateRange from "../utils/dateRange";
 import auth from "../middleware/auth";
 import getLastThreeMonths from "../utils/getLastThreeMonths";
+const router: Router = express.Router();
 
 router.get("/api/statistics/entries", auth, async (req: Request, res: Response) => {
   const { habitID, year } = req.query;

@@ -1,14 +1,9 @@
 import express, { Router, Request, Response } from "express";
-const router: Router = express.Router();
-import User, { UserDocument } from "../models/user";
+import User from "../models/user";
 import auth from "../middleware/auth";
-
-type AuthenticatedRequest = Request & {
-  user?: {
-    tokens: string[];
-    save: () => Promise<void>;
-  };
-};
+import { UserDocument } from "../types/models/User";
+import { AuthenticatedRequest } from "../types/Auth";
+const router: Router = express.Router();
 
 router.post("/api/user/add", async (req: Request, res: Response) => {
   try {

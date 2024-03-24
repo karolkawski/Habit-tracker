@@ -1,13 +1,5 @@
-import mongoose, { Document, Model } from "mongoose";
-
-type SettingsAttributes = {
-  name: string;
-  value: string;
-};
-
-type SettingsDocument = SettingsAttributes & Document;
-
-type SettingsModel = Model<SettingsDocument>;
+import mongoose from "mongoose";
+import { SettingsDocument, SettingsModel } from "../types/models/Settings";
 
 const settingsSchema = new mongoose.Schema<SettingsDocument>(
   {

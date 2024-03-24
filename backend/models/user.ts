@@ -1,35 +1,8 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
-import mongoose, { Document, Model } from "mongoose";
+import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-
-type UserAttributes = {
-  login: string;
-  name: string;
-  email: string;
-  password: string;
-  tokens: { token: string }[];
-  role: string;
-};
-
-type UserPublicData = {
-  login: string;
-  name: string;
-  email: string;
-  role: string;
-};
-
-type UserMethods = {
-  generateAuthToken(): Promise<string>;
-  getPublicData(): Promise<UserPublicData>;
-};
-
-export type UserDocument = UserAttributes & UserMethods & Document;
-
-type UserModel = Model<UserDocument> & {
-  // eslint-disable-next-line no-unused-vars
-  findByCredentials(login: string, password: string): Promise<UserDocument>;
-};
+import { UserDocument, UserModel } from "../types/models/User";
 
 const userSchema = new mongoose.Schema<UserDocument>(
   {

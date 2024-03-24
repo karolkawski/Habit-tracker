@@ -1,17 +1,5 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
-
-type EntryAttributes = {
-  time: Date;
-  habit_id: mongoose.Types.ObjectId;
-  amount: number;
-  count_mode: boolean;
-};
-
-export type EntryDocument = EntryAttributes & Document;
-
-type EntryModel = Model<EntryDocument> & {
-  getEntriesForHabit(): Promise<EntryDocument[]>;
-};
+import mongoose, { Schema } from "mongoose";
+import { EntryDocument, EntryModel } from "../types/models/Entry";
 
 const entriesSchema = new mongoose.Schema<EntryDocument>(
   {
