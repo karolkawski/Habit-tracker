@@ -1,9 +1,8 @@
-import express, {Router, Request, Response} from "express";
+import express, { Router, Request, Response } from "express";
 import Habit, { HabitDocument } from "../models/habit";
 import Entry, { EntryDocument } from "../models/entry";
-const router: Router = express.Router();
 import auth from "../middleware/auth";
-import {Frequency} from '../types/Habit'
+const router: Router = express.Router();
 
 /**
  * List all habits
@@ -12,10 +11,10 @@ import {Frequency} from '../types/Habit'
  */
 router.get("/api/habits", auth, (req: Request, res: Response) => {
   Habit.find({})
-    .then((habits: any) => {
+    .then((habits: HabitDocument[]) => {
       res.status(201).send(habits);
     })
-    .catch((e: any) => {
+    .catch((e: Error) => {
       res.status(500).send(e);
     });
 });
@@ -23,16 +22,16 @@ router.get("/api/habits", auth, (req: Request, res: Response) => {
 /**
  * Get habit by id
  */
-router.get("/api/habits/:id", auth,  (req: Request, res: Response) => {
+router.get("/api/habits/:id", auth, (req: Request, res: Response) => {
   const { id } = req.params;
   Habit.findById(id)
-    .then((habit: any) => {
+    .then((habit: HabitDocument | null) => {
       if (!habit) {
         return res.status(404).send(habit);
       }
       res.status(201).send(habit);
     })
-    .catch((e: any) => {
+    .catch((e: Error) => {
       res.status(500).send(e);
     });
 });
@@ -40,12 +39,13 @@ router.get("/api/habits/:id", auth,  (req: Request, res: Response) => {
 /**
  * Add new habit
  */
-router.post("/api/habits/add", auth, async  (req: Request, res: Response) => {
+router.post("/api/habits/add", auth, async (req: Request, res: Response) => {
   delete req.body._id;
   let cancelRequest = false;
 
-  req.on("close", function (err: any) {
+  req.on("close", function (err: Error) {
     cancelRequest = true;
+    return res.status(404).send(err);
   });
 
   const habit = await new Habit(req.body);
@@ -54,7 +54,7 @@ router.post("/api/habits/add", auth, async  (req: Request, res: Response) => {
     .then(() => {
       res.status(201).send(habit);
     })
-    .catch((err: any) => {
+    .catch((err: Error) => {
       if (cancelRequest) {
         return res.status(404).send("Cancel request");
       }
@@ -65,15 +65,15 @@ router.post("/api/habits/add", auth, async  (req: Request, res: Response) => {
 /**
  * Update habit
  */
-router.patch("/api/habits/:id", auth,  (req: Request, res: Response) => {
+router.patch("/api/habits/:id", auth, (req: Request, res: Response) => {
   Habit.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
   })
-    .then((habit: any) => {
+    .then((habit: HabitDocument | null) => {
       res.status(201).send(habit);
     })
-    .catch((e: any) => {
+    .catch((e: Error) => {
       res.status(500).send(e);
     });
 });
@@ -81,7 +81,7 @@ router.patch("/api/habits/:id", auth,  (req: Request, res: Response) => {
 /**
  * Get today's habits
  */
-router.get("/api/todayHabits", auth,  (req: Request, res: Response) => {
+router.get("/api/todayHabits", auth, (req: Request, res: Response) => {
   const currentTime = new Date();
   const dayIndex = currentTime.getDay();
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -90,10 +90,10 @@ router.get("/api/todayHabits", auth,  (req: Request, res: Response) => {
   query.frequency.days[currentDay] = true;
 
   Habit.find(query)
-    .then((habits: any) => {
+    .then((habits: HabitDocument[]) => {
       res.status(201).send({ habits });
     })
-    .catch((error: any) => {
+    .catch((error: Error) => {
       res.status(500).send(error);
     });
 });
@@ -101,26 +101,22 @@ router.get("/api/todayHabits", auth,  (req: Request, res: Response) => {
 /**
  * Get habits by date
  */
-router.get("/api/habitsByDate", auth,  (req: Request<{}, {}, { time?: string }>, res: Response) => {
-    let { time } = req.query;
-    if (time) {
-        const parsedTime = new Date(time as string);
-        
-        // Sprawdź, czy parsowanie się udało
-        if (!isNaN(parsedTime.getTime())) {
-            time = parsedTime as unknown as string; 
-        } else {
-            res.status(400).send('Invalid date format');
-            return;
-        }
+router.get("/api/habitsByDate", auth, (req: Request<{}, {}, { time?: string }>, res: Response) => {
+  let { time } = req.query;
+  if (time) {
+    const parsedTime = new Date(time as string);
+    if (!isNaN(parsedTime.getTime())) {
+      time = parsedTime as unknown as string;
+    } else {
+      res.status(400).send("Invalid date format");
+      return;
     }
+  }
 
-  const dayIndex = new Date(time!).getDay() -1;
+  const dayIndex = new Date(time!).getDay() - 1;
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const currentDay = days[dayIndex];
-  // const query: any = { frequency: { days: {} } };
-  // query.frequency.days[currentDay] = true;
-  const query :any = {};
+  const query: any = {};
   query[`frequency.days.${currentDay}`] = true;
   const startOfDay = new Date(time!);
   startOfDay.setHours(0, 0, 0, 0);
@@ -145,17 +141,19 @@ router.get("/api/habitsByDate", auth,  (req: Request<{}, {}, { time?: string }>,
 
       Promise.all(promises)
         .then((entries: (EntryDocument | null)[]) => {
-          const habitEntries: { habit: HabitDocument; entry: EntryDocument | null }[] = habits.map((habit: HabitDocument, index: number) => ({
-            habit: habit,
-            entry: entries[index],
-          }));
+          const habitEntries: { habit: HabitDocument; entry: EntryDocument | null }[] = habits.map(
+            (habit: HabitDocument, index: number) => ({
+              habit: habit,
+              entry: entries[index],
+            }),
+          );
           res.status(200).send({ habitEntries });
         })
-        .catch((error) => {
+        .catch(error => {
           res.status(500).send(error);
         });
     })
-    .catch((error: any) => {
+    .catch((error: Error) => {
       res.status(500).send(error);
     });
 });
@@ -165,13 +163,12 @@ router.get("/api/habitsByDate", auth,  (req: Request<{}, {}, { time?: string }>,
  */
 router.delete("/api/habits/:id", auth, (req: Request, res: Response) => {
   Habit.findByIdAndDelete(req.params.id)
-    .then((habit: any) => {
+    .then((habit: HabitDocument | null) => {
       res.status(201).send(habit);
     })
-    .catch((e: any) => {
+    .catch((e: Error) => {
       res.status(500).send(e);
     });
 });
 
 module.exports = router;
-

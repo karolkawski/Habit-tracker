@@ -1,33 +1,35 @@
-import mongoose, { Document, Model } from "mongoose"
+/* eslint-disable @typescript-eslint/no-this-alias */
+import mongoose, { Document, Model } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 type UserAttributes = {
-    login: string;
-    name: string;
-    email: string;
-    password: string;
-    tokens: {token: string}[],
-    role: string
-}
+  login: string;
+  name: string;
+  email: string;
+  password: string;
+  tokens: { token: string }[];
+  role: string;
+};
 
 type UserPublicData = {
-    login: string;
-    name: string;
-    email: string;
-    role: string;
-  };
+  login: string;
+  name: string;
+  email: string;
+  role: string;
+};
 
 type UserMethods = {
-    generateAuthToken(): Promise<string>,
-    getPublicData(): Promise<UserPublicData>
-}
+  generateAuthToken(): Promise<string>;
+  getPublicData(): Promise<UserPublicData>;
+};
 
-type UserDocument = UserAttributes & UserMethods & Document
+export type UserDocument = UserAttributes & UserMethods & Document;
 
 type UserModel = Model<UserDocument> & {
-    findByCredentials(login: string, password: string): Promise<UserDocument>
-}
+  // eslint-disable-next-line no-unused-vars
+  findByCredentials(login: string, password: string): Promise<UserDocument>;
+};
 
 const userSchema = new mongoose.Schema<UserDocument>(
   {
@@ -61,7 +63,7 @@ const userSchema = new mongoose.Schema<UserDocument>(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 userSchema.methods.getPublicData = async function () {
@@ -83,7 +85,7 @@ userSchema.methods.generateAuthToken = async function () {
 };
 
 userSchema.pre("save", async function (next) {
-  const user = this
+  const user = this;
 
   if (user.isModified("password")) {
     user.password = await bcrypt.hash(user.password, 8);

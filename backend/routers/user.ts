@@ -1,31 +1,29 @@
-import express, {Router, Request, Response} from "express";
+import express, { Router, Request, Response } from "express";
 const router: Router = express.Router();
-import User from "../models/user";
+import User, { UserDocument } from "../models/user";
 import auth from "../middleware/auth";
 
 type AuthenticatedRequest = Request & {
-    user?: {
-      tokens: string[];
-      save: () => Promise<void>;
-    };
-  }
+  user?: {
+    tokens: string[];
+    save: () => Promise<void>;
+  };
+};
 
 router.post("/api/user/add", async (req: Request, res: Response) => {
-  const user = await new User(req.body);
-
-  user
-    .save()
-    .then(async (user: { generateAuthToken: () => any; getPublicData: () => any; }) => {
-      const token = await user.generateAuthToken();
-      res.status(200).send({ user: user.getPublicData(), token });
-    })
-    .catch(() => {
-      res.status(400).send("Cancel request");
-    });
+  try {
+    const user = new User(req.body);
+    await user.save();
+    const token = await user.generateAuthToken();
+    res.status(200).send({ user: user.getPublicData(), token });
+  } catch (error) {
+    res.status(400).send("Error while adding user");
+  }
 });
 
 router.post("/api/user/login", async (req: Request, res: Response) => {
-  const user = await User.findByCredentials(req.body.login, req.body.password);
+  const { login, password } = req.body;
+  const user = await User.findByCredentials(login, password);
   if (!user) {
     res.status(400).send("Unable to login");
     return;
@@ -47,11 +45,11 @@ router.get("/api/users", auth, async (req: Request, res: Response) => {
   res.status(200).send(users);
 });
 
-router.post("/api/user/logout", auth, async (req: AuthenticatedRequest, res : Response) => {
+router.post("/api/user/logout", auth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     if (req.user) {
-        req.user.tokens = [];
-        await req.user.save();
+      req.user.tokens = [];
+      await req.user.save();
     }
 
     res.send();
@@ -60,28 +58,27 @@ router.post("/api/user/logout", auth, async (req: AuthenticatedRequest, res : Re
   }
 });
 
-router.delete("/api/user/delete", auth, (req: Request, res: Response) => {
-  const { login, password } = req.body;
-  User.findOneAndDelete({ login: login })
-    .then((user: any) => {
-      res.status(201).send(user);
-    })
-    .catch((e: any) => {
-      res.status(500).send(e);
-    });
+router.delete("/api/user/delete", auth, async (req: Request, res: Response) => {
+  const { login } = req.body;
+  try {
+    const user: UserDocument | null = await User.findOneAndDelete({ login: login });
+    res.status(200).send(user);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
-router.patch("/api/user/update/:id", auth, (req: Request, res: Response) => {
-  User.findByIdAndUpdate(req.params.id, req.body, {
-    new: false,
-    runValidators: false,
-  })
-    .then((updatedUser: any) => {
-      res.status(201).send(updatedUser);
-    })
-    .catch((e: any) => {
-      res.status(500).send(e);
+router.patch("/api/user/update/:id", auth, async (req: Request, res: Response) => {
+  try {
+    const user: UserDocument | null = await User.findByIdAndUpdate(req.params.id, req.body, {
+      new: false,
+      runValidators: false,
     });
+
+    res.status(201).send(user);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 module.exports = router;

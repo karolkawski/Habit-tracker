@@ -1,18 +1,17 @@
 import express, { Router, Request, Response } from "express";
 import Habit, { HabitDocument } from "../models/habit";
 const router: Router = express.Router();
-import Entry from "../models/entry";
+import Entry, { EntryDocument } from "../models/entry";
 import calculateTimeGap from "../utils/calculateTimeGap";
 import dateRange from "../utils/dateRange";
-import getDaysArray from "../utils/getDaysArray";
 import auth from "../middleware/auth";
-import { HabitType } from "../types/Habit";
 import getLastThreeMonths from "../utils/getLastThreeMonths";
-router.get("/api/statistics/entries", auth, (req: Request, res: Response) => {
+
+router.get("/api/statistics/entries", auth, async (req: Request, res: Response) => {
   const { habitID, year } = req.query;
 
   if (year === undefined) {
-    res.status(404).send("Missing year");
+    res.status(400).send("Missing year");
     return;
   }
 
@@ -22,86 +21,46 @@ router.get("/api/statistics/entries", auth, (req: Request, res: Response) => {
   const lastDayOfYear = new Date(Date.UTC(numericYear + 1, 0, 1));
   lastDayOfYear.setDate(lastDayOfYear.getDate() - 1);
 
-  if (habitID === "ALL") {
-    Entry.find({
-      time: {
-        $gte: firstDayOfYear,
-        $lt: lastDayOfYear,
-      },
-    })
-      .then((entries: any[]) => {
-        const dataArray = dateRange(firstDayOfYear, lastDayOfYear);
-        const dateMap = new Map();
-
-        entries.forEach((entry: { time: any; amount: any }) => {
-          const { time, amount } = entry;
-          const dateKey = time.toISOString().split("T")[0];
-          if (!dateMap.has(dateKey)) {
-            dateMap.set(dateKey, 0);
-          }
-          dateMap.set(dateKey, dateMap.get(dateKey) + amount);
-        });
-
-        dataArray.forEach((entry: { date: { toISOString: () => string }; value: any }) => {
-          const dateKey = entry.date.toISOString().split("T")[0];
-          if (dateMap.has(dateKey)) {
-            entry.value = dateMap.get(dateKey);
-          }
-        });
-
-        res.status(201).send(dataArray);
-      })
-      .catch((e: any) => {
-        res.status(400).send(e);
+  try {
+    let entries: EntryDocument[];
+    if (habitID === "ALL") {
+      entries = await Entry.find({
+        time: {
+          $gte: firstDayOfYear,
+          $lt: lastDayOfYear,
+        },
       });
-  } else {
-    Entry.find({
-      time: {
-        $gte: firstDayOfYear,
-        $lt: lastDayOfYear,
-      },
-      habit_id: habitID,
-    })
-      .then((entries: any[]) => {
-        const dataArray = getDaysArray(firstDayOfYear, lastDayOfYear);
-        let data: { date: any; value: any }[] = [];
-
-        //preprocess response
-        entries.map((entry: { time: any; amount: any }) => {
-          const { time, amount } = entry;
-          data.push({ date: time, value: amount });
-        });
-
-        const secondArrayMap = new Map(
-          data.map(item => [
-            `${item.date.getFullYear()}-${item.date.getMonth()}-${item.date.getDay()}`,
-            item.value,
-          ])
-        );
-
-        // Override values in the first array with values from the second array
-        const mergedArray = dataArray.map(
-          (item: {
-            date: {
-              getFullYear: () => any;
-              getMonth: () => any;
-              getDay: () => any;
-            };
-            value: any;
-          }) => ({
-            date: item.date,
-            value:
-              secondArrayMap.get(
-                `${item.date.getFullYear()}-${item.date.getMonth()}-${item.date.getDay()}`
-              ) || item.value,
-          })
-        );
-
-        res.status(201).send(mergedArray);
-      })
-      .catch((e: any) => {
-        res.status(400).send(e);
+    } else {
+      entries = await Entry.find({
+        time: {
+          $gte: firstDayOfYear,
+          $lt: lastDayOfYear,
+        },
+        habit_id: habitID,
       });
+    }
+    const dataArray = dateRange(firstDayOfYear, lastDayOfYear);
+    const dateMap = new Map<string, number>();
+
+    entries.forEach((entry: EntryDocument) => {
+      const { time, amount } = entry;
+      const dateKey = time.toISOString().split("T")[0];
+      if (!dateMap.has(dateKey)) {
+        dateMap.set(dateKey, 0);
+      }
+      dateMap.set(dateKey, dateMap.get(dateKey)! + amount);
+    });
+
+    dataArray.forEach((entry: { date: Date; value: number }) => {
+      const dateKey = entry.date.toISOString().split("T")[0];
+      if (dateMap.has(dateKey)) {
+        entry.value = dateMap.get(dateKey)!;
+      }
+    });
+
+    res.status(200).json(dataArray);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
   }
 });
 
@@ -122,12 +81,12 @@ router.get("/api/statistics/habits", auth, async (req: Request, res: Response) =
         });
         const entriesAmount = entries.length;
         return { name: habit.name, value: entriesAmount };
-      })
+      }),
     );
 
     res.status(201).send(response);
-  } catch (e) {
-    res.status(500).send(e);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
   }
 });
 
@@ -136,11 +95,11 @@ router.get(
   auth,
   async (req: Request, res: Response) => {
     const currentTime = new Date();
-    let months = await getLastThreeMonths(currentTime);
+    const months = await getLastThreeMonths(currentTime);
     const { habit_id } = req.query;
 
     if (!habit_id) {
-      res.status(404).send("Missing habit");
+      res.status(400).send("Missing habit");
       return;
     }
     try {
@@ -164,17 +123,17 @@ router.get(
           });
 
           return { ...month, entries: processedEntries };
-        })
+        }),
       );
 
       res.status(201).send(response);
     } catch (error) {
-      res.status(400).send(error);
+      res.status(500).send("Internal Server Error");
     }
-  }
+  },
 );
 
-router.get("/api/statistics/habitWeekdays", auth, (req: Request, res: Response) => {
+router.get("/api/statistics/habitWeekdays", auth, async (req: Request, res: Response) => {
   const { habitID, time } = req.query;
   const dayNames = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
   const response: { name: string; value: number }[] = [];
@@ -185,49 +144,36 @@ router.get("/api/statistics/habitWeekdays", auth, (req: Request, res: Response) 
     response.push({ name: day, value: 0 });
   });
 
-  if (habitID === "ALL") {
-    Entry.find({
-      time: {
-        $gte: startDate,
-        $lt: currentTime,
-      },
-    })
-      .then((entries: any[]) => {
-        entries.map((entry: { time: any }) => {
-          const { time } = entry;
-          const dayIndex = new Date(time).getDay();
-          response[dayIndex] = {
-            name: response[dayIndex].name,
-            value: response[dayIndex].value + 1,
-          };
-        });
-        res.status(201).send(response);
-      })
-      .catch((e: any) => {
-        res.status(400).send(e);
+  try {
+    let entries: EntryDocument[];
+    if (habitID === "ALL") {
+      entries = await Entry.find({
+        time: {
+          $gte: startDate,
+          $lt: currentTime,
+        },
       });
-  } else {
-    Entry.find({
-      time: {
-        $gte: startDate,
-        $lt: currentTime,
-      },
-      habit_id: habitID,
-    })
-      .then((entries: any[]) => {
-        entries.map((entry: { time: any }) => {
-          const { time } = entry;
-          const dayIndex = new Date(time).getDay();
-          response[dayIndex] = {
-            name: response[dayIndex].name,
-            value: response[dayIndex].value + 1,
-          };
-        });
-        res.status(201).send(response);
-      })
-      .catch((e: any) => {
-        res.status(400).send(e);
+    } else {
+      entries = await Entry.find({
+        time: {
+          $gte: startDate,
+          $lt: currentTime,
+        },
+        habit_id: habitID,
       });
+    }
+
+    entries.map((entry: EntryDocument) => {
+      const { time } = entry;
+      const dayIndex = new Date(time).getDay();
+      response[dayIndex] = {
+        name: response[dayIndex].name,
+        value: response[dayIndex].value + 1,
+      };
+    });
+    res.status(201).send(response);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
   }
 });
 

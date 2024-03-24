@@ -1,13 +1,13 @@
-import mongoose, { Document, Model } from "mongoose"
+import mongoose, { Document, Model } from "mongoose";
 
 type SettingsAttributes = {
-    name: string;
-    value: string;
-}
+  name: string;
+  value: string;
+};
 
-type SettingsDocument = SettingsAttributes & Document
+type SettingsDocument = SettingsAttributes & Document;
 
-type SettingsModel = Model<SettingsDocument>
+type SettingsModel = Model<SettingsDocument>;
 
 const settingsSchema = new mongoose.Schema<SettingsDocument>(
   {
@@ -20,7 +20,7 @@ const settingsSchema = new mongoose.Schema<SettingsDocument>(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Settings = mongoose.model<SettingsDocument, SettingsModel>("Settings", settingsSchema);

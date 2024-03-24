@@ -1,16 +1,11 @@
-import { EntryType } from "perf_hooks";
-
-const mongoose = require("mongoose");
-const mongodb = require("mongodb");
-const Habit = require("../models/habit");
-const Entry = require("../models/entry");
-const Settings = require("../models/settings");
+import mongoose from "mongoose";
+import Habit from "../models/habit";
+import Entry from "../models/entry";
+import Settings from "../models/settings";
 
 //CONNECTION
 mongoose.set("strictQuery", false);
-mongoose.connect("mongodb://127.0.0.1:27017/habit_tracker_290423", {
-  useNewUrlParser: true,
-});
+mongoose.connect("mongodb://127.0.0.1:27017/habit_tracker_290423");
 
 const randomZeroOrOne = Math.floor(Math.random() * 2);
 
@@ -265,7 +260,7 @@ const seedDb = async () => {
   const habitIds = await Habit.find({}, "_id");
   const ids = habitIds.map((habit: any) => habit._id);
   await Entry.deleteMany({});
-  await Entry.insertMany(seedEntries(ids)).then((entries: EntryType[]) => {});
+  await Entry.insertMany(seedEntries(ids));
 };
 
 seedDb().then(() => {

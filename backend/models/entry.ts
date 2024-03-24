@@ -1,18 +1,18 @@
-import mongoose, { Document, Model, Schema } from "mongoose"
+import mongoose, { Document, Model, Schema } from "mongoose";
 
 type EntryAttributes = {
-    time: Date;
-    habit_id: mongoose.Types.ObjectId;
-    amount: number;
-    count_mode: boolean;
-  }
-  
-  export type EntryDocument = EntryAttributes & Document
-  
-  type EntryModel = Model<EntryDocument> & {
-    getEntriesForHabit(habitId: mongoose.Types.ObjectId): Promise<EntryDocument[]>;
-  };
-  
+  time: Date;
+  habit_id: mongoose.Types.ObjectId;
+  amount: number;
+  count_mode: boolean;
+};
+
+export type EntryDocument = EntryAttributes & Document;
+
+type EntryModel = Model<EntryDocument> & {
+  getEntriesForHabit(): Promise<EntryDocument[]>;
+};
+
 const entriesSchema = new mongoose.Schema<EntryDocument>(
   {
     time: {
@@ -38,16 +38,17 @@ const entriesSchema = new mongoose.Schema<EntryDocument>(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-entriesSchema.statics.getEntriesForHabit = function (
-    habitId: mongoose.Types.ObjectId
-  ): Promise<EntryDocument[]> {
-    return this.find({ habit_id: habitId }).exec();
-  };
-  
-  const Entry = mongoose.model<EntryDocument, EntryModel>("Entry", entriesSchema);
-  
+entriesSchema.statics.getEntriesForHabit = async function ({
+  habit_id,
+}: {
+  habit_id: mongoose.Types.ObjectId;
+}): Promise<EntryDocument[]> {
+  return await this.find({ habit_id }).exec();
+};
+
+const Entry = mongoose.model<EntryDocument, EntryModel>("Entry", entriesSchema);
 
 export default Entry;
