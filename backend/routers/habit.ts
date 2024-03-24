@@ -12,31 +12,30 @@ const router: Router = express.Router();
  * GET /habits?completed (today)
  * GET /habits?limit=10&skip=20
  */
-router.get("/api/habits", auth, (req: Request, res: Response) => {
-  Habit.find({})
-    .then((habits: HabitDocument[]) => {
-      res.status(201).send(habits);
-    })
-    .catch((e: Error) => {
-      res.status(500).send(e);
-    });
+router.get("/api/habits", auth, async (req: Request, res: Response) => {
+  try {
+    const habits: HabitDocument[] = await Habit.find({});
+    res.status(200).send(habits);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 /**
  * Get habit by id
  */
-router.get("/api/habits/:id", auth, (req: Request, res: Response) => {
+router.get("/api/habits/:id", auth, async (req: Request, res: Response) => {
   const { id } = req.params;
-  Habit.findById(id)
-    .then((habit: HabitDocument | null) => {
-      if (!habit) {
-        return res.status(404).send(habit);
-      }
-      res.status(201).send(habit);
-    })
-    .catch((e: Error) => {
-      res.status(500).send(e);
-    });
+
+  try {
+    const habit: HabitDocument | null = await Habit.findById(id);
+    if (!habit) {
+      res.status(404).send("Habit not found");
+    }
+    res.status(200).send(habit);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 /**
@@ -51,40 +50,37 @@ router.post("/api/habits/add", auth, async (req: Request, res: Response) => {
     return res.status(404).send(err);
   });
 
-  const habit = await new Habit(req.body);
-  habit
-    .save()
-    .then(() => {
-      res.status(201).send(habit);
-    })
-    .catch((err: Error) => {
-      if (cancelRequest) {
-        return res.status(404).send("Cancel request");
-      }
-      res.status(404).send(err);
-    });
+  try {
+    const habit = await new Habit(req.body);
+    const savedHabit = await habit.save();
+    res.status(200).send(savedHabit);
+  } catch (error) {
+    if (cancelRequest) {
+      return res.status(404).send("Cancel request");
+    }
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 /**
  * Update habit
  */
-router.patch("/api/habits/:id", auth, (req: Request, res: Response) => {
-  Habit.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  })
-    .then((habit: HabitDocument | null) => {
-      res.status(201).send(habit);
-    })
-    .catch((e: Error) => {
-      res.status(500).send(e);
+router.patch("/api/habits/:id", auth, async (req: Request, res: Response) => {
+  try {
+    const habit: HabitDocument | null = await Habit.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
     });
+    res.status(200).send(habit);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 /**
  * Get today's habits
  */
-router.get("/api/todayHabits", auth, (req: Request, res: Response) => {
+router.get("/api/todayHabits", auth, async (req: Request, res: Response) => {
   const currentTime = new Date();
   const dayIndex = currentTime.getDay();
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -92,49 +88,51 @@ router.get("/api/todayHabits", auth, (req: Request, res: Response) => {
   const query: any = { frequency: { days: days } };
   query.frequency.days[currentDay] = true;
 
-  Habit.find(query)
-    .then((habits: HabitDocument[]) => {
-      res.status(201).send({ habits });
-    })
-    .catch((error: Error) => {
-      res.status(500).send(error);
-    });
+  try {
+    const habits: HabitDocument[] = await Habit.find(query);
+    res.status(200).send({ habits });
+  } catch (erro) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 /**
  * Get habits by date
  */
-router.get("/api/habitsByDate", auth, (req: Request<{}, {}, { time?: string }>, res: Response) => {
-  let { time } = req.query;
-  if (time) {
-    const parsedTime = new Date(time as string);
-    if (!isNaN(parsedTime.getTime())) {
-      time = parsedTime as unknown as string;
-    } else {
-      res.status(400).send("Invalid date format");
-      return;
+router.get(
+  "/api/habitsByDate",
+  auth,
+  async (req: Request<{}, {}, { time?: string }>, res: Response) => {
+    let { time } = req.query;
+    if (time) {
+      const parsedTime = new Date(time as string);
+      if (!isNaN(parsedTime.getTime())) {
+        time = parsedTime as unknown as string;
+      } else {
+        res.status(400).send("Invalid date format");
+        return;
+      }
     }
-  }
 
-  const dayIndex = new Date(time!).getDay() - 1;
-  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  const currentDay = days[dayIndex];
-  const query: any = {};
-  query[`frequency.days.${currentDay}`] = true;
-  const startOfDay = new Date(time!);
-  startOfDay.setHours(0, 0, 0, 0);
-  const endOfDay = new Date(time!);
-  endOfDay.setHours(23, 59, 59, 999);
+    const dayIndex = new Date(time!).getDay() - 1;
+    const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    const currentDay = days[dayIndex];
+    const query: any = {};
+    query[`frequency.days.${currentDay}`] = true;
+    const startOfDay = new Date(time!);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(time!);
+    endOfDay.setHours(23, 59, 59, 999);
 
-  Habit.find(query)
-    .then((habits: HabitDocument[]) => {
+    try {
+      const habits: HabitDocument[] = await Habit.find(query);
+
       if (!habits || habits.length === 0) {
         res.status(200).send([]);
         return;
       }
-
-      const promises = habits.map((habit: HabitDocument) => {
-        return Entry.findOne({
+      const promises = habits.map(async (habit: HabitDocument) => {
+        return await Entry.findOne({
           habit_id: habit._id,
           time: { $gte: startOfDay, $lte: endOfDay },
         })
@@ -153,25 +151,26 @@ router.get("/api/habitsByDate", auth, (req: Request<{}, {}, { time?: string }>, 
           res.status(200).send({ habitEntries });
         })
         .catch(error => {
-          res.status(500).send(error);
+          res.status(500).send("Internal Server Error");
         });
-    })
-    .catch((error: Error) => {
-      res.status(500).send(error);
-    });
-});
+    } catch (error) {
+      res.status(500).send("Internal Server Error");
+    }
+  },
+);
 
 /**
  * Delete habit
  */
-router.delete("/api/habits/:id", auth, (req: Request, res: Response) => {
-  Habit.findByIdAndDelete(req.params.id)
-    .then((habit: HabitDocument | null) => {
-      res.status(201).send(habit);
-    })
-    .catch((e: Error) => {
-      res.status(500).send(e);
-    });
+router.delete("/api/habits/:id", auth, async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const habit: HabitDocument | null = await Habit.findByIdAndDelete(id);
+    res.status(200).send(habit);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 module.exports = router;

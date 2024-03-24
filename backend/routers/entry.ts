@@ -10,14 +10,13 @@ const router: Router = express.Router();
 /**
  * List all entries
  */
-router.get("/api/entries", auth, (req: Request, res: Response) => {
-  Entry.find({})
-    .then((entries: EntryDocument[]) => {
-      res.status(201).send(entries);
-    })
-    .catch((e: Error) => {
-      res.status(500).send(e);
-    });
+router.get("/api/entries", auth, async (req: Request, res: Response) => {
+  try {
+    const entries: EntryDocument[] = await Entry.find({});
+    res.status(200).send(entries);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 /**
@@ -65,9 +64,9 @@ router.post("/api/entries/add", auth, async (req: Request, res: Response) => {
     try {
       const savedEntry = await newEntry.save();
 
-      res.status(201).send(savedEntry);
+      res.status(200).send(savedEntry);
     } catch (error) {
-      res.status(400).send(error);
+      res.status(500).send("Internal Server Error");
     }
 
     return;
@@ -90,13 +89,13 @@ router.post("/api/entries/add", auth, async (req: Request, res: Response) => {
         runValidators: false,
       });
 
-      res.status(201).send(updatedEntry);
+      res.status(200).send(updatedEntry);
     } catch (error) {
-      res.status(400).send(error);
+      res.status(500).send("Internal Server Error");
     }
   }
 
-  res.status(201).send(entry);
+  res.status(200).send(entry);
 });
 
 /**
@@ -159,15 +158,15 @@ router.get("/api/entriesByHabitAndDate", auth, async (req: Request, res: Respons
 /**
  * Delete entrie
  */
-router.delete("/api/entries/:id", auth, (req: Request, res: Response) => {
+router.delete("/api/entries/:id", auth, async (req: Request, res: Response) => {
   const { id } = req.params;
-  Entry.findOneAndDelete({ _id: id })
-    .then((entry: EntryDocument | null) => {
-      res.status(201).send(entry);
-    })
-    .catch((e: Error) => {
-      res.status(500).send(e);
-    });
+
+  try {
+    const entry: EntryDocument | null = await Entry.findOneAndDelete({ _id: id });
+    res.status(200).send(entry);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 module.exports = router;

@@ -1,43 +1,41 @@
 import Settings from "../models/settings";
 import express, { Router, Request, Response } from "express";
 import auth from "../middleware/auth";
+import { SettingsDocument } from "../types/models/Settings";
 const router: Router = express.Router();
 
-router.get("/api/settings", auth, (req: Request, res: Response) => {
-  Settings.find({})
-    .then(settings => {
-      res.status(201).send(settings);
-    })
-    .catch(e => {
-      res.status(500).send(e);
-    });
+router.get("/api/settings", auth, async (req: Request, res: Response) => {
+  try {
+    const settings: SettingsDocument[] = await Settings.find({});
+    res.status(200).send(settings);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 router.post("/api/settings/add", auth, async (req: Request, res: Response) => {
   const { name, value } = req.query;
 
-  const existedSetting = await Settings.findOne({ name: name });
-  if (existedSetting) {
-    const updatedSetting = await Settings.findByIdAndUpdate(
-      existedSetting._id,
-      { ...req.body, value: value },
-      { new: true, runValidators: false },
-    );
-    if (updatedSetting) {
-      return res.status(201).send(existedSetting);
-    }
-    return res.status(301).send("Setting not updated");
-  } else {
-    const newSettings = new Settings(req.body);
+  try {
+    const existedSetting = await Settings.findOne({ name: name });
+    if (existedSetting) {
+      const updatedSetting = await Settings.findByIdAndUpdate(
+        existedSetting._id,
+        { ...req.body, value: value },
+        { new: true, runValidators: false },
+      );
+      if (!updatedSetting) {
+        return res.status(400).send("Setting not updated");
+      }
+      return res.status(200).send(existedSetting);
+    } else {
+      const newSettings = await new Settings(req.body);
+      const newSettingsSaved = await newSettings.save();
 
-    newSettings
-      .save()
-      .then(settingReq => {
-        res.status(201).send(settingReq);
-      })
-      .catch(e => {
-        res.status(400).send(e);
-      });
+      res.status(200).send(newSettingsSaved);
+    }
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
   }
 });
 

@@ -69,7 +69,7 @@ router.get("/api/statistics/entries", auth, async (req: Request, res: Response) 
 router.get("/api/statistics/habits", auth, async (req: Request, res: Response) => {
   const { time } = req.query;
   const currentTime = new Date();
-  const startDate = calculateTimeGap(currentTime, time);
+  const startDate = calculateTimeGap(currentTime, time as string);
   try {
     const habits = await Habit.find({});
     const response = await Promise.all(
@@ -140,7 +140,7 @@ router.get("/api/statistics/habitWeekdays", auth, async (req: Request, res: Resp
   const dayNames = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
   const response: { name: string; value: number }[] = [];
   const currentTime = new Date();
-  const startDate = calculateTimeGap(currentTime, time);
+  const startDate = calculateTimeGap(currentTime, time as string);
 
   dayNames.map(day => {
     response.push({ name: day, value: 0 });

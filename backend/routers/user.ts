@@ -18,13 +18,18 @@ router.post("/api/user/add", async (req: Request, res: Response) => {
 
 router.post("/api/user/login", async (req: Request, res: Response) => {
   const { login, password } = req.body;
-  const user = await User.findByCredentials(login, password);
-  if (!user) {
-    res.status(400).send("Unable to login");
-    return;
+
+  try {
+    const user = await User.findByCredentials(login, password);
+    if (!user) {
+      res.status(400).send("Unable to login");
+      return;
+    }
+    const token = await user.generateAuthToken();
+    res.status(200).send({ user: user.getPublicData(), token });
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
   }
-  const token = await user.generateAuthToken();
-  res.status(200).send({ user: user.getPublicData(), token });
 });
 
 router.get("/api/user/me", auth, (req: AuthenticatedRequest, res: Response) => {
@@ -32,12 +37,16 @@ router.get("/api/user/me", auth, (req: AuthenticatedRequest, res: Response) => {
 });
 
 router.get("/api/users", auth, async (req: Request, res: Response) => {
-  const users = await User.find({});
-  if (!users) {
-    res.status(400).send("[]");
-    return;
+  try {
+    const users = await User.find({});
+    if (!users) {
+      res.status(200).send("[]");
+      return;
+    }
+    res.status(200).send(users);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
   }
-  res.status(200).send(users);
 });
 
 router.post("/api/user/logout", auth, async (req: AuthenticatedRequest, res: Response) => {
