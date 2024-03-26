@@ -1,4 +1,4 @@
-const calculateTimeGap = (currentTime: Date, time: any) => {
+const calculateTimeGap = (currentTime: Date, time: string | undefined) => {
   const startDate = new Date(currentTime);
 
   switch (time) {

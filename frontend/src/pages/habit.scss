@@ -1,0 +1,18 @@
+.Habit {
+    .rdp {
+        margin: 0;
+
+        .rdp-cell .done button{
+            background-color: #0e7490;
+            color:#fff
+        }
+        .rdp-day_selected {
+            background-color: unset;
+            border: 2px solid #0e7490;
+            color: #000;
+        }
+    }
+    .tab-months .rdp-months {
+        justify-content: center;
+    }
+}

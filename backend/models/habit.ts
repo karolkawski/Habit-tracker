@@ -1,19 +1,5 @@
-import mongoose, { Document, Model } from "mongoose"
-
-type HabitAttributes = {
-    name: string;
-    type: string;
-    color: string;
-    icon: string;
-    count_mode: boolean;
-    amount: number;
-    frequency: {days: {Mon: boolean, Tue: boolean, Wed: boolean, Thu: boolean, Fri: boolean, Sat: boolean, Sun: boolean}, repeat: string}
-}
-
-export type HabitDocument = HabitAttributes & Document
-
-type HabitModel = Model<HabitDocument>
-
+import mongoose from "mongoose";
+import { HabitDocument, HabitModel } from "../types/models/Habit";
 
 const habitSchema = new mongoose.Schema<HabitDocument>(
   {
@@ -47,7 +33,7 @@ const habitSchema = new mongoose.Schema<HabitDocument>(
         Wed: { type: Boolean },
         Thu: { type: Boolean },
         Fri: { type: Boolean },
-        Sat: { type: Boolean }, 
+        Sat: { type: Boolean },
         Sun: { type: Boolean },
       },
       repeat: {
@@ -55,7 +41,7 @@ const habitSchema = new mongoose.Schema<HabitDocument>(
       },
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Habit = mongoose.model<HabitDocument, HabitModel>("Habit", habitSchema);

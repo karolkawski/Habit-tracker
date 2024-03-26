@@ -1,5 +1,3 @@
-import { getTokenFromLocalStorage } from '../utils/token';
-
-export const AuthHeader = {
-  headers: { Authorization: `Bearer ${getTokenFromLocalStorage()}` },
+export const AuthHeader = (token) => {
+  return { headers: { Authorization: `Bearer ${token}` } };
 };

@@ -1,37 +1,31 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Label, TextInput } from 'flowbite-react';
 import { ContentWrapper } from '../Layout/ContentWrapper';
 import { ButtonCustomTheme } from '../theme/ButtonCustomTheme';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchTokenSuccess } from '../store/actions/userActions';
 
-export const Login = () => {
-  const dispatch = useDispatch();
-  const [login, setLogin] = useState('karol1');
-  const [password, setPassowrd] = useState('krolinka13');
-  const token = useSelector((state: { user }) => state.user.token);
-
+export const Registry = () => {
+  const [login, setLogin] = useState('');
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [password, setPassowrd] = useState('');
+  const [passwordRepeated, setPassowrdRepeated] = useState('');
   const navigate = useNavigate();
   const [IsLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (token) {
-      navigate('/dashboard');
-    }
-  }, [dispatch, navigate, token]);
-
-  const signIn = async () => {
+  const signUp = async () => {
     try {
       setIsLoading(true);
       axios
-        .post('http://localhost:4000/api/user/login', {
-          login,
+        .post('http://localhost:4000/api/user/add', {
+          name,
+          email,
+          login: email,
           password,
         })
         .then((response) => {
-          dispatch(fetchTokenSuccess(response.data.token));
+          navigate('/dashboard');
         })
         .catch((e) => {
           console.error('Something went wrong during signing in: ', e);
@@ -42,6 +36,7 @@ export const Login = () => {
       setIsLoading(false);
     }
   };
+
   const handleFormData = (data) => {
     const { id, value } = data.target;
 
@@ -49,8 +44,17 @@ export const Login = () => {
       case 'login':
         setLogin(value);
         break;
+      case 'email':
+        setEmail(value);
+        break;
+      case 'name':
+        setName(value);
+        break;
       case 'password':
         setPassowrd(value);
+        break;
+      case 'password-repeat':
+        setPassowrdRepeated(value);
         break;
       default:
         break;
@@ -81,18 +85,44 @@ export const Login = () => {
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-              Sign in to your account
+              Sign up
             </h1>
             <form className="flex max-w-md flex-col gap-4">
               <div>
                 <div className="mb-2 block">
-                  <Label htmlFor="login" value="Your email" />
+                  <Label htmlFor="login" value="Login" />
                 </div>
                 <TextInput
                   id="login"
                   type="text"
                   placeholder="login"
                   value={login}
+                  onChange={handleFormData}
+                  required
+                />
+              </div>
+              <div>
+                <div className="mb-2 block">
+                  <Label htmlFor="login" value="Name" />
+                </div>
+                <TextInput
+                  id="name"
+                  type="text"
+                  placeholder="name"
+                  value={name}
+                  onChange={handleFormData}
+                  required
+                />
+              </div>
+              <div>
+                <div className="mb-2 block">
+                  <Label htmlFor="login" value="Your email" />
+                </div>
+                <TextInput
+                  id="email"
+                  type="text"
+                  placeholder="email"
+                  value={email}
                   onChange={handleFormData}
                   required
                 />
@@ -109,6 +139,21 @@ export const Login = () => {
                   onChange={handleFormData}
                 />
               </div>
+              <div>
+                <div className="mb-2 block">
+                  <Label
+                    htmlFor="password-repeat"
+                    value="Repeat your password"
+                  />
+                </div>
+                <TextInput
+                  id="password-repeat"
+                  type="password"
+                  required
+                  value={passwordRepeated}
+                  onChange={handleFormData}
+                />
+              </div>
               <div className="flex items-center gap-2"></div>
               <Button
                 theme={ButtonCustomTheme}
@@ -116,25 +161,30 @@ export const Login = () => {
                 type="submit"
                 onClick={(e) => {
                   e.preventDefault();
-                  if (login.length < 5) {
+                  if (login.length < 5 || email.length < 5 || name.length < 5) {
                     return;
                   }
-                  if (password.length < 5) {
+
+                  if (password.length < 5 || passwordRepeated.length < 5) {
                     return;
                   }
-                  signIn();
+
+                  if (password !== passwordRepeated) {
+                    return;
+                  }
+                  signUp();
                 }}
               >
                 Submit
               </Button>
             </form>
             <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-              Don’t have an account yet?{' '}
+              Do you alerady have account?
               <a
-                href="/registry"
+                href="/"
                 className="font-medium pl-2 text-secondary hover:underline dark:text-primary-500"
               >
-                Sign up
+                Sign in
               </a>
             </p>
           </div>

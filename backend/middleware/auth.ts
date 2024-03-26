@@ -1,15 +1,11 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 
 import jwt from "jsonwebtoken";
 import User from "../models/user";
+import { AuthenticatedRequest } from "../types/Auth";
 
-type AuthenticatedRequest = Request & {
-    user?: { _id: string }; 
-  }
-
-  
 const auth = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    try {
+  try {
     const token = req.header("Authorization")?.replace("Bearer ", "");
     const decoded = jwt.verify(token!, "somename") as { _id: string }; // xxx! not null/undefined
     const user = await User.findOne({
@@ -19,8 +15,10 @@ const auth = async (req: AuthenticatedRequest, res: Response, next: NextFunction
     if (!user) {
       throw new Error();
     }
-
-    req.user = user;
+    req.user = {
+      ...user.toObject(),
+      ...req.user,
+    };
     next();
   } catch (e) {
     res.status(401).send({ error: "Please authenticate" });
