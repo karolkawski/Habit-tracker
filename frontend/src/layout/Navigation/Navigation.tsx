@@ -8,13 +8,14 @@ import { removeTokenSuccess } from '../../store/actions/userActions';
 export const Navigation = () => {
   const dispatch = useDispatch();
   const token = useSelector((state: { user }) => state.user.token);
-  const user = useSelector((state: { user }) => state.user.user);
-
+  const user = useSelector((state: { user }) => {
+    return state.user.user;
+  });
   const logOut = () => {
     try {
       axios
         .post('http://localhost:4000/api/user/logout', {}, AuthHeader(token))
-        .then((response) => {
+        .then(() => {
           dispatch(removeTokenSuccess());
         })
         .catch((e) => {
