@@ -1,4 +1,4 @@
-import express, { Router, Request, Response } from "express";
+import express, { Router, Response } from "express";
 import Habit from "../models/habit";
 import Entry from "../models/entry";
 import { HabitDocument } from "../types/models/Habit";
@@ -7,9 +7,13 @@ import calculateTimeGap from "../utils/calculateTimeGap";
 import dateRange from "../utils/dateRange";
 import auth from "../middleware/auth";
 import getLastThreeMonths from "../utils/getLastThreeMonths";
+import { AuthenticatedRequest } from "../types/Auth";
 const router: Router = express.Router();
 
-router.get("/api/statistics/entries", auth, async (req: Request, res: Response) => {
+/**
+ * Entries by day for whole year
+ */
+router.get("/api/statistics/entries", auth, async (req: AuthenticatedRequest, res: Response) => {
   const { habitID, year } = req.query;
 
   if (year === undefined) {
@@ -66,7 +70,10 @@ router.get("/api/statistics/entries", auth, async (req: Request, res: Response) 
   }
 });
 
-router.get("/api/statistics/habits", auth, async (req: Request, res: Response) => {
+/**
+ * Amount by habit by time period
+ */
+router.get("/api/statistics/habits", auth, async (req: AuthenticatedRequest, res: Response) => {
   const { time } = req.query;
   const currentTime = new Date();
   const startDate = calculateTimeGap(currentTime, time as string);
@@ -86,16 +93,19 @@ router.get("/api/statistics/habits", auth, async (req: Request, res: Response) =
       }),
     );
 
-    res.status(201).send(response);
+    res.status(200).send(response);
   } catch (error) {
     res.status(500).send("Internal Server Error");
   }
 });
 
+/**
+ * Habit entries by week day for lasrt 3 months
+ */
 router.get(
   "/api/statistics/currentMonthhHabitEntries",
   auth,
-  async (req: Request, res: Response) => {
+  async (req: AuthenticatedRequest, res: Response) => {
     const currentTime = new Date();
     const months = await getLastThreeMonths(currentTime);
     const { habit_id } = req.query;
@@ -128,55 +138,62 @@ router.get(
         }),
       );
 
-      res.status(201).send(response);
+      res.status(200).send(response);
     } catch (error) {
       res.status(500).send("Internal Server Error");
     }
   },
 );
 
-router.get("/api/statistics/habitWeekdays", auth, async (req: Request, res: Response) => {
-  const { habitID, time } = req.query;
-  const dayNames = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
-  const response: { name: string; value: number }[] = [];
-  const currentTime = new Date();
-  const startDate = calculateTimeGap(currentTime, time as string);
+/**
+ * Habit entries by week days by time period
+ */
+router.get(
+  "/api/statistics/habitWeekdays",
+  auth,
+  async (req: AuthenticatedRequest, res: Response) => {
+    const { habitID, time } = req.query;
+    const dayNames = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+    const response: { name: string; value: number }[] = [];
+    const currentTime = new Date();
+    const startDate = calculateTimeGap(currentTime, time as string);
 
-  dayNames.map(day => {
-    response.push({ name: day, value: 0 });
-  });
-
-  try {
-    let entries: EntryDocument[];
-    if (habitID === "ALL") {
-      entries = await Entry.find({
-        time: {
-          $gte: startDate,
-          $lt: currentTime,
-        },
-      });
-    } else {
-      entries = await Entry.find({
-        time: {
-          $gte: startDate,
-          $lt: currentTime,
-        },
-        habit_id: habitID,
-      });
-    }
-
-    entries.map((entry: EntryDocument) => {
-      const { time } = entry;
-      const dayIndex = new Date(time).getDay();
-      response[dayIndex] = {
-        name: response[dayIndex].name,
-        value: response[dayIndex].value + 1,
-      };
+    dayNames.map(day => {
+      response.push({ name: day, value: 0 });
     });
-    res.status(201).send(response);
-  } catch (error) {
-    res.status(500).send("Internal Server Error");
-  }
-});
+
+    try {
+      let entries: EntryDocument[];
+      if (habitID === "ALL") {
+        entries = await Entry.find({
+          time: {
+            $gte: startDate,
+            $lt: currentTime,
+          },
+        });
+      } else {
+        entries = await Entry.find({
+          time: {
+            $gte: startDate,
+            $lt: currentTime,
+          },
+          habit_id: habitID,
+        });
+      }
+
+      entries.map((entry: EntryDocument) => {
+        const { time } = entry;
+        const dayIndex = new Date(time).getDay();
+        response[dayIndex] = {
+          name: response[dayIndex].name,
+          value: response[dayIndex].value + 1,
+        };
+      });
+      res.status(200).send(response);
+    } catch (error) {
+      res.status(500).send("Internal Server Error");
+    }
+  },
+);
 
 module.exports = router;

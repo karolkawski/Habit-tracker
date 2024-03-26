@@ -1,18 +1,17 @@
-import express, { Router, Request, Response } from "express";
+import express, { Router, Response } from "express";
 import Habit from "../models/habit";
 import Entry from "../models/entry";
 import { EntryDocument } from "../types/models/Entry";
 import { HabitDocument } from "../types/models/Habit";
 import auth from "../middleware/auth";
+import { AuthenticatedRequest, AuthenticatedRequestWithTimeQuery } from "../types/Auth";
 
 const router: Router = express.Router();
 
 /**
  * List all habits
- * GET /habits?completed (today)
- * GET /habits?limit=10&skip=20
  */
-router.get("/api/habits", auth, async (req: Request, res: Response) => {
+router.get("/api/habits", auth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const habits: HabitDocument[] = await Habit.find({});
     res.status(200).send(habits);
@@ -24,7 +23,7 @@ router.get("/api/habits", auth, async (req: Request, res: Response) => {
 /**
  * Get habit by id
  */
-router.get("/api/habits/:id", auth, async (req: Request, res: Response) => {
+router.get("/api/habits/:id", auth, async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
 
   try {
@@ -41,7 +40,7 @@ router.get("/api/habits/:id", auth, async (req: Request, res: Response) => {
 /**
  * Add new habit
  */
-router.post("/api/habits/add", auth, async (req: Request, res: Response) => {
+router.post("/api/habits/add", auth, async (req: AuthenticatedRequest, res: Response) => {
   delete req.body._id;
   let cancelRequest = false;
 
@@ -53,7 +52,7 @@ router.post("/api/habits/add", auth, async (req: Request, res: Response) => {
   try {
     const habit = await new Habit(req.body);
     const savedHabit = await habit.save();
-    res.status(200).send(savedHabit);
+    res.status(201).send(savedHabit);
   } catch (error) {
     if (cancelRequest) {
       return res.status(404).send("Cancel request");
@@ -63,11 +62,12 @@ router.post("/api/habits/add", auth, async (req: Request, res: Response) => {
 });
 
 /**
- * Update habit
+ * Update habit by id
  */
-router.patch("/api/habits/:id", auth, async (req: Request, res: Response) => {
+router.patch("/api/habits/:id", auth, async (req: AuthenticatedRequest, res: Response) => {
+  const { id } = req.params;
   try {
-    const habit: HabitDocument | null = await Habit.findByIdAndUpdate(req.params.id, req.body, {
+    const habit: HabitDocument | null = await Habit.findByIdAndUpdate(id, req.body, {
       new: true,
       runValidators: true,
     });
@@ -80,7 +80,7 @@ router.patch("/api/habits/:id", auth, async (req: Request, res: Response) => {
 /**
  * Get today's habits
  */
-router.get("/api/todayHabits", auth, async (req: Request, res: Response) => {
+router.get("/api/todayHabits", auth, async (req: AuthenticatedRequest, res: Response) => {
   const currentTime = new Date();
   const dayIndex = currentTime.getDay();
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -102,7 +102,7 @@ router.get("/api/todayHabits", auth, async (req: Request, res: Response) => {
 router.get(
   "/api/habitsByDate",
   auth,
-  async (req: Request<{}, {}, { time?: string }>, res: Response) => {
+  async (req: AuthenticatedRequestWithTimeQuery, res: Response) => {
     let { time } = req.query;
     if (time) {
       const parsedTime = new Date(time as string);
@@ -160,9 +160,9 @@ router.get(
 );
 
 /**
- * Delete habit
+ * Delete habit by id
  */
-router.delete("/api/habits/:id", auth, async (req: Request, res: Response) => {
+router.delete("/api/habits/:id", auth, async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
 
   try {

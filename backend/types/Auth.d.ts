@@ -5,3 +5,7 @@ export type AuthenticatedRequest = Request & {
     save: () => Promise<void>;
   };
 };
+
+export type AuthenticatedRequestWithTimeQuery = Request<{}, {}, { time?: string }> & {
+  user?: { _id: string };
+};

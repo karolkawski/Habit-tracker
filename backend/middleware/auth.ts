@@ -1,11 +1,8 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 
 import jwt from "jsonwebtoken";
 import User from "../models/user";
-
-type AuthenticatedRequest = Request & {
-  user?: { _id: string };
-};
+import { AuthenticatedRequest } from "../types/Auth";
 
 const auth = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
@@ -18,8 +15,10 @@ const auth = async (req: AuthenticatedRequest, res: Response, next: NextFunction
     if (!user) {
       throw new Error();
     }
-
-    req.user = user;
+    req.user = {
+      ...user.toObject(),
+      ...req.user,
+    };
     next();
   } catch (e) {
     res.status(401).send({ error: "Please authenticate" });

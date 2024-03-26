@@ -1,16 +1,17 @@
-import express, { Router, Request, Response } from "express";
+import express, { Router, Response } from "express";
 import Entry from "../models/entry";
 import Habit from "../models/habit";
 import auth from "../middleware/auth";
 import { EntryDocument } from "../types/models/Entry";
 import { EntryType } from "../types/Entry";
+import { AuthenticatedRequest } from "../types/Auth";
 
 const router: Router = express.Router();
 
 /**
  * List all entries
  */
-router.get("/api/entries", auth, async (req: Request, res: Response) => {
+router.get("/api/entries", auth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const entries: EntryDocument[] = await Entry.find({});
     res.status(200).send(entries);
@@ -22,7 +23,7 @@ router.get("/api/entries", auth, async (req: Request, res: Response) => {
 /**
  *  Get entrie by id
  */
-router.get("/api/entries/:id", auth, async (req: Request, res: Response) => {
+router.get("/api/entries/:id", auth, async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
 
   try {
@@ -32,7 +33,7 @@ router.get("/api/entries/:id", auth, async (req: Request, res: Response) => {
       res.status(404).send("Entry not found");
     }
 
-    res.status(201).send(entry);
+    res.status(200).send(entry);
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("Error occurred:", error.message);
@@ -44,7 +45,7 @@ router.get("/api/entries/:id", auth, async (req: Request, res: Response) => {
 /**
  * Add new entrie
  */
-router.post("/api/entries/add", auth, async (req: Request, res: Response) => {
+router.post("/api/entries/add", auth, async (req: AuthenticatedRequest, res: Response) => {
   const { habit_id } = req.body;
   const habit = await Habit.findById(habit_id);
   if (!habit) res.status(404).send("Missing habit");
@@ -57,7 +58,7 @@ router.post("/api/entries/add", auth, async (req: Request, res: Response) => {
     habit_id,
   });
 
-  //entrie not exist today
+  //today's entrie not exist, we must create one
   if (!entry) {
     const newEntry = new Entry(req.body);
 
@@ -74,11 +75,11 @@ router.post("/api/entries/add", auth, async (req: Request, res: Response) => {
 
   if (habit && habit.count_mode) {
     if (!entry) {
-      return res.status(400).send("Missing entry");
+      return res.status(404).send("Missing entry");
     }
     const currAmount = Number.parseInt(entry.amount.toString());
     if (currAmount + 1 > habit.amount) {
-      return res.status(400).send("Max amount of entrie");
+      return res.status(404).send("Max amount of entrie");
     }
 
     entry.amount = currAmount + 1;
@@ -101,7 +102,7 @@ router.post("/api/entries/add", auth, async (req: Request, res: Response) => {
 /**
  * Get Entries by date
  */
-router.get("/api/entriesByDate", auth, async (req: Request, res: Response) => {
+router.get("/api/entriesByDate", auth, async (req: AuthenticatedRequest, res: Response) => {
   const { start, end } = req.query;
   if (start === undefined || end === undefined) {
     return res.status(400).send("Start and end dates are required");
@@ -120,7 +121,7 @@ router.get("/api/entriesByDate", auth, async (req: Request, res: Response) => {
         $lt: endDate,
       },
     });
-    res.status(201).send(entries);
+    res.status(200).send(entries);
   } catch (error) {
     res.status(500).send("Internal Server Error");
   }
@@ -129,7 +130,7 @@ router.get("/api/entriesByDate", auth, async (req: Request, res: Response) => {
 /**
  * Get Entries by date and habit_id
  */
-router.get("/api/entriesByHabitAndDate", auth, async (req: Request, res: Response) => {
+router.get("/api/entriesByHabitAndDate", auth, async (req: AuthenticatedRequest, res: Response) => {
   const { start, end, habit_id } = req.query;
   if (start === undefined || end === undefined) {
     return res.status(400).send("Start and end dates are required");
@@ -158,7 +159,7 @@ router.get("/api/entriesByHabitAndDate", auth, async (req: Request, res: Respons
 /**
  * Delete entrie
  */
-router.delete("/api/entries/:id", auth, async (req: Request, res: Response) => {
+router.delete("/api/entries/:id", auth, async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
 
   try {
