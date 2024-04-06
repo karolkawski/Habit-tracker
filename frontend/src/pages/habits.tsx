@@ -110,18 +110,22 @@ export const Habits = () => {
                     />
                   </Table.Cell>
                   <Table.Cell className="flex justify-end py-1 px-[8px] md:p-1.5">
-                    <Button theme={ButtonCustomTheme} color="secondary">
-                      <Link to={`/habits/${item._id}/edit`}>Edit</Link>
-                    </Button>
+                    <Link to={`/habits/${item._id}/edit`}>
+                      <Button theme={ButtonCustomTheme} color="secondary">
+                        Edit
+                      </Button>
+                    </Link>
                   </Table.Cell>
                 </Table.Row>
               ))}
           </Table.Body>
         </Table>
         <div className="flex justify-end my-5 px-[6px]">
-          <Button theme={ButtonCustomTheme} color="secondary">
-            <Link to={`/add`}>Add </Link>
-          </Button>
+          <Link to={`/add`}>
+            <Button theme={ButtonCustomTheme} color="secondary">
+              Add{' '}
+            </Button>
+          </Link>
         </div>
       </ContentWrapper>
     </>
