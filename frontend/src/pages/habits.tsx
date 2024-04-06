@@ -118,7 +118,7 @@ export const Habits = () => {
               ))}
           </Table.Body>
         </Table>
-        <div className="flex justify-end my-5 px-[8px]">
+        <div className="flex justify-end my-5 px-[6px]">
           <Button theme={ButtonCustomTheme} color="secondary">
             <Link to={`/add`}>Add </Link>
           </Button>
