@@ -10,7 +10,7 @@ const entryReducer = (state = initialState, action) => {
       return { ...state, loading: true, error: null };
     case 'FETCH_ENTRY_SUCCESS':
       if (state.entries && !state.loading) {
-        return;
+        return state;
       }
       const todayEntries = action.payload;
       return {

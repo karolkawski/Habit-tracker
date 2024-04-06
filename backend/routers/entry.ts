@@ -1,49 +1,57 @@
-import express, {Router, Request, Response} from "express";
+import express, { Router, Response } from "express";
 import Entry from "../models/entry";
 import Habit from "../models/habit";
-const router: Router = express.Router();
 import auth from "../middleware/auth";
-import {EntryDocument} from '../models/entry'
+import { EntryDocument } from "../types/models/Entry";
+import { EntryType } from "../types/Entry";
+import { AuthenticatedRequest } from "../types/Auth";
+
+const router: Router = express.Router();
 
 /**
  * List all entries
  */
-router.get("/api/entries", auth, (req: Request, res: Response) => {
-  Entry.find({})
-    .then((entries: EntryDocument[]) => {
-      res.status(201).send(entries);
-    })
-    .catch((e: any) => {
-      res.status(500).send(e);
-    });
+router.get("/api/entries", auth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const user_id = req.user ? req.user._id : undefined;
+    const entries: EntryDocument[] = await Entry.find({ user_id });
+    res.status(200).send(entries);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 /**
  *  Get entrie by id
  */
-router.get("/api/entries/:id", auth,  (req: Request, res: Response) => {
+router.get("/api/entries/:id", auth, async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
-  Entry.findById(id)
-    .then((entry: any) => {
-      if (!entry) {
-        return res.status(404).send(entry);
-      }
-      res.status(201).send(entry);
-    })
-    .catch((e: any) => {
-      res.status(500).send(e);
-    });
+
+  try {
+    const entry: EntryType | null = await Entry.findById(id);
+
+    if (!entry) {
+      res.status(404).send("Entry not found");
+    }
+
+    res.status(200).send(entry);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error occurred:", error.message);
+    }
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 /**
  * Add new entrie
  */
-router.post("/api/entries/add", auth, async  (req: Request, res: Response) => {
+router.post("/api/entries/add", auth, async (req: AuthenticatedRequest, res: Response) => {
   const { habit_id } = req.body;
   const habit = await Habit.findById(habit_id);
   if (!habit) res.status(404).send("Missing habit");
 
-  const entrie = await Entry.findOne({
+  const entry = await Entry.findOne({
     time: {
       $gte: new Date().setUTCHours(0, 0, 0, 0),
       $lt: new Date().setUTCHours(23, 59, 59, 999),
@@ -51,126 +59,120 @@ router.post("/api/entries/add", auth, async  (req: Request, res: Response) => {
     habit_id,
   });
 
-  //entrie not exist today
-  if (!entrie) {
-    const newEntrie = new Entry(req.body);
+  //today's entrie not exist, we must create one
+  if (!entry) {
+    const user_id = req.user ? req.user._id : undefined;
+    const newEntry = new Entry({ ...req.body, user_id });
 
-    newEntrie
-      .save()
-      .then((entrieReq: any) => {
-        res.status(201).send(entrieReq);
-      })
-      .catch((e: any) => {
-        res.status(400).send(e);
-      });
+    try {
+      const savedEntry = await newEntry.save();
+
+      res.status(200).send(savedEntry);
+    } catch (error) {
+      res.status(500).send("Internal Server Error");
+    }
+
     return;
   }
 
   if (habit && habit.count_mode) {
-    if (!entrie) {
-        res.status(400).send("Missing entrie");
-        return;
+    if (!entry) {
+      return res.status(404).send("Missing entry");
     }
-    const currAmount = Number.parseInt(entrie.amount.toString());
+    const currAmount = Number.parseInt(entry.amount.toString());
     if (currAmount + 1 > habit.amount) {
-      res.status(400).send("Max amount of entrie");
-      return;
+      return res.status(404).send("Max amount of entrie");
     }
 
-    entrie.amount = currAmount + 1;
+    entry.amount = currAmount + 1;
 
-    Entry.findOneAndUpdate(
-      {
-        id: entrie.id,
-      },
-      entrie,
-      { new: true, runValidators: false }
-    )
-      .then((test: any) => {
-        res.status(201).send(test);
-      })
-      .catch((e: any) => {
-        res.status(400).send(e);
+    try {
+      const updatedEntry = await Entry.findOneAndUpdate({ _id: entry._id }, entry, {
+        new: true,
+        runValidators: false,
       });
 
-    return;
+      res.status(200).send(updatedEntry);
+    } catch (error) {
+      res.status(500).send("Internal Server Error");
+    }
   }
 
-  res.status(201).send(entrie);
-  return;
+  res.status(200).send(entry);
 });
 
 /**
  * Get Entries by date
  */
-router.get("/api/entriesByDate", auth,  (req: Request, res: Response) => {
+router.get("/api/entriesByDate", auth, async (req: AuthenticatedRequest, res: Response) => {
   const { start, end } = req.query;
   if (start === undefined || end === undefined) {
     return res.status(400).send("Start and end dates are required");
   }
   const startDate: Date = new Date(start as string);
-  const endDate: Date  = new Date(end as string);
+  const endDate: Date = new Date(end as string);
 
   if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
     return res.status(400).send("Invalid date range");
   }
 
-  Entry.find({
-    time: {
-      $gte: startDate,
-      $lt: endDate,
-    },
-  })
-    .then((entry: any) => {
-      res.status(201).send(entry);
-    })
-    .catch((e: any) => {
-      res.status(400).send(e);
+  try {
+    const user_id = req.user ? req.user._id : undefined;
+
+    const entries: EntryDocument[] = await Entry.find({
+      time: {
+        $gte: startDate,
+        $lt: endDate,
+      },
+      user_id,
     });
+    res.status(200).send(entries);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 /**
  * Get Entries by date and habit_id
  */
-router.get("/api/entriesByHabitAndDate", auth,  (req: Request, res: Response) => {
+router.get("/api/entriesByHabitAndDate", auth, async (req: AuthenticatedRequest, res: Response) => {
   const { start, end, habit_id } = req.query;
   if (start === undefined || end === undefined) {
     return res.status(400).send("Start and end dates are required");
   }
   const startDate: Date = new Date(start as string);
-  const endDate: Date  = new Date(end as string);
+  const endDate: Date = new Date(end as string);
 
   if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
     return res.status(400).send("Invalid date range");
   }
 
-  Entry.find({
-    time: {
-      $gte: startDate,
-      $lt: endDate,
-    },
-    habit_id,
-  })
-    .then((entry: any) => {
-      res.status(201).send(entry);
-    })
-    .catch((e: any) => {
-      res.status(400).send(e);
+  try {
+    const entries: EntryDocument[] = await Entry.find({
+      time: {
+        $gte: startDate,
+        $lt: endDate,
+      },
+      habit_id,
     });
+    res.status(200).json(entries);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 /**
  * Delete entrie
  */
-router.delete("/api/entries/:id", auth, (req: Request, res: Response) => {
+router.delete("/api/entries/:id", auth, async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
-  Entry.findOneAndDelete({ _id: id })
-    .then((habit: any) => {
-      res.status(201).send(habit);
-    })
-    .catch((e: any) => {
-      res.status(500).send(e);
-    });
+
+  try {
+    const entry: EntryDocument | null = await Entry.findOneAndDelete({ _id: id });
+    res.status(200).send(entry);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 module.exports = router;

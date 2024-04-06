@@ -11,7 +11,7 @@ const habitReducer = (state = initialState, action) => {
       return { ...state, loading: true, error: null };
     case 'FETCH_DATA_SUCCESS':
       if (state.habits && !state.loading) {
-        return;
+        return state;
       }
       const newHabits = action.payload;
       return {

@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { Icon } from '../components/UI/Icon/Icon';
 import axios from 'axios';
 import { AuthHeader } from '../auth/AuthHeader';
+import { useSelector } from 'react-redux';
+import { EntryRowProps } from '../types/Entrie.d';
 
 export const EntryRow = ({
   habit,
@@ -9,14 +11,16 @@ export const EntryRow = ({
   entry,
   handleAddEntry,
   handleRemoveEntry,
-}: any) => {
+}: EntryRowProps) => {
   const { name, icon } = habit;
-  const [isDone, setIsDone] = useState(!!entry);
+  const [isDone, setIsDone] = useState<boolean>(!!entry);
+  const token = useSelector((state: { user }) => state.user.token);
 
-  const isDoneStyles = {
+  const isDoneStyles: { [key: string]: string } = {
     true: 'bg-secondary',
     false: 'bg-white',
   };
+
   const toggleEntry = () => {
     if (!entry) {
       axios
@@ -28,7 +32,7 @@ export const EntryRow = ({
             count_mode: habit.count_mode,
             habit_id: habit._id,
           },
-          AuthHeader
+          AuthHeader(token)
         )
         .then((res) => {
           handleAddEntry(res.data);
@@ -41,7 +45,10 @@ export const EntryRow = ({
     }
 
     axios
-      .delete(`http://localhost:4000/api/entries/${entry._id}`, AuthHeader)
+      .delete(
+        `http://localhost:4000/api/entries/${entry._id}`,
+        AuthHeader(token)
+      )
       .then((res) => {
         if (res.data) {
           handleRemoveEntry(res.data);
@@ -68,7 +75,7 @@ export const EntryRow = ({
   return (
     <div className="flex flex-row items-center border-b-[1px] py-2">
       <button
-        className={`Dashboard__HabitDone w-10 h-10 rounded-[50%] border-[1px] mr-5 pointer text-white  ${isDoneStyles[isDone]}`}
+        className={`Dashboard__HabitDone w-10 h-10 rounded-[50%] border-[1px] mr-5 pointer text-white  ${isDoneStyles[isDone + '']}`}
         onClick={() => toggleEntry()}
       >
         {isDone ? <Icon icon={'check'} /> : ''}
