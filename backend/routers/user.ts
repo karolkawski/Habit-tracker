@@ -68,7 +68,6 @@ router.post("/api/user/logout", auth, async (req: AuthenticatedRequest, res: Res
   try {
     if (req.user) {
       req.user.tokens = [];
-      await req.user.save();
       res.status(200).send("Logged out successfully");
     } else {
       res.status(404).send("User not found");

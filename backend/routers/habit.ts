@@ -101,7 +101,6 @@ router.get(
     const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
     const currentDay = days[dayIndex];
     const user_id = req.user ? req.user._id : undefined;
-    console.log(req.user);
 
     const query: any = {};
     query[`frequency.days.${currentDay}`] = true;

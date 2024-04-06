@@ -17,7 +17,6 @@ const auth = async (req: AuthenticatedRequest, res: Response, next: NextFunction
     }
     req.user = {
       ...user.toObject(),
-      ...req.user,
     };
     next();
   } catch (e) {
