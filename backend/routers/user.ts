@@ -31,7 +31,6 @@ router.post("/api/user/login", async (req: Request, res: Response) => {
       res.status(404).send("Unable to login");
       return;
     }
-    console.log("🚀 ~ router.post ~ user:", user);
     const token = await user.generateAuthToken();
     res.status(200).send({ user: user.getPublicData(), token });
   } catch (error) {
@@ -70,11 +69,12 @@ router.post("/api/user/logout", auth, async (req: AuthenticatedRequest, res: Res
     if (req.user) {
       req.user.tokens = [];
       await req.user.save();
+      res.status(200).send("Logged out successfully");
+    } else {
+      res.status(404).send("User not found");
     }
-
-    res.send();
   } catch (e) {
-    res.status(500).send();
+    res.status(500).send("Internal Server Error");
   }
 });
 

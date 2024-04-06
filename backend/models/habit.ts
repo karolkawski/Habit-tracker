@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { HabitDocument, HabitModel } from "../types/models/Habit";
 
 const habitSchema = new mongoose.Schema<HabitDocument>(
@@ -17,6 +17,11 @@ const habitSchema = new mongoose.Schema<HabitDocument>(
     },
     count_mode: {
       type: Boolean,
+    },
+    user_id: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
     },
     amount: {
       type: Number,

@@ -1,4 +1,4 @@
-import { Document, Model } from "mongoose";
+import mongoose, { Document, Model } from "mongoose";
 
 type HabitAttributes = {
   name: string;
@@ -7,6 +7,7 @@ type HabitAttributes = {
   icon: string;
   count_mode: boolean;
   amount: number;
+  user_id: mongoose.Types.ObjectId;
   frequency: {
     days: {
       Mon: boolean;

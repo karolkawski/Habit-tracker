@@ -13,7 +13,8 @@ const router: Router = express.Router();
  */
 router.get("/api/habits", auth, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const habits: HabitDocument[] = await Habit.find({});
+    const user_id = req.user ? req.user._id : undefined;
+    const habits: HabitDocument[] = await Habit.find({ user_id });
     res.status(200).send(habits);
   } catch (error) {
     res.status(500).send("Internal Server Error");
@@ -50,7 +51,8 @@ router.post("/api/habits/add", auth, async (req: AuthenticatedRequest, res: Resp
   });
 
   try {
-    const habit = await new Habit(req.body);
+    const user_id = req.user ? req.user._id : undefined;
+    const habit = await new Habit({ ...req.body, user_id });
     const savedHabit = await habit.save();
     res.status(201).send(savedHabit);
   } catch (error) {
@@ -117,8 +119,12 @@ router.get(
     const dayIndex = new Date(time!).getDay() - 1;
     const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
     const currentDay = days[dayIndex];
+    const user_id = req.user ? req.user._id : undefined;
+    console.log(req.user);
+
     const query: any = {};
     query[`frequency.days.${currentDay}`] = true;
+    query["user_id"] = user_id;
     const startOfDay = new Date(time!);
     startOfDay.setHours(0, 0, 0, 0);
     const endOfDay = new Date(time!);

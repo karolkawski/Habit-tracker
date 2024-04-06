@@ -1,12 +1,14 @@
 import axios from 'axios';
 import { Dropdown, Navbar } from 'flowbite-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthHeader } from '../../auth/AuthHeader';
 import { useDispatch, useSelector } from 'react-redux';
 import { removeTokenSuccess } from '../../store/actions/userActions';
 
 export const Navigation = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const token = useSelector((state: { user }) => state.user.token);
   const user = useSelector((state: { user }) => {
     return state.user.user;
@@ -17,12 +19,13 @@ export const Navigation = () => {
         .post('http://localhost:4000/api/user/logout', {}, AuthHeader(token))
         .then(() => {
           dispatch(removeTokenSuccess());
+          navigate('/');
         })
         .catch((e) => {
-          console.error('Something went wrong during signing in: ', e);
+          console.error('Something went wrong during logging out ', e);
         });
     } catch (err) {
-      console.error('Some error occured during signing in: ', err);
+      console.error('Some error occured during logging out: ', err);
     }
   };
 
