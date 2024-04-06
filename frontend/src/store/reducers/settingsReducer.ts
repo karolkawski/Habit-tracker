@@ -10,7 +10,7 @@ const settingsReducer = (state = initialState, action) => {
       return { ...state, loading: true, error: null };
     case 'FETCH_SETTINGS_SUCCESS':
       if (state.darkMode && !state.loading) {
-        return;
+        return state;
       }
       const darkMode = action.payload;
       return {

@@ -25,7 +25,7 @@ const userReducer = (state = initialState, action) => {
       return { ...state, loading: true, error: null };
     case 'FETCH_USER_SUCCESS':
       if (state.user && !state.loading) {
-        return;
+        return state;
       }
       const user = action.payload;
       return {
