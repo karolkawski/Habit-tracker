@@ -101,7 +101,7 @@ export const Habit = () => {
   const fetchHabitMonth = () => {
     axios
       .get(
-        `http://localhost:4000/api/statistics/currentMonthhHabitEntries?habit_id=${habit._id}`,
+        `http://localhost:4000/api/statistics/currentMonthHabitEntries?habit_id=${habit._id}`,
         AuthHeader(token)
       )
       .then((res) => {
