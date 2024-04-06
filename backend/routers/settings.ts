@@ -1,64 +1,73 @@
 import Settings from "../models/settings";
-import express, {Router, Request, Response} from "express";
-const router: Router = express.Router();
+import express, { Router, Response } from "express";
 import auth from "../middleware/auth";
+import { SettingsDocument } from "../types/models/Settings";
+import { AuthenticatedRequest } from "../types/Auth";
+const router: Router = express.Router();
 
-
-router.get("/api/settings", auth, (req: Request, res: Response) => {
-  Settings.find({})
-    .then((settings) => {
-      res.status(201).send(settings);
-    })
-    .catch((e) => {
-      res.status(500).send(e);
-    });
-});
-
-router.post("/api/settings/add", auth, async (req: Request, res: Response) => {
-  let { name, value } = req.query;
-
-  const existedSetting = await Settings.findOne({ name: name });
-  if (existedSetting) {
-    const updatedSetting = await Settings.findByIdAndUpdate(
-      existedSetting._id,
-      { ...req.body, value: value },
-      { new: true, runValidators: false }
-    );
-    if (updatedSetting) {
-      return res.status(201).send(existedSetting);
-    }
-    return res.status(301).send("Setting not updated");
-  } else {
-    const newSettings = new Settings(req.body);
-
-    newSettings
-      .save()
-      .then((settingReq) => {
-        res.status(201).send(settingReq);
-      })
-      .catch((e) => {
-        res.status(400).send(e);
-      });
+/**
+ * Get settings list
+ */
+router.get("/api/settings", auth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const user_id = req.user ? req.user._id : undefined;
+    const settings: SettingsDocument[] = await Settings.find({ user_id });
+    res.status(200).send(settings);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
   }
 });
 
-router.delete("/api/settings/delete", auth, async (req: Request, res: Response) => {
-  let { name } = req.body;
+/**
+ * Add or override setting if exist
+ */
+router.post("/api/settings/add", auth, async (req: AuthenticatedRequest, res: Response) => {
+  const { name, value } = req.query;
 
   try {
-    const existedSetting = await Settings.findOne({ name: name });
+    const user_id = req.user ? req.user._id : undefined;
+    const existedSetting = await Settings.findOne({ name, user_id });
     if (existedSetting) {
-      const deletedSetting = await Settings.findByIdAndDelete(
-        existedSetting._id
+      const updatedSetting = await Settings.findByIdAndUpdate(
+        existedSetting._id,
+        { ...req.body, value: value },
+        { new: true, runValidators: false },
       );
+      if (!updatedSetting) {
+        return res.status(304).send("Setting not updated");
+      }
+      return res.status(200).send(existedSetting);
+    } else {
+      const newSettings = await new Settings({ ...req.body, user_id });
+      const newSettingsSaved = await newSettings.save();
+
+      res.status(200).send(newSettingsSaved);
+    }
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+/**
+ * Delete setting by name
+ */
+router.delete("/api/settings/delete", auth, async (req: AuthenticatedRequest, res: Response) => {
+  const { name } = req.body;
+
+  try {
+    const user_id = req.user ? req.user._id : undefined;
+
+    const existedSetting = await Settings.findOne({ name, user_id });
+    if (existedSetting) {
+      const deletedSetting = await Settings.findByIdAndDelete(existedSetting._id);
 
       if (deletedSetting) {
-        res.status(203).send(deletedSetting);
+        res.status(200).send(deletedSetting);
       } else {
-        res.status(204).send("Element not deleted");
+        res.status(304).send("Element not deleted");
       }
     } else {
-      res.status(303).send("This setting does not exist");
+      res.status(404).send("This setting does not exist");
     }
   } catch (error) {
     console.error(error);
@@ -66,23 +75,25 @@ router.delete("/api/settings/delete", auth, async (req: Request, res: Response) 
   }
 });
 
-router.patch("/api/settings/update", auth, async (req: Request, res: Response) => {
+router.patch("/api/settings/update", auth, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    let { name, value } = req.body;
-    const existedSetting = await Settings.findOne({ name: name });
+    const { name, value } = req.body;
+    const user_id = req.user ? req.user._id : undefined;
+
+    const existedSetting = await Settings.findOne({ name, user_id });
     if (existedSetting) {
       const updatedSetting = await Settings.findByIdAndUpdate(
         existedSetting._id,
         { value: value },
-        { new: true, runValidators: false }
+        { new: true, runValidators: false },
       );
       if (updatedSetting) {
-        return res.status(201).send(updatedSetting);
+        return res.status(200).send(updatedSetting);
       } else {
-        return res.status(204).send("Element not updated");
+        return res.status(304).send("Element not updated");
       }
     }
-    return res.status(303).send("This setting does not exist");
+    return res.status(404).send("This setting does not exist");
   } catch (error) {
     console.error(error);
     return res.status(500).send("Internal Server Error");

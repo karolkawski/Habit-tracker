@@ -17,7 +17,7 @@ import { AuthHeader } from '../auth/AuthHeader';
 export const Dashboard = () => {
   const type = 'Tasks';
   const dispatch = useDispatch();
-
+  const token = useSelector((state: { user }) => state.user.token);
   const todayHabits = useSelector((state: { entry }) => state.entry.entries);
   const [noEntries, setNoEntries] = useState(true);
 
@@ -30,7 +30,7 @@ export const Dashboard = () => {
 
     axios
       .get('http://localhost:4000/api/habitsByDate', {
-        ...AuthHeader,
+        ...AuthHeader(token),
         params: { time: selectedDate },
       })
       .then((res) => {

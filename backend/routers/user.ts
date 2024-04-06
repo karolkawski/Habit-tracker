@@ -1,87 +1,109 @@
-import express, {Router, Request, Response} from "express";
-const router: Router = express.Router();
+import express, { Router, Request, Response } from "express";
 import User from "../models/user";
 import auth from "../middleware/auth";
+import { UserDocument } from "../types/models/User";
+import { AuthenticatedRequest } from "../types/Auth";
+const router: Router = express.Router();
 
-type AuthenticatedRequest = Request & {
-    user?: {
-      tokens: string[];
-      save: () => Promise<void>;
-    };
-  }
-
+/**
+ * Add new user
+ */
 router.post("/api/user/add", async (req: Request, res: Response) => {
-  const user = await new User(req.body);
-
-  user
-    .save()
-    .then(async (user: { generateAuthToken: () => any; getPublicData: () => any; }) => {
-      const token = await user.generateAuthToken();
-      res.status(200).send({ user: user.getPublicData(), token });
-    })
-    .catch(() => {
-      res.status(400).send("Cancel request");
-    });
-});
-
-router.post("/api/user/login", async (req: Request, res: Response) => {
-  const user = await User.findByCredentials(req.body.login, req.body.password);
-  if (!user) {
-    res.status(400).send("Unable to login");
-    return;
+  try {
+    const user = new User(req.body);
+    await user.save();
+    const token = await user.generateAuthToken();
+    res.status(200).send({ user: user.getPublicData(), token });
+  } catch (error) {
+    res.status(400).send("Error while adding user");
   }
-  const token = await user.generateAuthToken();
-  res.status(200).send({ user: user.getPublicData(), token });
 });
 
+/**
+ * User login authentication
+ */
+router.post("/api/user/login", async (req: Request, res: Response) => {
+  const { login, password } = req.body;
+
+  try {
+    const user = await User.findByCredentials(login, password);
+    if (!user) {
+      res.status(404).send("Unable to login");
+      return;
+    }
+    const token = await user.generateAuthToken();
+    res.status(200).send({ user: user.getPublicData(), token });
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+/**
+ * Get user data
+ */
 router.get("/api/user/me", auth, (req: AuthenticatedRequest, res: Response) => {
   res.send(req.user);
 });
 
-router.get("/api/users", auth, async (req: Request, res: Response) => {
-  const users = await User.find({});
-  if (!users) {
-    res.status(400).send("[]");
-    return;
+/**
+ * Get all users
+ */
+router.get("/api/users", auth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const users = await User.find({});
+    if (!users) {
+      res.status(200).send("[]");
+      return;
+    }
+    res.status(200).send(users);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
   }
-  res.status(200).send(users);
 });
 
-router.post("/api/users/logout", auth, async (req: AuthenticatedRequest, res : Response) => {
+/**
+ * Logout user, remove tokens
+ */
+router.post("/api/user/logout", auth, async (req: AuthenticatedRequest, res: Response) => {
   try {
     if (req.user) {
-        req.user.tokens = [];
-        await req.user.save();
+      req.user.tokens = [];
+      res.status(200).send("Logged out successfully");
+    } else {
+      res.status(404).send("User not found");
     }
-
-    res.send();
   } catch (e) {
-    res.status(500).send();
+    res.status(500).send("Internal Server Error");
   }
 });
 
-router.delete("/api/user/delete", auth, (req: Request, res: Response) => {
-  const { login, password } = req.body;
-  User.findOneAndDelete({ login: login })
-    .then((user: any) => {
-      res.status(201).send(user);
-    })
-    .catch((e: any) => {
-      res.status(500).send(e);
-    });
+/**
+ * Delete user
+ */
+router.delete("/api/user/delete", auth, async (req: AuthenticatedRequest, res: Response) => {
+  const { login } = req.body;
+  try {
+    const user: UserDocument | null = await User.findOneAndDelete({ login: login });
+    res.status(200).send(user);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
-router.patch("/api/user/update/:id", auth, (req: Request, res: Response) => {
-  User.findByIdAndUpdate(req.params.id, req.body, {
-    new: false,
-    runValidators: false,
-  })
-    .then((updatedUser: any) => {
-      res.status(201).send(updatedUser);
-    })
-    .catch((e: any) => {
-      res.status(500).send(e);
+/**
+ * Update user data
+ */
+router.patch("/api/user/update/:id", auth, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const user: UserDocument | null = await User.findByIdAndUpdate(req.params.id, req.body, {
+      new: false,
+      runValidators: false,
     });
+
+    res.status(200).send(user);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 module.exports = router;
