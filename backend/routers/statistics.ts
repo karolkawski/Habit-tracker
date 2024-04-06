@@ -29,12 +29,15 @@ router.get("/api/statistics/entries", auth, async (req: AuthenticatedRequest, re
 
   try {
     let entries: EntryDocument[];
+    const user_id = req.user ? req.user._id : undefined;
+
     if (habitID === "ALL") {
       entries = await Entry.find({
         time: {
           $gte: firstDayOfYear,
           $lt: lastDayOfYear,
         },
+        user_id,
       });
     } else {
       entries = await Entry.find({
@@ -103,7 +106,7 @@ router.get("/api/statistics/habits", auth, async (req: AuthenticatedRequest, res
  * Habit entries by week day for lasrt 3 months
  */
 router.get(
-  "/api/statistics/currentMonthhHabitEntries",
+  "/api/statistics/currentMonthHabitEntries",
   auth,
   async (req: AuthenticatedRequest, res: Response) => {
     const currentTime = new Date();
@@ -164,12 +167,15 @@ router.get(
 
     try {
       let entries: EntryDocument[];
+      const user_id = req.user ? req.user._id : undefined;
+
       if (habitID === "ALL") {
         entries = await Entry.find({
           time: {
             $gte: startDate,
             $lt: currentTime,
           },
+          user_id,
         });
       } else {
         entries = await Entry.find({

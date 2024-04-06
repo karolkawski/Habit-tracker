@@ -7,5 +7,4 @@ export type Frequency = {
 export type HabitType = {
   id: string;
   name: string;
-  // Add other properties as needed
 };

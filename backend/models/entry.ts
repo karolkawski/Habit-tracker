@@ -12,6 +12,11 @@ const entriesSchema = new mongoose.Schema<EntryDocument>(
       required: true,
       ref: "Habit",
     },
+    user_id: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
     amount: {
       type: Number,
       required: true,

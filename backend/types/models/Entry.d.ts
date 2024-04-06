@@ -3,6 +3,7 @@ import mongoose, { Document, Model } from "mongoose";
 type EntryAttributes = {
   time: Date;
   habit_id: mongoose.Types.ObjectId;
+  user_id: mongoose.Types.ObjectId;
   amount: number;
   count_mode: boolean;
 };

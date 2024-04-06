@@ -80,25 +80,6 @@ router.patch("/api/habits/:id", auth, async (req: AuthenticatedRequest, res: Res
 });
 
 /**
- * Get today's habits
- */
-router.get("/api/todayHabits", auth, async (req: AuthenticatedRequest, res: Response) => {
-  const currentTime = new Date();
-  const dayIndex = currentTime.getDay();
-  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  const currentDay = days[dayIndex];
-  const query: any = { frequency: { days: days } };
-  query.frequency.days[currentDay] = true;
-
-  try {
-    const habits: HabitDocument[] = await Habit.find(query);
-    res.status(200).send({ habits });
-  } catch (erro) {
-    res.status(500).send("Internal Server Error");
-  }
-});
-
-/**
  * Get habits by date
  */
 router.get(
@@ -156,7 +137,7 @@ router.get(
           );
           res.status(200).send({ habitEntries });
         })
-        .catch(error => {
+        .catch(() => {
           res.status(500).send("Internal Server Error");
         });
     } catch (error) {

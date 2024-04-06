@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { SettingsDocument, SettingsModel } from "../types/models/Settings";
 
 const settingsSchema = new mongoose.Schema<SettingsDocument>(
@@ -10,6 +10,11 @@ const settingsSchema = new mongoose.Schema<SettingsDocument>(
     value: {
       type: String,
       required: true,
+    },
+    user_id: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
     },
   },
   { timestamps: true },

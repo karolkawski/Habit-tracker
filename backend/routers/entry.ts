@@ -13,7 +13,8 @@ const router: Router = express.Router();
  */
 router.get("/api/entries", auth, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const entries: EntryDocument[] = await Entry.find({});
+    const user_id = req.user ? req.user._id : undefined;
+    const entries: EntryDocument[] = await Entry.find({ user_id });
     res.status(200).send(entries);
   } catch (error) {
     res.status(500).send("Internal Server Error");
@@ -60,7 +61,8 @@ router.post("/api/entries/add", auth, async (req: AuthenticatedRequest, res: Res
 
   //today's entrie not exist, we must create one
   if (!entry) {
-    const newEntry = new Entry(req.body);
+    const user_id = req.user ? req.user._id : undefined;
+    const newEntry = new Entry({ ...req.body, user_id });
 
     try {
       const savedEntry = await newEntry.save();
@@ -115,11 +117,14 @@ router.get("/api/entriesByDate", auth, async (req: AuthenticatedRequest, res: Re
   }
 
   try {
+    const user_id = req.user ? req.user._id : undefined;
+
     const entries: EntryDocument[] = await Entry.find({
       time: {
         $gte: startDate,
         $lt: endDate,
       },
+      user_id,
     });
     res.status(200).send(entries);
   } catch (error) {
