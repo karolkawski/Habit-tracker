@@ -17,6 +17,7 @@ const userSchema = new mongoose.Schema<UserDocument>(
     },
     email: {
       type: String,
+      unique: true,
       required: true,
     },
     password: {
@@ -67,8 +68,9 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.statics.findByCredentials = async (login, password) => {
-  const user = await User.findOne({ login });
+userSchema.statics.findByCredentials = async (loginOrEmail, password) => {
+  console.log("🚀 ~ userSchema.statics.findByCredentials= ~ loginOrEmail:", loginOrEmail);
+  const user = await User.findOne({ $or: [{ login: loginOrEmail }, { email: loginOrEmail }] });
 
   if (!user) {
     throw new Error("Unable to login");
