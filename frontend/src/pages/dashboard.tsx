@@ -29,7 +29,7 @@ export const Dashboard = () => {
     dispatch(fetchEntryRequest());
 
     axios
-      .get('http://localhost:4000/api/habitsByDate', {
+      .get('http://localhost:5001/api/habitsByDate', {
         ...AuthHeader(token),
         params: { time: selectedDate },
       })

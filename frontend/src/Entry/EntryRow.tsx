@@ -25,7 +25,7 @@ export const EntryRow = ({
     if (!entry) {
       axios
         .post(
-          `http://localhost:4000/api/entries/add`,
+          `http://localhost:5001/api/entries/add`,
           {
             time: new Date(selectedDate),
             amount: 1,
@@ -46,7 +46,7 @@ export const EntryRow = ({
 
     axios
       .delete(
-        `http://localhost:4000/api/entries/${entry._id}`,
+        `http://localhost:5001/api/entries/${entry._id}`,
         AuthHeader(token)
       )
       .then((res) => {

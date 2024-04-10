@@ -66,7 +66,7 @@ export const HabitForm = ({ isAdd }) => {
   const handleDeleteHabit = () => {
     axios
       .delete(
-        `http://localhost:4000/api/habits/${params.id}`,
+        `http://localhost:5001/api/habits/${params.id}`,
         AuthHeader(token)
       )
       .then((res) => {
@@ -89,7 +89,7 @@ export const HabitForm = ({ isAdd }) => {
             if (isAdd) {
               axios
                 .post(
-                  'http://localhost:4000/api/habits/add',
+                  'http://localhost:5001/api/habits/add',
                   { ...values },
                   AuthHeader(token)
                 )
@@ -104,7 +104,7 @@ export const HabitForm = ({ isAdd }) => {
 
             axios
               .patch(
-                `http://localhost:4000/api/habits/${values._id}`,
+                `http://localhost:5001/api/habits/${values._id}`,
                 { ...values },
                 AuthHeader(token)
               )

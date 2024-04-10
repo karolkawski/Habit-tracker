@@ -20,7 +20,7 @@ export const Settings = () => {
   const addSetiingsDarkMode = (darkMode) => {
     axios
       .post(
-        'http://localhost:4000/api/settings/add',
+        'http://localhost:5001/api/settings/add',
         {
           name: 'darkMode',
           value: darkMode,

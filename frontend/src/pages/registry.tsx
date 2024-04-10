@@ -18,7 +18,7 @@ export const Registry = () => {
     try {
       setIsLoading(true);
       axios
-        .post('http://localhost:4000/api/user/add', {
+        .post('http://localhost:5001/api/user/add', {
           name,
           email,
           login: email,

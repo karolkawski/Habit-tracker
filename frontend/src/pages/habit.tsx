@@ -53,7 +53,7 @@ export const Habit = () => {
 
   const fetchWeekdayStats = () => {
     axios
-      .get('http://localhost:4000/api/statistics/habitWeekdays', {
+      .get('http://localhost:5001/api/statistics/habitWeekdays', {
         params: {
           habitID: habit._id,
           time: '1y',
@@ -70,7 +70,7 @@ export const Habit = () => {
   const handleDeleteHabit = () => {
     axios
       .delete(
-        `http://localhost:4000/api/habits/${params.id}`,
+        `http://localhost:5001/api/habits/${params.id}`,
         AuthHeader(token)
       )
       .then((res) => {
@@ -83,7 +83,7 @@ export const Habit = () => {
 
   const fetchEntriesStats = () => {
     axios
-      .get('http://localhost:4000/api/statistics/entries', {
+      .get('http://localhost:5001/api/statistics/entries', {
         params: {
           habitID: habit._id,
           year: new Date().getFullYear(),
@@ -101,7 +101,7 @@ export const Habit = () => {
   const fetchHabitMonth = () => {
     axios
       .get(
-        `http://localhost:4000/api/statistics/currentMonthHabitEntries?habit_id=${habit._id}`,
+        `http://localhost:5001/api/statistics/currentMonthHabitEntries?habit_id=${habit._id}`,
         AuthHeader(token)
       )
       .then((res) => {
