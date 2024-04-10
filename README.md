@@ -25,6 +25,11 @@ Technologies used in the project:
 - ExpressJs
 - mongoose
 
+<h2>Run:</h2>
+docker build -t "react-app" ./frontend/
+docker build -t "api-server" ./backend/
+docker-compose up
+
 <h2>🛡️ License:</h2>
 
 This project is licensed under the MIT

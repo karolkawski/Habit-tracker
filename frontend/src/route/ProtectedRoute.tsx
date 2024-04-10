@@ -11,7 +11,7 @@ export const ProtectedRoute = ({ children }) => {
 
   const fetchSettings = () => {
     axios
-      .get('http://localhost:4000/api/settings', AuthHeader(token))
+      .get('http://localhost:5001/api/settings', AuthHeader(token))
       .then((res) => {
         dispatch(fetchSettingsSuccess(res.data));
       })
@@ -23,7 +23,7 @@ export const ProtectedRoute = ({ children }) => {
   const getUserData = () => {
     try {
       axios
-        .get('http://localhost:4000/api/user/me', AuthHeader(token))
+        .get('http://localhost:5001/api/user/me', AuthHeader(token))
         .then((response) => {
           dispatch(fetchUserSuccess(response.data));
         })

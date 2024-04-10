@@ -27,7 +27,7 @@ export const Habits = () => {
 
     try {
       const fetchedHabits = await axios.get(
-        'http://localhost:4000/api/habits',
+        'http://localhost:5001/api/habits',
         AuthHeader(token)
       );
       if (fetchedHabits) {
