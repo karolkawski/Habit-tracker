@@ -23,10 +23,10 @@ router.post("/api/user/add", async (req: Request, res: Response) => {
  * User login authentication
  */
 router.post("/api/user/login", async (req: Request, res: Response) => {
-  const { login, password } = req.body;
+  const { loginOrEmail, password } = req.body;
 
   try {
-    const user = await User.findByCredentials(login, password);
+    const user = await User.findByCredentials(loginOrEmail, password);
     if (!user) {
       res.status(404).send("Unable to login");
       return;

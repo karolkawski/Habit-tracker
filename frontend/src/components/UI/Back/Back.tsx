@@ -4,9 +4,11 @@ import { ButtonCustomTheme } from '../../../theme/ButtonCustomTheme';
 export const Back = () => {
   return (
     <div className="mr-5">
-      <Button theme={ButtonCustomTheme} color="secondary">
-        <Link to={`/habits`}>Back</Link>
-      </Button>
+      <Link to={`/habits`}>
+        <Button theme={ButtonCustomTheme} color="secondary">
+          Back
+        </Button>
+      </Link>
     </div>
   );
 };
