@@ -69,7 +69,6 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.statics.findByCredentials = async (loginOrEmail, password) => {
-  console.log("🚀 ~ userSchema.statics.findByCredentials= ~ loginOrEmail:", loginOrEmail);
   const user = await User.findOne({ $or: [{ login: loginOrEmail }, { email: loginOrEmail }] });
 
   if (!user) {
