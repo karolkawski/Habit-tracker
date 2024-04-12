@@ -18,12 +18,18 @@ Technologies used in the project:
 
 - Typescript
 - React
+- Docker
 - TailwindCss
 - Redux
 - Flowbite UI
 - D3.js
 - ExpressJs
 - mongoose
+
+<h2>Run:</h2>
+docker build -t "react-app" ./frontend/
+docker build -t "api-server" ./backend/
+docker-compose up
 
 <h2>🛡️ License:</h2>
 

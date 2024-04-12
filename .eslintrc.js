@@ -21,4 +21,5 @@ module.exports = {
     "prefer-const": "error",
     "@typescript-eslint/no-explicit-any": "warn",
   },
+  ignorePatterns: [".gitignore"],
 };

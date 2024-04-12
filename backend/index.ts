@@ -10,13 +10,12 @@ const settingsRouter = require("./routers/settings");
 const usersRouter = require("./routers/user");
 
 const app = express();
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 5001;
 
 app.use(express.json());
 app.use(bodyParser.json());
 
-app.use(cors({ origin: 'http://localhost:8080',
-}));
+app.use(cors());
 app.use(habitRouter);
 app.use(entieRouter);
 app.use(statisticsRouter);
@@ -24,6 +23,5 @@ app.use(settingsRouter);
 app.use(usersRouter);
 
 app.listen(port, () => {
-    console.log("Server is up on port " + port);
-  });
-  
+  console.log("Server is up on port " + port);
+});

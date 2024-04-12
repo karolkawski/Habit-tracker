@@ -16,7 +16,7 @@ export const Navigation = () => {
   const logOut = () => {
     try {
       axios
-        .post('http://localhost:4000/api/user/logout', {}, AuthHeader(token))
+        .post('http://localhost:5001/api/user/logout', {}, AuthHeader(token))
         .then(() => {
           dispatch(removeTokenSuccess());
           navigate('/');

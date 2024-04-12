@@ -1,0 +1,1074 @@
+{
+	"info": {
+		"_postman_id": "d474114b-41a8-4245-ad2d-07cc6645af26",
+		"name": "Habit tracker",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27171821"
+	},
+	"item": [
+		{
+			"name": "Habits",
+			"item": [
+				{
+					"name": "List habits",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/habits",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"habits"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create habit",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept-encoding": true,
+							"user-agent": true,
+							"host": true,
+							"accept": true,
+							"connection": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Programming\",\n    \"type\": \"Entertaiment\",\n\t\"color\": \"#e40000\",\n\t\"icon\": \"fa-plane\",\n\t\"count_mode\":false,\n\t\"amount\": 1,\n    \"frequency\": {\n        \"days\": {\n\t\t\t\"Mon\": true,\n\t\t\t\"Tue\": true,\n\t\t\t\"Wed\": true,\n\t\t\t\"Thu\": true,\n\t\t\t\"Fri\": true,\n\t\t\t\"Sat\": true,\n\t\t\t\"Sun\": true\n\t\t},\n\t\t\"repeat\": \"week\"\n    }\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/habits/add",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"habits",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit habit by id",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"frequency\": {\n        \"days\": {\n            \"Mon\": false,\n            \"Tue\": false,\n            \"Wed\": false,\n            \"Thu\": false,\n            \"Fri\": false,\n            \"Sat\": true,\n            \"Sun\": false\n        },\n        \"repeat\": \"month\"\n    },\n    \"_id\": \"643fcf6005ae9cfb7135de3f\",\n    \"name\": \"Wycieczka do burdelu\",\n    \"type\": \"enterteiment\",\n    \"color\": \"#ffff00\",\n    \"icon\": \"fa-plane\",\n    \"count_mode\": false,\n    \"amount\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/habits/643fcf4c05ae9cfb7135de3c",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"habits",
+								"643fcf4c05ae9cfb7135de3c"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get habit by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/habits/65592705f1b592e50dd914a6",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"habits",
+								"65592705f1b592e50dd914a6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete habit by id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/habits/6431dd96e6d69c7f77ae3e68",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"habits",
+								"6431dd96e6d69c7f77ae3e68"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get today habits",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/todayHabits",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"todayHabits"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get habit by date",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/habitsByDate?time=2024-03-06T17:32:47.827Z",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"habitsByDate"
+							],
+							"query": [
+								{
+									"key": "time",
+									"value": "168278529200000",
+									"disabled": true
+								},
+								{
+									"key": "time",
+									"value": "2024-03-06T17:32:47.827Z"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{authToken}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Entries",
+			"item": [
+				{
+					"name": "List entries",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/entries",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"entries"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create entrie",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"time\": \"2024-03-28T17:00:00.000Z\",\n\t\"habit__id\": \"653cefa7e3be830c292b5b93\",\n\t\"amount\": 1,\n\t\"count_mode\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/entries/add",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"entries",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get entries by start and end",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/entriesByDate?start=2023-11-16T01:46:55.397Z&end=2024-01-16T23:46:55.397Z",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"entriesByDate"
+							],
+							"query": [
+								{
+									"key": "start",
+									"value": "2023-11-16T01:46:55.397Z"
+								},
+								{
+									"key": "end",
+									"value": "2024-01-16T23:46:55.397Z"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete entrie by id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/entries/653d35b0c949bd4c1f638238",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"entries",
+								"653d35b0c949bd4c1f638238"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get entries by start, end and habit_id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/entriesByHabitAndDate?start=2024-03-01T01:46:55.397Z&end=2024-03-16T23:46:55.397Z&habit_id=65592705f1b592e50dd914a6",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"entriesByHabitAndDate"
+							],
+							"query": [
+								{
+									"key": "start",
+									"value": "2024-03-01T01:46:55.397Z"
+								},
+								{
+									"key": "end",
+									"value": "2024-03-16T23:46:55.397Z"
+								},
+								{
+									"key": "habit_id",
+									"value": "65592705f1b592e50dd914a6"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{authToken}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "User login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if(pm.response.code === 200) {",
+									" pm.environment.set('authToken', pm.response.json().token)",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"login\": \"test1@test1.pl\",\n    \"password\": \"test1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/user/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"login\": \"karolina\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/user/delete",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if(pm.response.code === 200) {",
+									" pm.environment.set('authToken', pm.response.json().token)",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"login\": \"karol1\",\n    \"name\": \"Karol2\",\n    \"email\": \"karol2.kawski@protonmmail.com\",\n    \"password\": \"krolinka13\",\n    \"role\": \"User\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/user/add",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/user/me",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/user/logout",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"k.kawski@protonmmail.com\",\n    \"password\": \"krolinka12\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/user/update/6589b628fb6447edb37b0d26",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"update",
+								"6589b628fb6447edb37b0d26"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{url}}/api/users",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"users"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{authToken}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Statistics",
+			"item": [
+				{
+					"name": "Entries",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/api/statistics/entries?habitID=ALL&year=2023",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"statistics",
+								"entries"
+							],
+							"query": [
+								{
+									"key": "habitID",
+									"value": "ALL"
+								},
+								{
+									"key": "year",
+									"value": "2023"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "WeekDays",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"habitID\": \"ALL\",\n    \"time\": \"3m\"\n}"
+						},
+						"url": {
+							"raw": "{{url}}/api/statistics/habitWeekdays?habitID=ALL&time=7d",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"statistics",
+								"habitWeekdays"
+							],
+							"query": [
+								{
+									"key": "habitID",
+									"value": "ALL"
+								},
+								{
+									"key": "time",
+									"value": "7d"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Habits",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/statistics/habits?time=7d",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"statistics",
+								"habits"
+							],
+							"query": [
+								{
+									"key": "time",
+									"value": "7d"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MonthHabits",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/statistics/currentMonthhHabitEntries?habit_id=65592705f1b592e50dd914a6",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"statistics",
+								"currentMonthhHabitEntries"
+							],
+							"query": [
+								{
+									"key": "habit_id",
+									"value": "65592705f1b592e50dd914a6"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{authToken}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Settings",
+			"item": [
+				{
+					"name": "Get Settings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/settings",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"settings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add or update settings",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/settings/add?name=darkMode&value=true",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"settings",
+								"add"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "darkMode"
+								},
+								{
+									"key": "value",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete setting",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"test\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/settings/delete",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"settings",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update setting",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"darkMode\",\n    \"value\": \"true\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/settings/update",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"settings",
+								"update"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{authToken}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{authToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

@@ -25,5 +25,5 @@ export type UserDocument = UserAttributes & UserMethods & Document;
 
 export type UserModel = Model<UserDocument> & {
   // eslint-disable-next-line no-unused-vars
-  findByCredentials(login: string, password: string): Promise<UserDocument>;
+  findByCredentials(loginOrEmail: string, password: string): Promise<UserDocument>;
 };

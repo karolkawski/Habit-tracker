@@ -9,8 +9,11 @@ import { fetchTokenSuccess } from '../store/actions/userActions';
 
 export const Login = () => {
   const dispatch = useDispatch();
-  const [login, setLogin] = useState('karol1');
-  const [password, setPassowrd] = useState('krolinka13');
+  const [loginOrEmail, setLoginOrEmail] = useState('');
+  const [password, setPassowrd] = useState('');
+  const [errorMessage, setErrorMessage] = useState<undefined | string>(
+    undefined
+  );
   const token = useSelector((state: { user }) => state.user.token);
 
   const navigate = useNavigate();
@@ -26,8 +29,8 @@ export const Login = () => {
     try {
       setIsLoading(true);
       axios
-        .post('http://localhost:4000/api/user/login', {
-          login,
+        .post('http://localhost:5001/api/user/login', {
+          loginOrEmail,
           password,
         })
         .then((response) => {
@@ -35,6 +38,9 @@ export const Login = () => {
         })
         .catch((e) => {
           console.error('Something went wrong during signing in: ', e);
+          setErrorMessage(
+            'Invalid Credentials: The email address or password you entered is incorrect. Please try again'
+          );
         });
     } catch (err) {
       console.error('Some error occured during signing in: ', err);
@@ -47,7 +53,7 @@ export const Login = () => {
 
     switch (id) {
       case 'login':
-        setLogin(value);
+        setLoginOrEmail(value);
         break;
       case 'password':
         setPassowrd(value);
@@ -86,13 +92,13 @@ export const Login = () => {
             <form className="flex max-w-md flex-col gap-4">
               <div>
                 <div className="mb-2 block">
-                  <Label htmlFor="login" value="Your email" />
+                  <Label htmlFor="login" value="Your email or login" />
                 </div>
                 <TextInput
                   id="login"
                   type="text"
                   placeholder="login"
-                  value={login}
+                  value={loginOrEmail}
                   onChange={handleFormData}
                   required
                 />
@@ -116,10 +122,17 @@ export const Login = () => {
                 type="submit"
                 onClick={(e) => {
                   e.preventDefault();
+                  setErrorMessage(undefined);
                   if (login.length < 5) {
+                    setErrorMessage(
+                      'Short Login: Login must be at least 5 characters long'
+                    );
                     return;
                   }
                   if (password.length < 5) {
+                    setErrorMessage(
+                      'Short Password: Password must be at least 5 characters long'
+                    );
                     return;
                   }
                   signIn();
@@ -128,6 +141,7 @@ export const Login = () => {
                 Submit
               </Button>
             </form>
+            <p className="text-red-500">{errorMessage}</p>
             <p className="text-sm font-light text-gray-500 dark:text-gray-400">
               Don’t have an account yet?{' '}
               <a

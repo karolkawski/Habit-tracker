@@ -42,7 +42,7 @@ export const Statistics = () => {
 
     try {
       const fetchedHabits = await axios.get(
-        'http://localhost:4000/api/habits',
+        'http://localhost:5001/api/habits',
         AuthHeader(token)
       );
       if (fetchedHabits) {
@@ -62,7 +62,7 @@ export const Statistics = () => {
   }
   const fetchEntriesStats = () => {
     axios
-      .get('http://localhost:4000/api/statistics/entries', {
+      .get('http://localhost:5001/api/statistics/entries', {
         params: {
           habitID: habit === 'ALL' ? 'ALL' : habit._id,
           year: year,
@@ -78,7 +78,7 @@ export const Statistics = () => {
   };
   const fetchHabitsStats = () => {
     axios
-      .get('http://localhost:4000/api/statistics/habits', {
+      .get('http://localhost:5001/api/statistics/habits', {
         params: {
           time: pie1ChartTime,
         },
@@ -93,7 +93,7 @@ export const Statistics = () => {
   };
   const fetchWeekdayStats = () => {
     axios
-      .get('http://localhost:4000/api/statistics/habitWeekdays', {
+      .get('http://localhost:5001/api/statistics/habitWeekdays', {
         params: {
           habitID: habit === 'ALL' ? 'ALL' : habit._id,
           time: pie2ChartTime,

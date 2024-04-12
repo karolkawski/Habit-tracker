@@ -8,7 +8,7 @@
     "dev": "nodemon index.ts",
     "lint": "eslint ./**/*.ts"
   },
-  "author": "",
+  "author": "Karol Kawski",
   "license": "ISC",
   "dependencies": {
     "@types/react-router-dom": "^5.3.3",

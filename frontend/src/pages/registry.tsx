@@ -11,20 +11,48 @@ export const Registry = () => {
   const [name, setName] = useState('');
   const [password, setPassowrd] = useState('');
   const [passwordRepeated, setPassowrdRepeated] = useState('');
+  const [errorMessage, setErrorMessage] = useState<undefined | string>(
+    undefined
+  );
   const navigate = useNavigate();
   const [IsLoading, setIsLoading] = useState(false);
+
+  const validateValues = () => {
+    if (login.length < 5) {
+      return 'Short Login: Login must be at least 5 characters long';
+    }
+
+    if (name.length < 3) {
+      return 'Short Name: Name must be at least 3 characters long';
+    }
+
+    const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    if (!regex.test(email)) {
+      return 'Invalid Email Address: Please enter a valid email address. Make sure it contains "@" and the appropriate domain';
+    }
+
+    if (password.length < 5) {
+      return 'Short Password: Password must be at least 5 characters long';
+    }
+
+    if (password !== passwordRepeated) {
+      return 'Password: Passwords do not match';
+    }
+
+    return undefined;
+  };
 
   const signUp = async () => {
     try {
       setIsLoading(true);
       axios
-        .post('http://localhost:4000/api/user/add', {
+        .post('http://localhost:5001/api/user/add', {
           name,
+          login,
           email,
-          login: email,
           password,
         })
-        .then((response) => {
+        .then(() => {
           navigate('/dashboard');
         })
         .catch((e) => {
@@ -161,23 +189,17 @@ export const Registry = () => {
                 type="submit"
                 onClick={(e) => {
                   e.preventDefault();
-                  if (login.length < 5 || email.length < 5 || name.length < 5) {
-                    return;
-                  }
+                  setErrorMessage(validateValues());
 
-                  if (password.length < 5 || passwordRepeated.length < 5) {
-                    return;
+                  if (errorMessage === undefined) {
+                    signUp();
                   }
-
-                  if (password !== passwordRepeated) {
-                    return;
-                  }
-                  signUp();
                 }}
               >
                 Submit
               </Button>
             </form>
+            <p className="text-red-500">{errorMessage}</p>
             <p className="text-sm font-light text-gray-500 dark:text-gray-400">
               Do you alerady have account?
               <a
