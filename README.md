@@ -18,6 +18,7 @@ Technologies used in the project:
 
 - Typescript
 - React
+- Docker
 - TailwindCss
 - Redux
 - Flowbite UI
